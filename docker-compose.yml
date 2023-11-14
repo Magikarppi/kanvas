@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  front:
+    restart: always
+    build: ./front
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front:/app
+      - /front/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  back:
+    restart: always
+    build: ./back
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./back:/app
+      - /back/node_modules
+
+  db:
+    image: postgres
+    container_name: local_pgdb_kanban_project
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pgpass
+    volumes:
+      - local_pgdata:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container_kanban_project
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
+      PGADMIN_DEFAULT_PASSWORD: strong-password
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  local_pgdata:
+  pgadmin-data:
+

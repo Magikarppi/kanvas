@@ -1,6 +1,5 @@
 # kanban-project
-Jussi lisännyt tekstiä
-
+Jussi lisännyt tekstiä kolmoseen
 
 ## Getting started
 

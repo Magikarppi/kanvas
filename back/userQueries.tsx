@@ -1,6 +1,5 @@
 
-export const insertNewUser = () => {
-    return `
+export const insertNewUser =  `
         INSERT INTO users (
         first_name,
         last_name,
@@ -18,16 +17,11 @@ export const insertNewUser = () => {
         job_pitch
         ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
-        )
-    `
-}
+        )`;
 
-export const deleteUser = () => {
-   return "DELETE FROM users WHERE id = $1"
-}
+export const deleteUser = "DELETE FROM users WHERE id = $1";
 
-export const updateUser = () => {
-    const query = `
+export const updateUser = `
     UPDATE users 
     SET 
       first_name = $1,
@@ -44,11 +38,6 @@ export const updateUser = () => {
       is_open_to_work = $12,
       linkedin_username = $13,
       job_pitch = $14
-    WHERE id = $15
-  `;
-  return query;
-}
+    WHERE id = $15`;
 
-export const getUserById = () => {
-    return 'SELECT * FROM users WHERE id = $1';
-}
+export const getUserById = 'SELECT * FROM users WHERE id = $1';

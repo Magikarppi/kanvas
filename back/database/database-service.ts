@@ -20,10 +20,12 @@ export const executeQuery = async (
     try {
         const result = await client.query(query, parameters);
         return result;
-    } catch (error: any) {
-        console.error(error.stack);
-        error.name = "dbError";
-        throw error;
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error(error.stack);
+            error.name = "dbError";
+            throw error;
+        }
     } finally {
         client.release();
     }

@@ -9,15 +9,33 @@ users.post("/signup", async (request: Request, response: Response) => {
     const { email, password, first_name, last_name } = request.body;
     const lowerCaseEmail = email.toLowerCase();
 
-    const existingUser = await getUserByEmail(lowerCaseEmail);
+    // RegEx checks if email is of correct format
+    const validateEmailRegEx = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    if (validateEmailRegEx.test(lowerCaseEmail) === false) {
+        response.status(400).send();
+        return;
+    }
 
-    if (existingUser.rows.length !== 0) response.status(409).send();
-    else {
+    if (first_name.length < 1 || last_name.length < 1) {
+        response.status(400).send();
+        return;
+    }
+
+    // const existingUser = await getUserByEmail(lowerCaseEmail);
+
+    const existingUser = {
+        rows: [],
+    };
+
+    if (existingUser.rows.length !== 0) {
+        response.status(409).send();
+        return;
+    } else {
         try {
             const hashedPassword = await argon2.hash(password);
-    
+
             const timestamp = getCurrentTimestamp();
-        
+
             const newUser = {
                 id: uuid(),
                 first_name: first_name,
@@ -36,9 +54,11 @@ users.post("/signup", async (request: Request, response: Response) => {
                 job_pitch: null,
             };
 
-            await createNewUser(newUser);
+            // await createNewUser(newUser);
+            console.log(newUser);
 
-        } catch(error) {
+            response.status(200).send();
+        } catch (error) {
             console.error(error);
             response.status(500).send();
         }

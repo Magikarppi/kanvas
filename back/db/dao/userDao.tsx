@@ -1,33 +1,10 @@
 
+
+
 const { Pool, Client } = require('pg');
-const { insertNewUser, deleteUser, updateUser, getUserById, getUserByEmail } = require('./userQueries.tsx')
+const { insertNewUser, deleteUser, updateUser, getUserById, getUserByEmail } = require('./userQueries.tsx');
+const {IUser, DAO} = require('./userInterfaces');
 
-interface IUser {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  password_hash: string;
-  phone_number: string;
-  country: string;
-  city: string;
-  picture: string;
-  account_creation_date: Date;
-  is_online: boolean;
-  last_online: Date;
-  is_open_to_work: boolean;
-  linkedin_username: string;
-  job_pitch: string;
-};
-
-interface DAO<T> {
-  createNewUser(item: T): void;
-  getUserById(id: string): Promise<T | null>;
-  getUserByEmail(email: string): Promise<T | null>;
-  update(id: string, user: T): void;
-  delete(id: string): void;
-}
-  
 const config = {
   user: process.env.USER_NAME,
   database: process.env.DATABASE,
@@ -49,9 +26,9 @@ const databaseConnection = {
     pool.end();
   },
 };
-  
-  const userDAO: DAO<IUser> = {
-    createNewUser: (user: IUser) => {
+
+  const userDAO: typeof DAO = {
+    createNewUser: (user: typeof IUser) => {
       databaseConnection.connect();
       const values = Object.values(user);
       client.query(insertNewUser, values)
@@ -62,7 +39,7 @@ const databaseConnection = {
       try {
         databaseConnection.connect();
         const result = await client.query(getUserById, [id])
-        return result.rows[0] as IUser | null;
+        return result.rows[0] as typeof DAO | null;
       }
       finally{
         databaseConnection.disconnect();
@@ -73,13 +50,13 @@ const databaseConnection = {
       try {
         databaseConnection.connect();
         const result = await client.query(getUserByEmail, [email])
-        return result.rows[0] as IUser | null;
+        return result.rows[0] as typeof IUser | null;
       }
       finally{
         databaseConnection.disconnect();
       }
     },
-    update: (id:string, user: IUser ) => {
+    update: (id:string, user: typeof IUser ) => {
       databaseConnection.connect();
       let copyUser:any = user;
       delete copyUser.id;

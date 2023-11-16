@@ -1,7 +1,13 @@
-import React from "react";
+import NonLoginNavBar from "./components/NavBar/NonLoginNavBar";
+import HomePage from "./pages/NonLogin/HomePage/HomePage";
 
 const App = () => {
-    return <div>App</div>;
+    return (
+        <div>
+            <NonLoginNavBar />
+            <HomePage />
+        </div>
+    );
 };
 
 export default App;

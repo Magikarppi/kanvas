@@ -10,6 +10,7 @@ const pool = new pg.Pool({
     user: PG_USERNAME,
     password: String(PG_PASSWORD),
     database: PG_DATABASE,
+    
 });
 
 export const executeQuery = async (

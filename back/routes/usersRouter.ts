@@ -11,9 +11,8 @@ users.post("/signup", async (request: Request, response: Response) => {
 
     const existingUser = await getUserByEmail(lowerCaseEmail);
 
-    if (existingUser.rows.length !== 0) {
-        response.status(409).send();
-    } else {
+    if (existingUser.rows.length !== 0) response.status(409).send();
+    else {
         try {
             const hashedPassword = await argon2.hash(password);
     

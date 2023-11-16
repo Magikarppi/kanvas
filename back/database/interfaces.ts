@@ -16,7 +16,7 @@ export type IUser = {
   job_pitch: string;
 };
 
-export type DAO<T> = {
+export interface DAO<T>  {
   createNewUser(item: T): void;
   getUserById(id: string): Promise<T | null>;
   getUserByEmail(email: string): Promise<T | null>;

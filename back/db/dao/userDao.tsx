@@ -16,7 +16,7 @@ const pool = new Pool(config);
 const client = new Client(config);
 const databaseConnection = {
   connect: () => {
-    pool.connect((err:string) => {
+    pool.connect((err: typeof String) => {
         if (err) {
           return console.error('Virhe yhteyden avaamisessa', err);
         }

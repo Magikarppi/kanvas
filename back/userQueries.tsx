@@ -42,5 +42,3 @@ export const updateUser = `
     WHERE id = $15`;
 
 export const getUserById = "SELECT * FROM users WHERE id = $1";
-
-export const getUserByEmail = "SELECT * FROM users WHERE email = $1";

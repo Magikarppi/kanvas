@@ -1,6 +1,7 @@
 
 export const insertNewUser =  `
         INSERT INTO users (
+        id,
         first_name,
         last_name,
         email,
@@ -16,7 +17,7 @@ export const insertNewUser =  `
         linkedin_username,
         job_pitch
         ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
         )`;
 
 export const deleteUser = "DELETE FROM users WHERE id = $1";
@@ -40,4 +41,6 @@ export const updateUser = `
       job_pitch = $14
     WHERE id = $15`;
 
-export const getUserById = 'SELECT * FROM users WHERE id = $1';
+export const getUserById = "SELECT * FROM users WHERE id = $1";
+
+export const getUserByEmail = "SELECT * FROM users WHERE email = $1";

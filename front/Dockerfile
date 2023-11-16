@@ -8,7 +8,7 @@ COPY tsconfig.json ./
 
 RUN npm install --silent
 
-COPY ./ ./
+COPY . ./
 
 EXPOSE 3000
 

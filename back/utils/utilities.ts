@@ -11,5 +11,5 @@ export const getCurrentTimestamp = () => {
 
     const timestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-    return timestamp;
+    return new Date(timestamp);
 };

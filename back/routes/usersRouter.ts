@@ -16,12 +16,18 @@ users.post("/signup", async (request: Request, response: Response) => {
         return;
     }
 
-    if (first_name.length < 1 || last_name.length < 1) {
+    if (first_name.trim().length < 1 || last_name.trim().length < 1) {
         response.status(400).send();
         return;
     }
 
-    // const existingUser = await getUserByEmail(lowerCaseEmail);
+    try {
+        // const existingUser = await getUserByEmail(lowerCaseEmail);
+    } catch (error) {
+        console.error(error);
+        response.status(500).send();
+    }
+
 
     const existingUser = {
         rows: [],
@@ -29,7 +35,6 @@ users.post("/signup", async (request: Request, response: Response) => {
 
     if (existingUser.rows.length !== 0) {
         response.status(409).send();
-        return;
     } else {
         try {
             const hashedPassword = await argon2.hash(password);
@@ -48,7 +53,7 @@ users.post("/signup", async (request: Request, response: Response) => {
                 picture: null,
                 account_creation_date: timestamp,
                 is_online: false,
-                last_online: null,
+                last_online: timestamp,
                 is_open_to_work: false,
                 linkedin_username: null,
                 job_pitch: null,
@@ -56,7 +61,7 @@ users.post("/signup", async (request: Request, response: Response) => {
 
             // await createNewUser(newUser);
             console.log(newUser);
-
+            
             response.status(200).send();
         } catch (error) {
             console.error(error);

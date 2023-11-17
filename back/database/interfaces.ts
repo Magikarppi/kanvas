@@ -15,11 +15,3 @@ export type IUser = {
   linkedin_username: string;
   job_pitch: string;
 };
-
-export interface DAO<T>  {
-  createNewUser(item: T): void;
-  getUserById(id: string): Promise<T | null>;
-  getUserByEmail(email: string): Promise<T | null>;
-  update(id: string, user: T): void;
-  delete(id: string): void;
-}

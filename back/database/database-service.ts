@@ -15,7 +15,7 @@ const pool = new pg.Pool({
 
 export const executeQuery = async (
     query: string,
-    parameters?: Array<unknown>
+    parameters?: (string | boolean | Date | null | undefined )[]
 ) => {
     const client = await pool.connect();
     try {

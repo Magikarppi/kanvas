@@ -1,7 +1,10 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { getTeamByIdDao } from "./database/teamsDAO";
+import userRouter from "./routes/usersRouter";
+import { createTablesAndFillWithDummyData } from "./database/database-service";
+import { getTeamByIdDao } from "./database/teamsDao";
+
 const server = express();
 
 server.use(cors());
@@ -14,5 +17,8 @@ server.get('/teams/:id', (req, res) => {
   const team = getTeamByIdDao(id);
   res.send(team).status(200);
 });
+server.use("/users", userRouter);
+
+createTablesAndFillWithDummyData();
 
 export default server;

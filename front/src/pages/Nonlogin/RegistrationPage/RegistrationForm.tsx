@@ -15,12 +15,10 @@ const RegistrationForm = () => {
                 }}
             >
                 <Typography variant="h5">
-              Sign up
+                    Sign up
                 </Typography>
                 <Box
                     component="form"
-                    //noValidate
-                    //onSubmit={handleSubmit}
                     sx={{ mt: 3 }}
                 >
                     <Grid container spacing={2}>
@@ -79,12 +77,12 @@ const RegistrationForm = () => {
                         color="secondary"
                         sx={{ mt: 3, mb: 2 }}
                     >
-            Sign Up
+                    Sign Up
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
                             <Link href="#" variant="body2">
-                Already have an account? Sign in
+                    Already have an account? Sign in
                             </Link>
                         </Grid>
                     </Grid>

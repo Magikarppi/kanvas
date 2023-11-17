@@ -15,3 +15,10 @@ export type IUser = {
   linkedin_username: string | null;
   job_pitch: string | null;
 };
+
+export type ITeam = {
+  id: string;
+  name: string;
+  admin: string;
+  is_public: string;
+}

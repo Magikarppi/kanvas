@@ -59,7 +59,7 @@ users.post("/signup", async (request: Request, response: Response) => {
                 job_pitch: null,
             };
 
-            createNewUserDAO(newUser);
+            await createNewUserDAO(newUser);
             response.status(200).send("New user created.");
         } catch (error) {
             console.error(error);

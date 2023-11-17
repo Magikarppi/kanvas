@@ -3,9 +3,9 @@ import { IUser} from "./interfaces";
 import { executeQuery } from "./database-service";
 
 
-export const  createNewUserDAO = (user: IUser) => {
+export const  createNewUserDAO = async (user: IUser) => {
     const values = Object.values(user);
-    executeQuery(insertNewUser, values);
+    await executeQuery(insertNewUser, values);
 };
 
 export const getUserDAO = async(id: string) => {

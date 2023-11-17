@@ -20,5 +20,5 @@ export type ITeam = {
     id: string;
     name: string;
     admin: string;
-    is_public: string;
+    is_public: boolean;
 };

@@ -1,6 +1,6 @@
 import { executeQuery } from "./database-service";
 import { ITeam } from "./interfaces";
-import { getTeamById } from "./teamQuery";
+import { getTeamById } from "./teamQueries";
 
 
 export const getTeamByIdDao = async(id: string) => {

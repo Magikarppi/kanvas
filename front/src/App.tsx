@@ -1,5 +1,5 @@
 import NonLoginNavBar from "./components/NavBar/NonLoginNavBar";
-import HomePage from "./pages/NonLogin/HomePage/HomePage";
+import HomePage from "./pages/Nonlogin/HomePage/HomePage";
 
 const App = () => {
     return (

@@ -1,6 +1,7 @@
 import {
     Avatar,
     Button,
+    Checkbox,
     Grid,
     Paper,
     TextField,
@@ -91,7 +92,9 @@ const UserProfile = () => {
                         type="text"
                         label="About you"
                     />
-
+                    <div>
+                        <Checkbox /> Are you open to finding work?
+                    </div>
                     <Button
                         variant="contained"
                         color="secondary"

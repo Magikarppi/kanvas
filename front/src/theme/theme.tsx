@@ -1,8 +1,8 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 export type PaletteMode = "dark" | "light";
 
-const theme = createTheme({
+let theme = createTheme({
     palette: {
         mode: "dark" as PaletteMode,
         primary: {
@@ -46,7 +46,30 @@ const theme = createTheme({
                 },
             },
         },
+        MuiTextField: {
+            styleOverrides: {
+                root: {
+                    marginBottom: "15px",
+                },
+            },
+        },
+        MuiListItemIcon: {
+            styleOverrides: {
+                root: {
+                    marginRight: "-25px",
+                },
+            },
+        },
+        MuiOutlinedInput: {
+            styleOverrides: {
+                root: {
+                    borderRadius: 15,
+                },
+            },
+        },
     },
 });
+
+theme = responsiveFontSizes(theme);
 
 export default theme;

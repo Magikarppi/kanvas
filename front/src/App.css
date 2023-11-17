@@ -1,3 +1,8 @@
+html {
+    font-size: 70%;
+}
+
+/* Home Page */
 .navBarContainer {
     height: 65px;
     background:
@@ -38,4 +43,32 @@
 
 .homeBodyText {
     padding-bottom: 40px;
+}
+
+.homePageFooter {
+    border-top: 1px solid #000;
+    margin-top: auto;
+    text-align: center;
+    padding: 20px 0 60px 0;
+    margin: 0 10% 0 10%;
+}
+
+.footerDivider {
+    background-color: #121212;
+    width: 80%;
+    padding-top: 25px;
+}
+
+/* User profile Page */
+
+.userProfilePage {
+    padding-top: 30px;
+}
+
+.userEditProfileContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
 }

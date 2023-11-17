@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
 import { getCurrentTimestamp } from "../utils/utilities";
+// import userDAO from "../database/userDao";
 
 const users = express.Router();
 
@@ -22,7 +23,7 @@ users.post("/signup", async (request: Request, response: Response) => {
     }
 
     try {
-        // const existingUser = await getUserByEmail(lowerCaseEmail);
+        // const existingUser = await getUserEmailDAO(lowerCaseEmail);
     } catch (error) {
         console.error(error);
         response.status(500).send();
@@ -59,7 +60,7 @@ users.post("/signup", async (request: Request, response: Response) => {
                 job_pitch: null,
             };
 
-            // await createNewUser(newUser);
+            // await createNewUserDAO(newUser);
             console.log(newUser);
             
             response.status(200).send();

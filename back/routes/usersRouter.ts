@@ -22,6 +22,11 @@ users.post("/signup", async (request: Request, response: Response) => {
         return;
     }
 
+    if (lowerCaseEmail.length > 255 || first_name.length > 255 || last_name.length > 255) {
+        response.status(400).send();
+        return;
+    }
+
     const existingUser = await getUserEmailDAO(lowerCaseEmail);
     if (existingUser) {
         response.status(409).send();

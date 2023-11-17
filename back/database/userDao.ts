@@ -1,6 +1,3 @@
-
-
-
 import { insertNewUser, deleteUser, updateUser, getUserById, getUserByEmail } from "./userQueries";
 import { IUser} from "./interfaces";
 import { executeQuery } from "./database-service";

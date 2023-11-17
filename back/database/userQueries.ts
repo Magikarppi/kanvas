@@ -1,5 +1,4 @@
-
-export const insertNewUser =  `
+export const insertNewUser = `
         INSERT INTO users (
         id,
         first_name,

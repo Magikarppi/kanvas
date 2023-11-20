@@ -21,6 +21,7 @@
         "react/jsx-uses-react": "off",
         "react/react-in-jsx-scope": "off",
         "react/display-name": "off",
+        "react/no-unescaped-entities": 0,
         "indent": [
             "error",
             4

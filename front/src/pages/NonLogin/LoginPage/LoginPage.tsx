@@ -1,7 +1,15 @@
-import * as React from "react";
 import LoginForm from "./LoginForm";
+import NavigateBackIcon from "../../../components/NavigationButtons/NavigateBackIcon";
+
 const LoginPage = () => {
-    return <div><LoginForm/></div>;
+    return (
+        <>
+            <NavigateBackIcon />
+            <div className="loginPage">
+                <LoginForm />
+            </div>
+        </>
+    );
 };
 
 export default LoginPage;

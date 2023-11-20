@@ -1,7 +1,13 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Grid, Typography } from "@mui/material";
 
 const HomePage = () => {
+    const navigate = useNavigate();
+
+    const handleNavigation = (location: string) => {
+        navigate(location);
+    };
+
     return (
         <div>
             <Grid container spacing={1} className="homeContainer1">
@@ -14,7 +20,11 @@ const HomePage = () => {
                         <Typography variant="body1" className="homeBodyText">
                             Sign up for your account today...
                         </Typography>
-                        <Button variant="contained" color="secondary">
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => handleNavigation("/sign-up")}
+                        >
                             Sign up
                         </Button>
                     </div>
@@ -28,7 +38,11 @@ const HomePage = () => {
                         <Typography variant="body1" className="homeBodyText">
                             Sign in to your account to get started...
                         </Typography>
-                        <Button variant="contained" color="primary">
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleNavigation("/sign-in")}
+                        >
                             Sign in
                         </Button>
                     </div>

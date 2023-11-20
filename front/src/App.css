@@ -73,3 +73,23 @@ html {
     justify-content: center;
     margin-bottom: 50px;
 }
+
+/* Error page */
+.unknownUrl {
+    min-height: 80vh;
+}
+
+.errorCard {
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    width: 100%;
+}
+
+.registrationPage {
+    min-height: 70vh;
+}
+
+.loginPage {
+    min-height: 70vh;
+}

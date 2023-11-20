@@ -2,9 +2,22 @@ import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
 import { getCurrentTimestamp } from "../utils/utilities";
-import { getUserEmailDAO, createNewUserDAO } from "../database/userDao";
+import { getUserEmailDAO, createNewUserDAO, updateDAO } from "../database/userDao";
+import * as jwt from 'jsonwebtoken';
 
+const secret = process.env.SECRET;
 const users = express.Router();
+
+users.put("/users/:id",async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const token = req.body.token;
+    const user = req.body.user;
+    const decoded = jwt.verify(token, secret);
+    if(decoded.id){
+        updateDAO(id, user)
+        res.status(200);
+    }
+})
 
 users.post("/signup", async (request: Request, response: Response) => {
     const { email, password, first_name, last_name } = request.body;

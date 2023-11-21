@@ -8,14 +8,11 @@ import {
     Grid, 
     Link, 
     Typography, 
-    FormControl,
-    InputLabel,
-    OutlinedInput,
     InputAdornment,
     IconButton  } from "@mui/material";
 import Icons from "../../../components/Icons/Icons";
 
-interface RegistrationFormState {
+interface UserRegistrationState {
     firstName: string;
     lastName: string;
     email: string;
@@ -24,15 +21,29 @@ interface RegistrationFormState {
   }
 
 const RegistrationForm = () => {
-    const [showPassword, setShowPassword] = useState(false);
-    const [formData, setFormData] = useState<RegistrationFormState>({
+    const [showPassword, setShowPassword] = useState({
+        password: false,
+        confirmPassword: false,
+    });
+    const [formData, setFormData] = useState<UserRegistrationState>({
         firstName: "",
         lastName: "",
         email: "",
         password: "",
         confirmPassword: "",
     });
-    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const [touched, setTouched] = useState({
+        firstName: false,
+        lastName: false,
+        email: false,
+        password: false,
+        confirmPassword: false
+    });
+
+    const handleClickShowPassword = (field: keyof typeof showPassword) => {
+        setShowPassword((prevField) => ({ ...prevField, [field]: !prevField[field] }));
+    };
     const showValues = () => {
         console.log("First name :" + formData.firstName + " Last name : " + formData.lastName + " Email : " + formData.email + " Password : " + formData.password  );
     };
@@ -41,7 +52,50 @@ const RegistrationForm = () => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
- 
+    
+    const handleInputBlur = (field: keyof typeof formData) => {
+        setTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
+    };
+    
+    const passWordRegex = /^(?=.*[a-z]).{8,40}$/; // Minimum eight characters, at least one letter
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    
+    const validateInputs = (field: keyof typeof formData) => {
+        const value = formData[field];
+      
+        if (field === "email") {
+            return touched[field] && !emailRegex.test(value);
+        }
+        else if (field === "password") {
+            return touched[field] && !passWordRegex.test(value);
+        } else if (field === "confirmPassword" && formData.password !== formData.confirmPassword) {
+            return touched[field];
+        }
+        else {
+            return touched[field] && value === "";
+        }
+    };
+
+    const getErrorText = (field: keyof typeof formData) => {
+        const value = formData[field];
+        
+        if (touched[field] && value === "") {
+            return "Field must be filled out";
+        }
+        else if (field === "email" && touched[field] && !emailRegex.test(value)) {
+            return "Invalid email address";
+        } else if (field === "password" && touched[field] && !passWordRegex.test(value)) {
+            return "Invalid password";
+        } else if (field === "confirmPassword" && touched[field] && formData.password !== formData.confirmPassword) {
+            return "Password not match";
+        } else {
+            return null;
+        }
+    };
+
+    const disableButton = formData.firstName === "" || formData.lastName === "" || formData.password === ""
+    || formData.confirmPassword === "" || formData.password !== formData.confirmPassword  || formData.email === "" || !emailRegex.test(formData.email) || !passWordRegex.test(formData.password);
+
     return (
         <Container maxWidth="xs">
             <Box
@@ -62,6 +116,7 @@ const RegistrationForm = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                error={validateInputs("firstName")}
                                 required
                                 name="firstName"
                                 value={formData.firstName}
@@ -69,10 +124,13 @@ const RegistrationForm = () => {
                                 id="firstName"
                                 onChange={handleInputChange}
                                 label="First Name"
+                                onBlur={() => handleInputBlur("firstName")}
+                                helperText={getErrorText("firstName")}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                error={validateInputs("lastName")}
                                 required
                                 fullWidth
                                 id="lastName"
@@ -80,72 +138,78 @@ const RegistrationForm = () => {
                                 onChange={handleInputChange}
                                 label="Last Name"
                                 name="lastName"
+                                onBlur={() => handleInputBlur("lastName")}
+                                helperText={getErrorText("lastName")}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                error={validateInputs("email")}
                                 required
                                 fullWidth
+                                type="email"
                                 id="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 label="Email Address"
                                 name="email"
-                                autoComplete="email"
+                                onBlur={() => handleInputBlur("email")}
+                                helperText={getErrorText("email")} 
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <InputLabel htmlFor="password">Password *</InputLabel>
-                                <OutlinedInput
-                                    id="password"
-                                    type={showPassword ? "text" : "password"}
-                                    onChange={handleInputChange}
-                                    name="password"
-                                    value={formData.password}
-                                    fullWidth
-                                    endAdornment={
+                            <TextField
+                                error={validateInputs("password")}
+                                required
+                                fullWidth
+                                id="password"
+                                value={formData.password}
+                                onChange={handleInputChange}
+                                label="Password"
+                                name="password"
+                                onBlur={() => handleInputBlur("password")}
+                                helperText={getErrorText("password")}
+                                type={showPassword.password ? "text" : "password"}
+                                InputProps={{ 
+                                    endAdornment: (
                                         <InputAdornment position="end">
                                             <IconButton
                                                 aria-label="toggle password visibility"
-                                                onClick={handleClickShowPassword}
-                                                edge="end"
-                                                style={{ cursor: "pointer"}}
+                                                onClick={() => handleClickShowPassword("password")}
                                             >
-                                                {showPassword ? <Icons.VisibilityOff /> : <Icons.Visibility />}
+                                                {showPassword.password ? <Icons.Visibility /> : <Icons.VisibilityOff />}
                                             </IconButton>
                                         </InputAdornment>
-                                    }
-                                    label="Password"
-                                />
-                            </FormControl>
+                                    )
+                                }}
+                            />
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <InputLabel htmlFor="confirmPassword">Confirm Password *</InputLabel>
-                                <OutlinedInput
-                                    id="confirmPassword"
-                                    type={showPassword ? "text" : "password"}
-                                    name="confirmPassword"
-                                    value={formData.confirmPassword}
-                                    required
-                                    onChange={handleInputChange}
-                                    fullWidth
-                                    endAdornment={
+                            <TextField
+                                error={validateInputs("confirmPassword")}
+                                required
+                                fullWidth
+                                id="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleInputChange}
+                                label="Confirm password"
+                                name="confirmPassword"
+                                onBlur={() => handleInputBlur("confirmPassword")}
+                                helperText={getErrorText("confirmPassword")}
+                                type={showPassword.confirmPassword ? "text" : "password"}
+                                InputProps={{ 
+                                    endAdornment: (
                                         <InputAdornment position="end">
                                             <IconButton
                                                 aria-label="toggle password visibility"
-                                                onClick={handleClickShowPassword}
-                                                edge="end"
-                                                style={{ cursor: "pointer"}}
+                                                onClick={() => handleClickShowPassword("confirmPassword")}
                                             >
-                                                {showPassword ? <Icons.VisibilityOff /> : <Icons.Visibility />}
+                                                {showPassword.confirmPassword ? <Icons.Visibility /> : <Icons.VisibilityOff />}
                                             </IconButton>
                                         </InputAdornment>
-                                    }
-                                    label="Confirm Password"
-                                />
-                            </FormControl>
+                                    )
+                                }}
+                            />
                         </Grid>
                     </Grid>
                     <Button
@@ -154,6 +218,7 @@ const RegistrationForm = () => {
                         color="secondary"
                         sx={{ mt: 3, mb: 2 }}
                         onClick={showValues}
+                        disabled={disableButton}
                     >
                     Sign Up
                     </Button>

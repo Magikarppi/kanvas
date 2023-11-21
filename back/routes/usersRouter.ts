@@ -18,8 +18,13 @@ const createToken = (value: string) =>
 users.put("/users/:id", authenticate, async (request: Request, response: Response) => {
     const id = request.params.id;
     const user:IUser = request.body.user;
-    await updateDAO(id, user);
-    response.send(200);
+    try {
+        await updateDAO(id, user);
+        response.send(204);
+        
+    } catch (error) {
+        response.send(error).status(500);
+    }
 });
 
 users.post("/signup", async (request: Request, response: Response) => {

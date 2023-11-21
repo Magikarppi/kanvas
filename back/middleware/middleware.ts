@@ -4,8 +4,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-interface UserRequest extends Request {
-    user: string | JwtPayload;
+export interface UserRequest extends Request {
+    user?: string | JwtPayload;
 }
 
 export const authenticate = (

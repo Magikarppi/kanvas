@@ -7,9 +7,7 @@ import { getUserEmailDAO, createNewUserDAO, updateDAO } from "../database/userDa
 import * as jwt from 'jsonwebtoken';
 import { IUser } from "../database/interfaces";
 
-const secret = process.env.SECRET;
 const users = express.Router();
-
 const JWT_SECRET = process.env.SECRET as string;
 
 const createToken = (value: string) =>

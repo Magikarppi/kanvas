@@ -224,7 +224,7 @@ const RegistrationForm = () => {
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link href="#">
+                            <Link href="http://localhost:3000/sign-in">
                     Already have an account? Sign in
                             </Link>
                         </Grid>

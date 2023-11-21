@@ -46,13 +46,6 @@ let theme = createTheme({
                 },
             },
         },
-        MuiTextField: {
-            styleOverrides: {
-                root: {
-                    marginBottom: "15px",
-                },
-            },
-        },
         MuiListItemIcon: {
             styleOverrides: {
                 root: {

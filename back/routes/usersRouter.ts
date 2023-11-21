@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
+import { IUser } from "../database/interfaces";
 import jwt, { JwtPayload } from "jsonwebtoken";
-
 import { getCurrentTimestamp } from "../utils/utilities";
 import {
     getUserEmailDAO,
@@ -10,17 +10,24 @@ import {
     getUserDAO,
     deleteUserDAO,
     updatePasswordDAO,
+    updateDAO
 } from "../database/userDao";
 import { UserRequest, authenticate } from "../middleware/middleware";
 
 const users = express.Router();
-
 const JWT_SECRET = process.env.SECRET as string;
 
 const createToken = (value: string) =>
     jwt.sign({ value: value.toLowerCase() }, JWT_SECRET, {
         expiresIn: 60000 * 60 * 24,
     });
+
+users.put("/:id", authenticate, async (request: Request, response: Response) => {
+    const id = request.params.id;
+    const user:IUser = request.body.user;
+    await updateDAO(id, user);
+    response.status(200).json();
+});
 
 users.post("/signup", async (request: Request, response: Response) => {
     const { email, password, first_name, last_name } = request.body;

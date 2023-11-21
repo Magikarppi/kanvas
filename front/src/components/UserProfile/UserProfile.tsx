@@ -21,7 +21,7 @@ const UserProfile = () => {
             </Tooltip>
 
             <Typography variant="h5" style={{ marginBottom: "30px" }}>
-                User's profile
+                Users profile
             </Typography>
 
             <Grid container style={{ marginBottom: "40px" }}>

@@ -1,7 +1,15 @@
 import RegistrationForm from "./RegistrationForm";
-import * as React from "react";
+import NavigateBackIcon from "../../../components/NavigationButtons/NavigateBackIcon";
+
 const RegistrationPage = () => {
-    return <div><RegistrationForm/></div>;
+    return (
+        <>
+            <NavigateBackIcon />
+            <div className="registrationPage">
+                <RegistrationForm />
+            </div>
+        </>
+    );
 };
 
 export default RegistrationPage;

@@ -7,8 +7,9 @@ import { getCurrentTimestamp } from "../utils/utilities";
 import {
     getUserEmailDAO,
     createNewUserDAO,
-    updatePasswordDAO,
     getUserDAO,
+    deleteUserDAO,
+    updatePasswordDAO,
     updateDAO
 } from "../database/userDao";
 import { UserRequest, authenticate } from "../middleware/middleware";
@@ -139,6 +140,29 @@ users.post("/login", async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         res.status(500).send("There was an error with logging in");
+    }
+});
+
+users.delete("/:id", authenticate, async (req: UserRequest, res: Response) => {
+    try {
+        const { id } = req.params;
+        const user = req.user as JwtPayload;
+
+        const userToDelete = await getUserDAO(id);
+
+        if (!userToDelete) {
+            return res.status(404).send("User not found");
+        }
+
+        if (userToDelete.email === user.value) {
+            await deleteUserDAO(id);
+            return res.status(200).send();
+        } else {
+            return res.status(403).send("Unauthorized to delete this user");
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(400).send();
     }
 });
 

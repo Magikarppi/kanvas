@@ -1,7 +1,7 @@
 
 import React, {useState, ChangeEvent} from "react";
-import Box from "@mui/material/Box";
-import { 
+import {
+    Box, 
     Container,
     TextField, 
     Button,
@@ -11,6 +11,8 @@ import {
     InputAdornment,
     IconButton  } from "@mui/material";
 import Icons from "../../../components/Icons/Icons";
+import { useNavigate } from "react-router-dom";
+
 
 interface UserRegistrationState {
     firstName: string;
@@ -40,6 +42,12 @@ const RegistrationForm = () => {
         password: false,
         confirmPassword: false
     });
+
+    const navigate = useNavigate();
+
+    const handleNavigation = (location: string) => {
+        navigate(location);
+    };
 
     const handleClickShowPassword = (field: keyof typeof showPassword) => {
         setShowPassword((prevField) => ({ ...prevField, [field]: !prevField[field] }));
@@ -85,7 +93,7 @@ const RegistrationForm = () => {
         else if (field === "email" && touched[field] && !emailRegex.test(value)) {
             return "Invalid email address";
         } else if (field === "password" && touched[field] && !passWordRegex.test(value)) {
-            return "Invalid password";
+            return "Minimum eight characters and at least one letter";
         } else if (field === "confirmPassword" && touched[field] && formData.password !== formData.confirmPassword) {
             return "Password not match";
         } else {
@@ -126,6 +134,7 @@ const RegistrationForm = () => {
                                 label="First Name"
                                 onBlur={() => handleInputBlur("firstName")}
                                 helperText={getErrorText("firstName")}
+                                autoComplete='off'
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -140,6 +149,7 @@ const RegistrationForm = () => {
                                 name="lastName"
                                 onBlur={() => handleInputBlur("lastName")}
                                 helperText={getErrorText("lastName")}
+                                autoComplete='off'
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -154,7 +164,8 @@ const RegistrationForm = () => {
                                 label="Email Address"
                                 name="email"
                                 onBlur={() => handleInputBlur("email")}
-                                helperText={getErrorText("email")} 
+                                helperText={getErrorText("email")}
+                                autoComplete='off'
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -167,6 +178,7 @@ const RegistrationForm = () => {
                                 onChange={handleInputChange}
                                 label="Password"
                                 name="password"
+                                autoComplete='off'
                                 onBlur={() => handleInputBlur("password")}
                                 helperText={getErrorText("password")}
                                 type={showPassword.password ? "text" : "password"}
@@ -194,6 +206,7 @@ const RegistrationForm = () => {
                                 onChange={handleInputChange}
                                 label="Confirm password"
                                 name="confirmPassword"
+                                autoComplete='off'
                                 onBlur={() => handleInputBlur("confirmPassword")}
                                 helperText={getErrorText("confirmPassword")}
                                 type={showPassword.confirmPassword ? "text" : "password"}
@@ -224,7 +237,8 @@ const RegistrationForm = () => {
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link href="http://localhost:3000/sign-in">
+                            <Link style={{cursor:"pointer"}} onClick={() => handleNavigation("/sign-in")}
+                            >
                     Already have an account? Sign in
                             </Link>
                         </Grid>

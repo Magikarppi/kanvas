@@ -1,14 +1,18 @@
 import { forwardRef } from "react";
 
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AddIcon from "@mui/icons-material/Add";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import EmailIcon from "@mui/icons-material/Email";
+import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import ListIcon from "@mui/icons-material/List";
+import KeyIcon from "@mui/icons-material/Key";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -28,6 +32,13 @@ interface IconProps {
 }
 
 const Icons = {
+    Account: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <AccountCircleIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
     Add: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <AddIcon
             {...props}
@@ -36,7 +47,7 @@ const Icons = {
         />
     )),
     ArrowBack: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
-        <ArrowBackIosIcon
+        <ArrowBackIosNewIcon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}
@@ -77,8 +88,22 @@ const Icons = {
             style={{ color: props.iconColor, fontSize: props.size }}
         />
     )),
+    Home: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <HomeIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
     Info: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <InfoIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    Key: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <KeyIcon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}
@@ -100,6 +125,13 @@ const Icons = {
     )),
     Menu: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <MenuIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    Message: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <EmailIcon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}

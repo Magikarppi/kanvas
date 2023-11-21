@@ -1,16 +1,29 @@
 import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
+import jwt from "jsonwebtoken";
+
 import { getCurrentTimestamp } from "../utils/utilities";
 import { getUserEmailDAO, createNewUserDAO } from "../database/userDao";
 
 const users = express.Router();
 
+const JWT_SECRET = process.env.SECRET as string;
+
+const createToken = (value: string) =>
+    jwt.sign({ value: value.toLowerCase() }, JWT_SECRET, {
+        expiresIn: 60000 * 60 * 24,
+    });
+
 users.post("/signup", async (request: Request, response: Response) => {
     const { email, password, first_name, last_name } = request.body;
 
     if (!email || !password || !first_name || !last_name) {
-        response.status(400).send("Email, password, first name or last name missing from the request");
+        response
+            .status(400)
+            .send(
+                "Email, password, first name or last name missing from the request"
+            );
         return;
     }
 
@@ -27,14 +40,26 @@ users.post("/signup", async (request: Request, response: Response) => {
         return;
     }
 
-    if (lowerCaseEmail.length > 255 || first_name.length > 255 || last_name.length > 255) {
-        response.status(400).send("Email, first name or last name cannot exceed 255 characters");
+    if (
+        lowerCaseEmail.length > 255 ||
+        first_name.length > 255 ||
+        last_name.length > 255
+    ) {
+        response
+            .status(400)
+            .send(
+                "Email, first name or last name cannot exceed 255 characters"
+            );
         return;
     }
 
     const existingUser = await getUserEmailDAO(lowerCaseEmail);
     if (existingUser) {
-        response.status(409).send("New account not created - a user with that email already exists");
+        response
+            .status(409)
+            .send(
+                "New account not created - a user with that email already exists"
+            );
     } else {
         try {
             const hashedPassword = await argon2.hash(password);
@@ -63,8 +88,44 @@ users.post("/signup", async (request: Request, response: Response) => {
             response.status(200).send("New user created.");
         } catch (error) {
             console.error(error);
-            response.status(500).send("There was an error for storing user data in the database");
+            response
+                .status(500)
+                .send(
+                    "There was an error for storing user data in the database"
+                );
         }
+    }
+});
+
+users.post("/login", async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+
+    if (!email && !password) {
+        return res.status(400).send("Invalid request body");
+    }
+
+    try {
+        const user = await getUserEmailDAO((email as string).toLowerCase());
+
+        if (!user) {
+            return res.status(401).send("Invalid username or password");
+        }
+
+        const isPasswordValid = await argon2.verify(
+            user.password_hash,
+            password
+        );
+
+        if (!isPasswordValid) {
+            return res.status(401).send("Invalid username or password");
+        }
+
+        const token = createToken(email);
+
+        res.status(200).json({ token, user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("There was an error with logging in");
     }
 });
 

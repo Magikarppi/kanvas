@@ -20,7 +20,6 @@ interface UserLoginState {
 const LoginForm = () => {
     const [showPassword, setShowPassword] = useState({
         password: false,
-        confirmPassword: false,
     });
 
     const [formData, setFormData] = useState<UserLoginState>({

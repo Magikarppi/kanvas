@@ -26,7 +26,7 @@ users.put("/:id", authenticate, async (request: Request, response: Response) => 
     const id = request.params.id;
     const user:IUser = request.body.user;
     await updateDAO(id, user);
-    response.status(200);
+    response.status(200).json();
 });
 
 users.post("/signup", async (request: Request, response: Response) => {

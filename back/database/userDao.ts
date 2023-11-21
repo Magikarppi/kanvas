@@ -4,6 +4,7 @@ import {
     updateUser,
     getUserById,
     getUserByEmail,
+    updatePassword,
 } from "./userQueries";
 import { IUser } from "./interfaces";
 import { executeQuery } from "./database-service";
@@ -34,6 +35,11 @@ export const updateDAO = async (id: string, user: IUser) => {
         values.slice(1);
     shiftArray.push(id);
     await executeQuery(updateUser, shiftArray);
+};
+
+export const updatePasswordDAO = async (id: string, password: string) => {
+    const values = [id, password];
+    await executeQuery(updatePassword, values);
 };
 
 export const deleteUserDAO = async (id: string) => {

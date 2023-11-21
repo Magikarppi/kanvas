@@ -1,11 +1,17 @@
 import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
-import { authenticate } from "../middleware/middleware";
-import { getCurrentTimestamp } from "../utils/utilities";
-import { getUserEmailDAO, createNewUserDAO, updateDAO } from "../database/userDao";
-import * as jwt from "jsonwebtoken";
 import { IUser } from "../database/interfaces";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { getCurrentTimestamp } from "../utils/utilities";
+import {
+    getUserEmailDAO,
+    createNewUserDAO,
+    updatePasswordDAO,
+    getUserDAO,
+    updateDAO
+} from "../database/userDao";
+import { UserRequest, authenticate } from "../middleware/middleware";
 
 const users = express.Router();
 const JWT_SECRET = process.env.SECRET as string;
@@ -15,7 +21,7 @@ const createToken = (value: string) =>
         expiresIn: 60000 * 60 * 24,
     });
 
-users.put("/users/:id", authenticate, async (request: Request, response: Response) => {
+users.put("/:id", authenticate, async (request: Request, response: Response) => {
     const id = request.params.id;
     const user:IUser = request.body.user;
     try {
@@ -140,5 +146,37 @@ users.post("/login", async (req: Request, res: Response) => {
         res.status(500).send("There was an error with logging in");
     }
 });
+
+users.put(
+    "/:id/password",
+    authenticate,
+    async (request: UserRequest, response: Response) => {
+        const userId = request.params.id;
+        const { password } = request.body;
+
+        if (!password) {
+            response.status(400).send("Password missing from the request");
+            return;
+        }
+
+        try {
+            const user = await getUserDAO(userId);
+
+            const userPayLoad = request.user as JwtPayload;
+            const isCorrectUser = user?.email === userPayLoad.value;
+            if (isCorrectUser) {
+                const newHashedPassword = await argon2.hash(password);
+                await updatePasswordDAO(userId, newHashedPassword);
+                response.status(204).send();
+            } else {
+                response.status(401).send("Unauthorized: invalid user");
+            }
+        } catch (error) {
+            response
+                .status(500)
+                .send("There was an error updating the password");
+        }
+    }
+);
 
 export default users;

@@ -19,4 +19,4 @@ export const updateTeam = `
       is_public = $3,
     WHERE id = $4`;
 
-export const getTeamById = 'SELECT * FROM teams WHERE id = $1';
+export const getTeamById = "SELECT * FROM teams WHERE id = $1";

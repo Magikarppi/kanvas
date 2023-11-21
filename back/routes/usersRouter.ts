@@ -4,7 +4,7 @@ import argon2 from "argon2";
 import { authenticate } from "../middleware/middleware";
 import { getCurrentTimestamp } from "../utils/utilities";
 import { getUserEmailDAO, createNewUserDAO, updateDAO } from "../database/userDao";
-import * as jwt from 'jsonwebtoken';
+import * as jwt from "jsonwebtoken";
 import { IUser } from "../database/interfaces";
 
 const users = express.Router();
@@ -16,9 +16,10 @@ const createToken = (value: string) =>
     });
 
 users.put("/users/:id", authenticate, async (request: Request, response: Response) => {
-     const id = request.params.id;
-     const user:IUser = request.body.user;
-     updateDAO(id, user)
+    const id = request.params.id;
+    const user:IUser = request.body.user;
+    await updateDAO(id, user);
+    response.send(200);
 });
 
 users.post("/signup", async (request: Request, response: Response) => {

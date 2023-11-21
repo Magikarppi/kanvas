@@ -24,13 +24,8 @@ const createToken = (value: string) =>
 users.put("/:id", authenticate, async (request: Request, response: Response) => {
     const id = request.params.id;
     const user:IUser = request.body.user;
-    try {
-        await updateDAO(id, user);
-        response.send(204);
-        
-    } catch (error) {
-        response.send(error).status(500);
-    }
+    await updateDAO(id, user);
+    response.status(200);
 });
 
 users.post("/signup", async (request: Request, response: Response) => {

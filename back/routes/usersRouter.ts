@@ -45,10 +45,8 @@ users.post("/signup", async (request: Request, response: Response) => {
         return;
     }
 
-    const lowerCaseEmail = email.toLowerCase();
-
     const validateEmailRegEx = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-    if (validateEmailRegEx.test(lowerCaseEmail) === false) {
+    if (validateEmailRegEx.test(email) === false) {
         response.status(400).send("Invalid email address format");
         return;
     }
@@ -59,7 +57,7 @@ users.post("/signup", async (request: Request, response: Response) => {
     }
 
     if (
-        lowerCaseEmail.length > 255 ||
+        email.length > 255 ||
         first_name.length > 255 ||
         last_name.length > 255
     ) {
@@ -71,15 +69,15 @@ users.post("/signup", async (request: Request, response: Response) => {
         return;
     }
 
-    const existingUser = await getUserEmailDAO(lowerCaseEmail);
-    if (existingUser) {
-        response
-            .status(409)
-            .send(
-                "New account not created - a user with that email already exists"
-            );
-    } else {
-        try {
+    try {
+        const existingUser = await getUserEmailDAO(email);
+        if (existingUser) {
+            response
+                .status(409)
+                .send(
+                    "New account not created - a user with that email already exists"
+                );
+        } else {
             const hashedPassword = await argon2.hash(password);
 
             const timestamp = getCurrentTimestamp();
@@ -88,7 +86,7 @@ users.post("/signup", async (request: Request, response: Response) => {
                 id: uuid(),
                 first_name: first_name,
                 last_name: last_name,
-                email: lowerCaseEmail,
+                email: email,
                 password_hash: hashedPassword,
                 phone_number: null,
                 country: null,
@@ -104,14 +102,12 @@ users.post("/signup", async (request: Request, response: Response) => {
 
             await createNewUserDAO(newUser);
             response.status(200).send("New user created.");
-        } catch (error) {
-            console.error(error);
-            response
-                .status(500)
-                .send(
-                    "There was an error for storing user data in the database"
-                );
         }
+    } catch (error) {
+        console.error(error);
+        response
+            .status(500)
+            .send("There was an error for storing user data in the database");
     }
 });
 

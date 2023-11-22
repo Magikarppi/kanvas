@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 
 import LoginNavDrawer from "./LoginNavDrawer";
+import LoginNavBarSearch from "./LoginNavBarSearch";
 import Icons from "../../Icons/Icons";
 
 import { TOpen } from "../../../models/themeModels";
@@ -42,6 +43,7 @@ const LoginNavBar = ({ open, setOpen }: TOpen) => {
                         </Typography>
                         <div className="navbarButtonContainer">
                             <Stack direction="row" spacing={1}>
+                                <LoginNavBarSearch />
                                 <IconButton>
                                     <Badge color="secondary" badgeContent={4}>
                                         <Icons.Notifications size="18" />

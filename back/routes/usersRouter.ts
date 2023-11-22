@@ -10,7 +10,7 @@ import {
     getUserDAO,
     deleteUserDAO,
     updatePasswordDAO,
-    updateDAO
+    updateDAO,
 } from "../database/userDao";
 import { UserRequest, authenticate } from "../middleware/middleware";
 
@@ -22,12 +22,16 @@ const createToken = (value: string) =>
         expiresIn: 60000 * 60 * 24,
     });
 
-users.put("/:id", authenticate, async (request: Request, response: Response) => {
-    const id = request.params.id;
-    const user:IUser = request.body.user;
-    await updateDAO(id, user);
-    response.status(200).json();
-});
+users.put(
+    "/:id",
+    authenticate,
+    async (request: Request, response: Response) => {
+        const id = request.params.id;
+        const user: IUser = request.body.user;
+        await updateDAO(id, user);
+        response.status(200).json();
+    }
+);
 
 users.post("/signup", async (request: Request, response: Response) => {
     const { email, password, first_name, last_name } = request.body;
@@ -41,10 +45,8 @@ users.post("/signup", async (request: Request, response: Response) => {
         return;
     }
 
-    const lowerCaseEmail = email.toLowerCase();
-
     const validateEmailRegEx = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-    if (validateEmailRegEx.test(lowerCaseEmail) === false) {
+    if (validateEmailRegEx.test(email) === false) {
         response.status(400).send("Invalid email address format");
         return;
     }
@@ -55,7 +57,7 @@ users.post("/signup", async (request: Request, response: Response) => {
     }
 
     if (
-        lowerCaseEmail.length > 255 ||
+        email.length > 255 ||
         first_name.length > 255 ||
         last_name.length > 255
     ) {
@@ -67,15 +69,15 @@ users.post("/signup", async (request: Request, response: Response) => {
         return;
     }
 
-    const existingUser = await getUserEmailDAO(lowerCaseEmail);
-    if (existingUser) {
-        response
-            .status(409)
-            .send(
-                "New account not created - a user with that email already exists"
-            );
-    } else {
-        try {
+    try {
+        const existingUser = await getUserEmailDAO(email);
+        if (existingUser) {
+            response
+                .status(409)
+                .send(
+                    "New account not created - a user with that email already exists"
+                );
+        } else {
             const hashedPassword = await argon2.hash(password);
 
             const timestamp = getCurrentTimestamp();
@@ -84,7 +86,7 @@ users.post("/signup", async (request: Request, response: Response) => {
                 id: uuid(),
                 first_name: first_name,
                 last_name: last_name,
-                email: lowerCaseEmail,
+                email: email,
                 password_hash: hashedPassword,
                 phone_number: null,
                 country: null,
@@ -100,14 +102,12 @@ users.post("/signup", async (request: Request, response: Response) => {
 
             await createNewUserDAO(newUser);
             response.status(200).send("New user created.");
-        } catch (error) {
-            console.error(error);
-            response
-                .status(500)
-                .send(
-                    "There was an error for storing user data in the database"
-                );
         }
+    } catch (error) {
+        console.error(error);
+        response
+            .status(500)
+            .send("There was an error for storing user data in the database");
     }
 });
 

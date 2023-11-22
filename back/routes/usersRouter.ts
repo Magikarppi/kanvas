@@ -143,6 +143,30 @@ users.post("/login", async (req: Request, res: Response) => {
     }
 });
 
+users.get("/:id", authenticate, async (req: UserRequest, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { value: requestingUser } = req.user as JwtPayload;
+
+        const userInfo = await getUserDAO(id);
+
+        if (!userInfo) {
+            return res.status(404).send(`User with id: ${id} not found`);
+        }
+
+        if (userInfo.email === requestingUser) {
+            return res.status(200).json(userInfo);
+        } else {
+            return res
+                .status(403)
+                .send("You are not authorized to get this user's info");
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(400).send("Getting the user failed");
+    }
+});
+
 users.delete("/:id", authenticate, async (req: UserRequest, res: Response) => {
     try {
         const { id } = req.params;

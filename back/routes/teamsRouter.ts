@@ -1,11 +1,20 @@
 import express, { Request, Response } from "express";
 import { getTeamByIdDao } from "../database/teamsDao";
 
-
 const teams = express.Router();
-teams.get("/teams/:id", (req: Request, res: Response) => {
+
+teams.get("/:id", async (req: Request, res: Response) => {
     const id = req.params.id;
-    const team = getTeamByIdDao(id);
-    res.send(team).status(200);
+    try {
+        const team = await getTeamByIdDao(id);
+
+        if (team) {
+            res.send(team).status(200);
+        } else {
+            res.send("Team not found").status(404);
+        }
+    } catch (error) {
+        res.send("Error retrieving team").status(500);
+    }
 });
 export default teams;

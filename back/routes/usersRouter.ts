@@ -10,7 +10,7 @@ import {
     getUserDAO,
     deleteUserDAO,
     updatePasswordDAO,
-    updateDAO
+    updateDAO,
 } from "../database/userDao";
 import { UserRequest, authenticate } from "../middleware/middleware";
 
@@ -22,12 +22,16 @@ const createToken = (value: string) =>
         expiresIn: 60000 * 60 * 24,
     });
 
-users.put("/:id", authenticate, async (request: Request, response: Response) => {
-    const id = request.params.id;
-    const user:IUser = request.body.user;
-    await updateDAO(id, user);
-    response.status(200).json();
-});
+users.put(
+    "/:id",
+    authenticate,
+    async (request: Request, response: Response) => {
+        const id = request.params.id;
+        const user: IUser = request.body.user;
+        await updateDAO(id, user);
+        response.status(200).json();
+    }
+);
 
 users.post("/signup", async (request: Request, response: Response) => {
     const { email, password, first_name, last_name } = request.body;
@@ -140,6 +144,30 @@ users.post("/login", async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         res.status(500).send("There was an error with logging in");
+    }
+});
+
+users.get("/:id", authenticate, async (req: UserRequest, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { value: requestingUser } = req.user as JwtPayload;
+
+        const userInfo = await getUserDAO(id);
+
+        if (!userInfo) {
+            return res.status(404).send(`User with id: ${id} not found`);
+        }
+
+        if (userInfo.email === requestingUser) {
+            return res.status(200).json(userInfo);
+        } else {
+            return res
+                .status(403)
+                .send("You are not authorized to get this user's info");
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(400).send("Getting the user failed");
     }
 });
 

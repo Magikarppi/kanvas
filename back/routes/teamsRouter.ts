@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { getTeamByIdDao } from "../database/teamsDao";
+import { getTeamByIdDao } from "../database/daos/teamsDao";
 
 const teams = express.Router();
 

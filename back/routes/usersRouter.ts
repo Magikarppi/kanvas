@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
-import { IUser } from "../database/interfaces";
+import { IUser } from "../database/utils/interfaces";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { getCurrentTimestamp } from "../utils/utilities";
 import {
@@ -11,7 +11,7 @@ import {
     deleteUserDAO,
     updatePasswordDAO,
     updateDAO,
-} from "../database/userDao";
+} from "../database/daos/userDao";
 import { UserRequest, authenticate } from "../middleware/middleware";
 
 const users = express.Router();

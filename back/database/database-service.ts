@@ -1,7 +1,7 @@
 import pg from "pg";
 import dotenv from "dotenv";
-import { createNewUserDAO } from "./userDao";
-import { dummyUsers } from "./dummyData";
+import { createNewUserDAO } from "./daos/userDao";
+import { dummyUsers } from "./utils/dummyData";
 dotenv.config();
 
 const { PG_HOST, PG_PORT, PG_USERNAME, PG_PASSWORD, PG_DATABASE } = process.env;

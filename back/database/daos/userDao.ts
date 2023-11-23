@@ -5,9 +5,9 @@ import {
     getUserById,
     getUserByEmail,
     updatePassword,
-} from "./userQueries";
-import { IUser } from "./interfaces";
-import { executeQuery } from "./database-service";
+} from "../queries/userQueries";
+import { IUser } from "../utils/interfaces";
+import { executeQuery } from "../database-service";
 
 export const createNewUserDAO = async (user: IUser) => {
     const values = Object.values(user);

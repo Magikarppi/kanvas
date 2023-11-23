@@ -22,3 +22,14 @@ export type ITeam = {
     admin: string;
     is_public: boolean;
 };
+
+export type IProject = {
+    id: string;
+    name: string;
+    description: string;
+    isPublic: boolean;
+    creationDate: Date;
+    endDate: Date | null;
+    theme: string;
+    picture: string | null;
+};

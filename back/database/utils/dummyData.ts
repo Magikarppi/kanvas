@@ -1,4 +1,5 @@
 import { v4 as uuid } from "uuid";
+import { getCurrentTimestamp } from "../../utils/utilities";
 
 export type IUser = {
     id: string;
@@ -185,3 +186,61 @@ export const dummyProjects: Project[] = [
         picture: null,
     },
 ];
+
+export const dummyGetProjectData = {
+    projectColumns: [
+        {
+            id: uuid(),
+            projectId: uuid(),
+            column_name: "Dummy Column",
+            orderIndex: 1,
+        },
+    ],
+    projectMembers: [
+        {
+            id: uuid(),
+            userId: uuid(),
+            projectId: uuid(),
+        },
+    ],
+    cards: [
+        {
+            id: uuid(),
+            projectId: uuid(),
+            title: "Dummy Card Title",
+            subTitle: "Dummy Card Subtitle",
+            description: "Dummy Card Description",
+            status: "Dummy Status in Progress",
+            creationDate: getCurrentTimestamp(),
+            dueDate: getCurrentTimestamp(),
+            attachments: ["Dummy attachment"],
+            inColumn: uuid(),
+            cardResponsiblePersons: [
+                { id: uuid(), userId: uuid(), cardId: uuid() },
+            ],
+            cardKeywords: [
+                {
+                    keywordId: uuid(),
+                    cardId: uuid(),
+                },
+            ],
+            cardComments: [
+                {
+                    id: uuid(),
+                    cardId: uuid(),
+                    author: uuid(),
+                    commentText: "Dummy Comment Text",
+                    timeAdded: getCurrentTimestamp(),
+                    reactions: [
+                        {
+                            id: uuid(),
+                            userId: uuid(),
+                            cardComment: "Dummy Card Comment",
+                            emoji: "U+1F600",
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};

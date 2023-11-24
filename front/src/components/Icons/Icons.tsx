@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -9,16 +10,19 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import EmailIcon from "@mui/icons-material/Email";
+import Groups2Icon from "@mui/icons-material/Groups2";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import ListIcon from "@mui/icons-material/List";
 import KeyIcon from "@mui/icons-material/Key";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import Search from "@mui/icons-material/Search";
 import ShareIcon from "@mui/icons-material/Share";
+import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -62,6 +66,13 @@ const Icons = {
     )),
     Close: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <CloseIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    Dashboard: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <SpaceDashboardIcon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}
@@ -137,8 +148,22 @@ const Icons = {
             style={{ color: props.iconColor, fontSize: props.size }}
         />
     )),
+    Notifications: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <NotificationsIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
     Play: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <PlayCircleIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    Projects: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <AccountTreeIcon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}
@@ -160,6 +185,13 @@ const Icons = {
     )),
     SignOut: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <LogoutIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    Team: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <Groups2Icon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}

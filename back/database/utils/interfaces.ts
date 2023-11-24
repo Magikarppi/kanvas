@@ -1,4 +1,4 @@
-export type IUser = {
+export interface IUser {
     id: string;
     first_name: string;
     last_name: string;
@@ -14,14 +14,29 @@ export type IUser = {
     is_open_to_work: boolean | null;
     linkedin_username: string | null;
     job_pitch: string | null;
-};
+}
 
-export type ITeam = {
+export interface IUpdateUser {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string | null;
+    country: string | null;
+    city: string | null;
+    picture: string | null;
+    isOnline: boolean | null;
+    lastOnline: Date | null;
+    isOpenToWork: boolean | null;
+    linkedinUsername: string | null;
+    jobPitch: string | null;
+}
+
+export interface ITeam {
     id: string;
     name: string;
     admin: string;
     is_public: boolean;
-};
+}
 
 export type IProject = {
     id: string;

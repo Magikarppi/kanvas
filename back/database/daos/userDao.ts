@@ -6,7 +6,7 @@ import {
     getUserByEmail,
     updatePassword,
 } from "../queries/userQueries";
-import { IUser } from "../utils/interfaces";
+import { IUser, IUpdateUser } from "../utils/interfaces";
 import { executeQuery } from "../database-service";
 
 export const createNewUserDAO = async (user: IUser) => {
@@ -28,13 +28,26 @@ export const getUserEmailDAO = async (email: string) => {
     }
 };
 
-export const updateDAO = async (id: string, user: IUser) => {
-    const copyUser: IUser = { ...user };
-    const values = Object.values(copyUser);
-    const shiftArray: (string | boolean | Date | null | undefined)[] =
-        values.slice(1);
-    shiftArray.push(id);
-    await executeQuery(updateUser, shiftArray);
+export const updateDAO = async (
+    id: string,
+    user: IUpdateUser
+) => {
+    const paramsArray = [
+        user.firstName,
+        user.lastName,
+        user.email,
+        user.phoneNumber,
+        user.country,
+        user.city,
+        user.picture,
+        user.isOnline,
+        user.lastOnline,
+        user.isOpenToWork,
+        user.linkedinUsername,
+        user.jobPitch,
+        id,
+    ];
+    await executeQuery(updateUser, paramsArray);
 };
 
 export const updatePasswordDAO = async (id: string, password: string) => {

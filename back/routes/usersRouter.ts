@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
-import { IUser } from "../database/utils/interfaces";
+import { IUpdateUser } from "../database/utils/interfaces";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { getCurrentTimestamp } from "../utils/utilities";
+import { getCurrentTimestamp, validateEmail } from "../utils/utilities";
 import {
     getUserEmailDAO,
     createNewUserDAO,
@@ -27,9 +27,54 @@ users.put(
     authenticate,
     async (request: Request, response: Response) => {
         const id = request.params.id;
-        const user: IUser = request.body.user;
-        await updateDAO(id, user);
-        response.status(200).json();
+        const { first_name, last_name, email } = request.body.user;
+
+        if (!email || !first_name || !last_name) {
+            response
+                .status(400)
+                .send(
+                    "Email, first name or last name missing from the request body"
+                );
+            return;
+        }
+
+        if (first_name.length === 0 || last_name.length === 0) {
+            response
+                .status(400)
+                .send("First name or last name cannot be empty");
+            return;
+        }
+
+        const isEmailFormatValid = validateEmail(email);
+        if (isEmailFormatValid === false) {
+            response.status(400).send("Invalid email address format");
+            return;
+        }
+
+        const user: IUpdateUser = {
+            firstName: first_name,
+            lastName: last_name,
+            email: email,
+            phoneNumber: request.body.user.phone_number,
+            country: request.body.user.country,
+            city: request.body.user.city,
+            picture: request.body.user.picture,
+            isOnline: true,
+            lastOnline: getCurrentTimestamp(),
+            isOpenToWork: request.body.user.is_open_to_work,
+            linkedinUsername: request.body.user.linkedin_username,
+            jobPitch: request.body.user.job_pitch,
+        };
+
+        try {
+            await updateDAO(id, user);
+            response.status(200).send();
+        } catch (error) {
+            console.error(error);
+            response
+                .status(500)
+                .send("There was an error updating user information");
+        }
     }
 );
 
@@ -45,8 +90,8 @@ users.post("/signup", async (request: Request, response: Response) => {
         return;
     }
 
-    const validateEmailRegEx = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-    if (validateEmailRegEx.test(email) === false) {
+    const isEmailFormatValid = validateEmail(email);
+    if (isEmailFormatValid === false) {
         response.status(400).send("Invalid email address format");
         return;
     }

@@ -27,18 +27,16 @@ export const updateUser = `
       first_name = $1,
       last_name = $2,
       email = $3,
-      password_hash = $4,
-      phone_number = $5,
-      country = $6,
-      city = $7,
-      picture = $8,
-      account_creation_date = $9,
-      is_online = $10,
-      last_online = $11,
-      is_open_to_work = $12,
-      linkedin_username = $13,
-      job_pitch = $14
-    WHERE id = $15`;
+      phone_number = $4,
+      country = $5,
+      city = $6,
+      picture = $7,
+      is_online = $8,
+      last_online = $9,
+      is_open_to_work = $10,
+      linkedin_username = $11,
+      job_pitch = $12
+    WHERE id = $13`;
 
 export const updatePassword = "UPDATE users SET password_hash = $2 WHERE id = $1";
 

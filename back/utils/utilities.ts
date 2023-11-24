@@ -1,4 +1,4 @@
-export const getCurrentTimestamp = () => {
+export const getCurrentTimestamp = (): Date => {
     const date = new Date();
 
     const year = date.getFullYear().toString();
@@ -12,4 +12,9 @@ export const getCurrentTimestamp = () => {
     const timestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
     return new Date(timestamp);
+};
+
+export const validateEmail = (email: string): boolean => {
+    const validateEmailRegEx = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    return validateEmailRegEx.test(email);
 };

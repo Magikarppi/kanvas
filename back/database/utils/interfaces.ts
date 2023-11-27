@@ -48,3 +48,16 @@ export type IProject = {
     theme: string;
     picture: string | null;
 };
+
+export interface ICard {
+    id: string;
+    project_id: string;
+    title: string;
+    sub_title?: string | null;
+    description?: string | null;
+    status?: string | null;
+    creation_date: Date;
+    due_date?: Date | null;
+    attachments?: string | null;
+    in_column: string;
+}

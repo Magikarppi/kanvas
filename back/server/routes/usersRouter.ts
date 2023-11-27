@@ -1,17 +1,17 @@
 import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
-import { IUpdateUser } from "../database/utils/interfaces";
+import { IUpdateUser } from "../../database/utils/interfaces";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { getCurrentTimestamp, validateEmail } from "../utils/utilities";
-import {
+import { 
     getUserEmailDAO,
     createNewUserDAO,
     getUserDAO,
     deleteUserDAO,
     updatePasswordDAO,
     updateDAO,
-} from "../database/daos/userDao";
+} from "../../database/daos/userDao";
 import { UserRequest, authenticate } from "../middleware/middleware";
 
 const users = express.Router();

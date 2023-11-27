@@ -2,16 +2,16 @@ import { Router, Response } from "express";
 import { v4 as uuid } from "uuid";
 
 import { UserRequest } from "../middleware/middleware";
-import {
+import { 
     addProjectDao,
     getProjectMemberDAO,
     getSingleProjectDAO,
-} from "../database/daos/projectsDao";
-import { IProject } from "../database/utils/interfaces";
+} from "../../database/daos/projectsDao";
+import { IProject } from "../../database/utils/interfaces";
 import { getCurrentTimestamp } from "../utils/utilities";
-import { getUserEmailDAO } from "../database/daos/userDao";
+import { getUserEmailDAO } from "../../database/daos/userDao";
 import { JwtPayload } from "jsonwebtoken";
-import { dummyGetProjectData } from "../database/utils/dummyData";
+import { dummyGetProjectData } from "../../database/utils/dummyData";
 
 const router = Router();
 

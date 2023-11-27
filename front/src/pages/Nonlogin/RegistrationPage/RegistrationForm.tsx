@@ -1,18 +1,20 @@
-
-import React, {useState, ChangeEvent} from "react";
+import React, { useState, ChangeEvent } from "react";
 import {
-    Box, 
+    Box,
     Container,
-    TextField, 
+    TextField,
     Button,
-    Grid, 
-    Link, 
-    Typography, 
+    Grid,
+    Link,
+    Typography,
     InputAdornment,
-    IconButton  } from "@mui/material";
+    IconButton,
+} from "@mui/material";
 import Icons from "../../../components/Icons/Icons";
 import { useNavigate } from "react-router-dom";
 
+import userRequests from "../../../services/userService";
+import { INewUserBody } from "../../../models/userModels";
 
 interface UserRegistrationState {
     firstName: string;
@@ -20,7 +22,7 @@ interface UserRegistrationState {
     email: string;
     password: string;
     confirmPassword: string;
-  }
+}
 
 const RegistrationForm = () => {
     const [showPassword, setShowPassword] = useState({
@@ -40,7 +42,7 @@ const RegistrationForm = () => {
         lastName: false,
         email: false,
         password: false,
-        confirmPassword: false
+        confirmPassword: false,
     });
 
     const navigate = useNavigate();
@@ -50,59 +52,95 @@ const RegistrationForm = () => {
     };
 
     const handleClickShowPassword = (field: keyof typeof showPassword) => {
-        setShowPassword((prevField) => ({ ...prevField, [field]: !prevField[field] }));
+        setShowPassword((prevField) => ({
+            ...prevField,
+            [field]: !prevField[field],
+        }));
     };
-    const showValues = () => {
-        console.log("First name :" + formData.firstName + " Last name : " + formData.lastName + " Email : " + formData.email + " Password : " + formData.password  );
+
+    const handleSubmit = async () => {
+        const userToRegister: INewUserBody = {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            email: formData.email,
+            password: formData.password,
+        };
+
+        try {
+            await userRequests.registerUser(userToRegister);
+        } catch (error) {
+            console.error(error);
+            // Set error notification
+        }
     };
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
-    
+
     const handleInputBlur = (field: keyof typeof formData) => {
         setTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
     };
-    
+
     const passWordRegex = /^(?=.*[a-z]).{8,40}$/; // Minimum eight characters, at least one letter
-    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    
+    const emailRegex =
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
     const validateInputs = (field: keyof typeof formData) => {
         const value = formData[field];
-      
+
         if (field === "email") {
             return touched[field] && !emailRegex.test(value);
-        }
-        else if (field === "password") {
+        } else if (field === "password") {
             return touched[field] && !passWordRegex.test(value);
-        } else if (field === "confirmPassword" && formData.password !== formData.confirmPassword) {
+        } else if (
+            field === "confirmPassword" &&
+            formData.password !== formData.confirmPassword
+        ) {
             return touched[field];
-        }
-        else {
+        } else {
             return touched[field] && value === "";
         }
     };
 
     const getErrorText = (field: keyof typeof formData) => {
         const value = formData[field];
-        
+
         if (touched[field] && value === "") {
             return "Field must be filled out";
-        }
-        else if (field === "email" && touched[field] && !emailRegex.test(value)) {
+        } else if (
+            field === "email" &&
+            touched[field] &&
+            !emailRegex.test(value)
+        ) {
             return "Invalid email address";
-        } else if (field === "password" && touched[field] && !passWordRegex.test(value)) {
+        } else if (
+            field === "password" &&
+            touched[field] &&
+            !passWordRegex.test(value)
+        ) {
             return "Minimum eight characters and at least one letter";
-        } else if (field === "confirmPassword" && touched[field] && formData.password !== formData.confirmPassword) {
+        } else if (
+            field === "confirmPassword" &&
+            touched[field] &&
+            formData.password !== formData.confirmPassword
+        ) {
             return "Password not match";
         } else {
             return null;
         }
     };
 
-    const disableButton = formData.firstName === "" || formData.lastName === "" || formData.password === ""
-    || formData.confirmPassword === "" || formData.password !== formData.confirmPassword  || formData.email === "" || !emailRegex.test(formData.email) || !passWordRegex.test(formData.password);
+    const disableButton =
+        formData.firstName === "" ||
+        formData.lastName === "" ||
+        formData.password === "" ||
+        formData.confirmPassword === "" ||
+        formData.password !== formData.confirmPassword ||
+        formData.email === "" ||
+        !emailRegex.test(formData.email) ||
+        !passWordRegex.test(formData.password);
 
     return (
         <Container maxWidth="xs">
@@ -114,13 +152,8 @@ const RegistrationForm = () => {
                     alignItems: "center",
                 }}
             >
-                <Typography variant="h5">
-                    Sign up
-                </Typography>
-                <Box
-                    component="form"
-                    sx={{ mt: 3 }}
-                >
+                <Typography variant="h5">Sign up</Typography>
+                <Box component="form" sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
@@ -134,7 +167,7 @@ const RegistrationForm = () => {
                                 label="First Name"
                                 onBlur={() => handleInputBlur("firstName")}
                                 helperText={getErrorText("firstName")}
-                                autoComplete='off'
+                                autoComplete="off"
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -149,7 +182,7 @@ const RegistrationForm = () => {
                                 name="lastName"
                                 onBlur={() => handleInputBlur("lastName")}
                                 helperText={getErrorText("lastName")}
-                                autoComplete='off'
+                                autoComplete="off"
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -165,7 +198,7 @@ const RegistrationForm = () => {
                                 name="email"
                                 onBlur={() => handleInputBlur("email")}
                                 helperText={getErrorText("email")}
-                                autoComplete='off'
+                                autoComplete="off"
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -178,21 +211,31 @@ const RegistrationForm = () => {
                                 onChange={handleInputChange}
                                 label="Password"
                                 name="password"
-                                autoComplete='off'
+                                autoComplete="off"
                                 onBlur={() => handleInputBlur("password")}
                                 helperText={getErrorText("password")}
-                                type={showPassword.password ? "text" : "password"}
-                                InputProps={{ 
+                                type={
+                                    showPassword.password ? "text" : "password"
+                                }
+                                InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
                                             <IconButton
                                                 aria-label="toggle password visibility"
-                                                onClick={() => handleClickShowPassword("password")}
+                                                onClick={() =>
+                                                    handleClickShowPassword(
+                                                        "password"
+                                                    )
+                                                }
                                             >
-                                                {showPassword.password ? <Icons.Visibility /> : <Icons.VisibilityOff />}
+                                                {showPassword.password ? (
+                                                    <Icons.Visibility />
+                                                ) : (
+                                                    <Icons.VisibilityOff />
+                                                )}
                                             </IconButton>
                                         </InputAdornment>
-                                    )
+                                    ),
                                 }}
                             />
                         </Grid>
@@ -206,21 +249,35 @@ const RegistrationForm = () => {
                                 onChange={handleInputChange}
                                 label="Confirm password"
                                 name="confirmPassword"
-                                autoComplete='off'
-                                onBlur={() => handleInputBlur("confirmPassword")}
+                                autoComplete="off"
+                                onBlur={() =>
+                                    handleInputBlur("confirmPassword")
+                                }
                                 helperText={getErrorText("confirmPassword")}
-                                type={showPassword.confirmPassword ? "text" : "password"}
-                                InputProps={{ 
+                                type={
+                                    showPassword.confirmPassword
+                                        ? "text"
+                                        : "password"
+                                }
+                                InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
                                             <IconButton
                                                 aria-label="toggle password visibility"
-                                                onClick={() => handleClickShowPassword("confirmPassword")}
+                                                onClick={() =>
+                                                    handleClickShowPassword(
+                                                        "confirmPassword"
+                                                    )
+                                                }
                                             >
-                                                {showPassword.confirmPassword ? <Icons.Visibility /> : <Icons.VisibilityOff />}
+                                                {showPassword.confirmPassword ? (
+                                                    <Icons.Visibility />
+                                                ) : (
+                                                    <Icons.VisibilityOff />
+                                                )}
                                             </IconButton>
                                         </InputAdornment>
-                                    )
+                                    ),
                                 }}
                             />
                         </Grid>
@@ -230,16 +287,18 @@ const RegistrationForm = () => {
                         variant="contained"
                         color="secondary"
                         sx={{ mt: 3, mb: 2 }}
-                        onClick={showValues}
+                        onClick={handleSubmit}
                         disabled={disableButton}
                     >
-                    Sign Up
+                        Sign Up
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link style={{cursor:"pointer"}} onClick={() => handleNavigation("/sign-in")}
+                            <Link
+                                style={{ cursor: "pointer" }}
+                                onClick={() => handleNavigation("/sign-in")}
                             >
-                    Already have an account? Sign in
+                                Already have an account? Sign in
                             </Link>
                         </Grid>
                     </Grid>

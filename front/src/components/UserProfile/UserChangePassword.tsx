@@ -10,6 +10,7 @@ import {
     Typography,
 } from "@mui/material";
 import Icons from "../Icons/Icons";
+import userRequests from "../../services/userService";
 
 const UserChangePassword = () => {
     const [password, setPassword] = useState<string>("");
@@ -23,6 +24,22 @@ const UserChangePassword = () => {
 
     const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+    };
+
+    const handleSubmit = async () => {
+        // add validation
+        try {
+            await userRequests.updatePassword(
+                "user-token-replace-with-actual-token",
+                {
+                    id: "user-id-replace-with-actual-user-id",
+                    password: newPassword,
+                }
+            );
+        } catch (error) {
+            console.error(error);
+            // set error notification
+        }
     };
 
     return (
@@ -152,6 +169,7 @@ const UserChangePassword = () => {
                         variant="contained"
                         color="secondary"
                         style={{ marginTop: "20px" }}
+                        onClick={handleSubmit}
                     >
                         Submit
                     </Button>

@@ -3,7 +3,7 @@ import { cardsDaoUpdate } from "../database/daos/cardsDao";
 
 const cards = express.Router();
 
-cards.put("/cards/:id", async (req: Request, res: Response) => {
+cards.put("/:id", async (req: Request, res: Response) => {
     const id = req.params.id;
     const card = req.body;
     try {

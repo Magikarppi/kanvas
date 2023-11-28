@@ -11,12 +11,11 @@ export const cardsDaoUpdate = async(id: string, card: ICard) => {
         card.sub_title, 
         card.description,
         card.status,
-        card.creation_date,
         card.due_date,
         card.attachments,
         card.in_column,
         id, 
 
     ];
-    await executeQuery(updateCard, [array]);
+    await executeQuery(updateCard, array);
 };

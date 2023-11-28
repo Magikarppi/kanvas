@@ -1,4 +1,4 @@
-export const updateCard = `UPDATE your_table_name
+export const updateCard = `UPDATE cards
   SET
     "project_id" = $1,
     "title" = $2,

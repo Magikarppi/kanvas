@@ -5,8 +5,11 @@ html {
 /* Home Page */
 .navBarContainer {
     height: 65px;
-    background:
-        linear-gradient(180deg, rgba(200, 200, 200, 0.5) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background: linear-gradient(
+        180deg,
+        rgba(200, 200, 200, 0.5) 0%,
+        rgba(0, 0, 0, 0.1) 100%
+    );
 }
 
 .navbarButtonContainer {
@@ -14,7 +17,13 @@ html {
 }
 
 .homeContainer1 {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(28, 28, 28, 0.7329525560224089) 5%, rgba(28, 28, 28, 1) 14%, rgba(28, 28, 28, 1) 53%);
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(28, 28, 28, 0.7329525560224089) 5%,
+        rgba(28, 28, 28, 1) 14%,
+        rgba(28, 28, 28, 1) 53%
+    );
     min-height: 600px;
 }
 
@@ -72,6 +81,14 @@ html {
     align-items: center;
     justify-content: center;
     margin-bottom: 50px;
+}
+
+/* Forgot passwod page*/
+.forgotPasswordContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10%;
 }
 
 /* Error page */

@@ -174,6 +174,22 @@ const LoginForm = () => {
                                 }}
                             />
                         </Grid>
+                        <Grid
+                            container
+                            justifyContent="flex-end"
+                            sx={{ mt: 1 }}
+                        >
+                            <Grid item>
+                                <Link
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() =>
+                                        handleNavigation("/forgot-password")
+                                    }
+                                >
+                                    Forgot password?
+                                </Link>
+                            </Grid>
+                        </Grid>
                     </Grid>
                     <Button
                         fullWidth

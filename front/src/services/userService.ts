@@ -59,6 +59,14 @@ const userRequests = {
         const response = await client.delete(`${userId}`);
         return response;
     },
+
+    newPassword: async (userId: string, email: string) => {
+        const client = createClient();
+        const response = await client.put(`${userId}/forgot-password`, {
+            email: email,
+        });
+        return response;
+    },
 };
 
 export default userRequests;

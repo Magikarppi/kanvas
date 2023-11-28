@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { cardsDaoUpdate } from "../database/daos/cardsDao";
+import { cardsDaoUpdate } from "../../database/daos/cardsDao";
 
 const cards = express.Router();
 

@@ -34,9 +34,7 @@ const App = () => {
                         path="/forgot-password"
                         element={<ForgotPasswordPage />}
                     />
-
                     <Route path="/profile" element={<UserProfilePage />} />
-
                     <Route path="*" element={<UnknownUrl />} />
                 </Routes>
                 <Footer />

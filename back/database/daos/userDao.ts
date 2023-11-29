@@ -10,7 +10,23 @@ import { IUser, IUpdateUser } from "../utils/interfaces";
 import { executeQuery } from "../database-service";
 
 export const createNewUserDAO = async (user: IUser) => {
-    const values = Object.values(user);
+    const values = [
+        user.id,
+        user.firstName,
+        user.lastName,
+        user.email,
+        user.passwordHash,
+        user.phoneNumber,
+        user.country,
+        user.city,
+        user.picture,
+        user.accountCreationDate,
+        user.isOnline,
+        user.lastOnline,
+        user.isOpenToWork,
+        user.linkedinUsername,
+        user.jobPitch,
+    ];
     await executeQuery(insertNewUser, values);
 };
 
@@ -28,10 +44,7 @@ export const getUserEmailDAO = async (email: string) => {
     }
 };
 
-export const updateDAO = async (
-    id: string,
-    user: IUpdateUser
-) => {
+export const updateDAO = async (id: string, user: IUpdateUser) => {
     const paramsArray = [
         user.firstName,
         user.lastName,

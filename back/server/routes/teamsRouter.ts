@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { getTeamByIdDao } from "../../database/daos/teamsDao";
+import { HTTP_RESPONSE_CODES, RESPONSE_MESSAGES } from "../utils/utilities";
 
 const teams = express.Router();
 
@@ -9,12 +10,14 @@ teams.get("/:id", async (req: Request, res: Response) => {
         const team = await getTeamByIdDao(id);
 
         if (team) {
-            res.send(team).status(200);
+            res.status(HTTP_RESPONSE_CODES.OK).send(team);
         } else {
-            res.send("Team not found").status(404);
+            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.TEAM_NOT_FOUND);
         }
     } catch (error) {
-        res.send("Error retrieving team").status(500);
+        res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
+            RESPONSE_MESSAGES.SERVER_ERROR
+        );
     }
 });
 export default teams;

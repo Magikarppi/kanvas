@@ -11,6 +11,7 @@ import LoginNavBar from "./components/NavBar/LoginNavBar/LoginNavBar";
 import Footer from "./components/Footer/Footer";
 
 import MainContainer from "./components/MainContainer/MainContainer";
+import ForgotPasswordPage from "./pages/NonLogin/ForgotPasswordPage/ForgotPasswordPage";
 
 const App = () => {
     const user = true;
@@ -29,6 +30,10 @@ const App = () => {
                     <Route path="/" element={<HomePage />} />
                     <Route path="/sign-in" element={<LoginPage />} />
                     <Route path="/sign-up" element={<RegistrationPage />} />
+                    <Route
+                        path="/forgot-password"
+                        element={<ForgotPasswordPage />}
+                    />
 
                     <Route path="/profile" element={<UserProfilePage />} />
 

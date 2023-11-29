@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { cardsDaoUpdate } from "../../database/daos/cardsDao";
-import { HTTP_RESPONSE_CODES } from "../utils/utilities";
+import { HTTP_RESPONSE_CODES, RESPONSE_MESSAGES } from "../utils/utilities";
 import { ICard } from "../../database/utils/interfaces";
 
 const cards = express.Router();
@@ -25,8 +25,8 @@ cards.put("/:id", async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         res
-            .status(500)
-            .send(HTTP_RESPONSE_CODES.SERVER_ERROR);
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
     }
 });
 export default cards;

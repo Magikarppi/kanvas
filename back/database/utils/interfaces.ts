@@ -51,13 +51,13 @@ export type IProject = {
 
 export interface ICard {
     id: string;
-    project_id: string;
+    projectId: string;
     title: string;
-    sub_title?: string | null;
+    subTitle?: string | null;
     description?: string | null;
     status?: string | null;
-    creation_date: Date;
-    due_date?: Date | null;
+    creationDate: Date;
+    dueDate?: Date | null;
     attachments?: string | null;
-    in_column: string;
+    inColumn: string;
 }

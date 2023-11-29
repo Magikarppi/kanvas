@@ -182,7 +182,7 @@ users.post("/login", async (req: Request, res: Response) => {
         }
 
         const isPasswordValid = await argon2.verify(
-            user.passwordHash,
+            user.password_hash,
             password
         );
 
@@ -265,24 +265,46 @@ users.put(
     authenticate,
     async (request: UserRequest, response: Response) => {
         const userId = request.params.id;
-        const { password } = request.body;
+        const { oldPassword, newPassword, newPasswordConfirmation } =
+            request.body;
 
-        if (!password) {
+        if (!oldPassword || !newPassword || !newPasswordConfirmation) {
             response
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
                 .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
             return;
         }
 
+        if (newPassword !== newPasswordConfirmation) {
+            response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(
+                    "Password was not updated because the provided passwords do not match"
+                );
+            return;
+        }
+
         try {
             const user = await getUserDAO(userId);
-
             const userPayLoad = request.user as JwtPayload;
             const isCorrectUser = user?.email === userPayLoad.value;
-            if (isCorrectUser) {
-                const newHashedPassword = await argon2.hash(password);
-                await updatePasswordDAO(userId, newHashedPassword);
-                response.status(HTTP_RESPONSE_CODES.NO_CONTENT).send();
+
+            if (isCorrectUser && user) {
+                const isOldPasswordValid = await argon2.verify(
+                    user.password_hash,
+                    oldPassword
+                );
+                if (isOldPasswordValid) {
+                    const newHashedPassword = await argon2.hash(newPassword);
+                    await updatePasswordDAO(userId, newHashedPassword);
+                    response.status(HTTP_RESPONSE_CODES.NO_CONTENT).send();
+                } else {
+                    response
+                        .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                        .send(
+                            "Password was not updated because the old password was incorrect"
+                        );
+                }
             } else {
                 response
                     .status(HTTP_RESPONSE_CODES.FORBIDDEN)

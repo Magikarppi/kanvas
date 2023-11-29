@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import Icons from "../Icons/Icons";
 import userRequests from "../../services/userService";
+import { IUpdatePasswordBody } from "../../models/userModels";
 
 const UserChangePassword = () => {
     const [password, setPassword] = useState<string>("");
@@ -29,13 +30,20 @@ const UserChangePassword = () => {
     const handleSubmit = async () => {
         // add validation
         try {
+            const changePasswordBody: IUpdatePasswordBody = {
+                id: "insert-valid-userid-here",
+                oldPassword: password,
+                newPassword: newPassword,
+                newPasswordConfirmation: newPasswordConfirm,
+            };
+
             await userRequests.updatePassword(
-                "user-token-replace-with-actual-token",
-                {
-                    id: "user-id-replace-with-actual-user-id",
-                    password: newPassword,
-                }
+                "insert-valid-user-token-here",
+                changePasswordBody
             );
+            setPassword("");
+            setNewPassword("");
+            setNewPasswordConfirm("");
         } catch (error) {
             console.error(error);
             // set error notification

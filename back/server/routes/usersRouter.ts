@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
-import { IUpdateUser } from "../../database/utils/interfaces";
+import { IUpdateUser, IUser } from "../../database/utils/interfaces";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import {
     HTTP_RESPONSE_CODES,
@@ -134,22 +134,22 @@ users.post("/signup", async (request: Request, response: Response) => {
 
             const timestamp = getCurrentTimestamp();
 
-            const newUser = {
+            const newUser: IUser = {
                 id: uuid(),
-                first_name: first_name,
-                last_name: last_name,
+                firstName: first_name,
+                lastName: last_name,
                 email: email,
-                password_hash: hashedPassword,
-                phone_number: null,
+                passwordHash: hashedPassword,
+                phoneNumber: null,
                 country: null,
                 city: null,
                 picture: null,
-                account_creation_date: timestamp,
-                is_online: false,
-                last_online: timestamp,
-                is_open_to_work: false,
-                linkedin_username: null,
-                job_pitch: null,
+                accountCreationDate: timestamp,
+                isOnline: false,
+                lastOnline: timestamp,
+                isOpenToWork: false,
+                linkedinUsername: null,
+                jobPitch: null,
             };
 
             await createNewUserDAO(newUser);
@@ -182,7 +182,7 @@ users.post("/login", async (req: Request, res: Response) => {
         }
 
         const isPasswordValid = await argon2.verify(
-            user.password_hash,
+            user.passwordHash,
             password
         );
 

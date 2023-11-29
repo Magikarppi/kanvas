@@ -1,19 +1,19 @@
 export interface IUser {
     id: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     email: string;
-    password_hash: string;
-    phone_number: string | null;
+    passwordHash: string;
+    phoneNumber: string | null;
     country: string | null;
     city: string | null;
     picture: string | null;
-    account_creation_date: Date | null;
-    is_online: boolean | null;
-    last_online: Date | null;
-    is_open_to_work: boolean | null;
-    linkedin_username: string | null;
-    job_pitch: string | null;
+    accountCreationDate: Date | null;
+    isOnline: boolean | null;
+    lastOnline: Date | null;
+    isOpenToWork: boolean | null;
+    linkedinUsername: string | null;
+    jobPitch: string | null;
 }
 
 export interface IUpdateUser {

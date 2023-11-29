@@ -6,14 +6,14 @@ import { ICard } from "../utils/interfaces";
 
 export const cardsDaoUpdate = async(id: string, card: ICard) => {
     const array = [
-        card.project_id,
+        card.projectId,
         card.title, 
-        card.sub_title, 
+        card.subTitle, 
         card.description,
         card.status,
-        card.due_date,
+        card.dueDate,
         card.attachments,
-        card.in_column,
+        card.inColumn,
         id, 
 
     ];

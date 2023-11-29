@@ -33,14 +33,14 @@ export const createNewUserDAO = async (user: IUser) => {
 export const getUserDAO = async (id: string) => {
     const result = await executeQuery(getUserById, [id]);
     if (result) {
-        return result.rows[0] as IUser | null;
+        return result.rows[0];
     }
 };
 
 export const getUserEmailDAO = async (email: string) => {
     const result = await executeQuery(getUserByEmail, [email]);
     if (result) {
-        return result.rows[0] as IUser | null;
+        return result.rows[0];
     }
 };
 

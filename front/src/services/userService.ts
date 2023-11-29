@@ -45,12 +45,13 @@ const userRequests = {
 
     updatePassword: async (
         token: string,
-        updateInformation: IUpdatePasswordBody
+        changePasswordBody: IUpdatePasswordBody
     ) => {
         const client = createClient(token);
-        const response = await client.put(`${updateInformation.id}/password`, {
-            password: updateInformation.password,
-        });
+        const response = await client.put(
+            `${changePasswordBody.id}/password`,
+            changePasswordBody
+        );
         return response;
     },
 

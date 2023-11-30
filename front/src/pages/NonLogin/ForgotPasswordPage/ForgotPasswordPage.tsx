@@ -32,7 +32,7 @@ export default function ForgotPasswordPage() {
                 setTouched(false);
             }
             else{
-                setEmailError("Syöttämäsi sähköpostiosoite ei ole validi. Varmista oikeamuotoisuus.");
+                setEmailError("The email address you entered is not valid. ensure correctness.");
             }
             // Set success notification
         } catch (error) {

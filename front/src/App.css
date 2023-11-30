@@ -2,6 +2,10 @@ html {
     font-size: 70%;
 }
 
+a {
+    text-decoration: none;
+}
+
 /* Home Page */
 .navBarContainer {
     height: 65px;

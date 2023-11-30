@@ -1,4 +1,4 @@
-import { Router, Response } from "express";
+import { Router, Response} from "express";
 import { v4 as uuid } from "uuid";
 
 import { UserRequest } from "../middleware/middleware";
@@ -6,6 +6,9 @@ import {
     addProjectDao,
     getProjectMemberDAO,
     getSingleProjectDAO,
+    getUserProjects,
+    getUserFavoritProjects,
+    getUserTeams,
 } from "../../database/daos/projectsDao";
 import { IProject } from "../../database/utils/interfaces";
 import { getCurrentTimestamp } from "../utils/utilities";
@@ -88,6 +91,26 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
         }
     } catch (error) {
         res.status(500).send("Error retrieving the project");
+    }
+});
+
+router.get("/userprojects/:id", async (req: UserRequest, res: Response) => {
+    const userId = req.params.id;
+    // Jätetäänkö näin ja lähtee tyhjät taulut ja tehäänkö erikseen endpointit tiimille ja suosikeille
+    try {
+        const userAllProjects = await getUserProjects(userId);
+        const userFavoriteProjects = await getUserFavoritProjects(userId);
+        const userTeams = await getUserTeams(userId);
+        const userProjectsData = {
+            allProjects:userAllProjects,
+            favoriteProjects: userFavoriteProjects,
+            teams: userTeams,
+        };
+        return res.status(200).json(userProjectsData);
+        
+    }
+    catch (error) {
+        res.status(500).send("Error retrieving the projects or teams");
     }
 });
 

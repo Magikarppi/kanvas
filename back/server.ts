@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRouter from "./server/routes/usersRouter";
-import { createTablesAndFillWithDummyData } from "./database/database-service";
+//import { createTablesAndFillWithDummyData } from "./database/database-service";
 import teamsRouter from "./server/routes/teamsRouter";
 import projectsRouter from "./server/routes/projectsRouter";
 import { authenticate, loggerMiddleWare } from "./server/middleware/middleware";
@@ -19,6 +19,6 @@ server.use("/users", userRouter);
 server.use("/teams", teamsRouter);
 server.use("/projects", authenticate, projectsRouter);
 
-createTablesAndFillWithDummyData();
+//createTablesAndFillWithDummyData(); Poista tämä kommentti
 
 export default server;

@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRouter from "./server/routes/usersRouter";
-import { createTablesAndFillWithDummyData } from "./database/database-service";
+//import { createTablesAndFillWithDummyData } from "./database/database-service";
 import teamsRouter from "./server/routes/teamsRouter";
 import projectsRouter from "./server/routes/projectsRouter";
 import { authenticate, loggerMiddleWare } from "./server/middleware/middleware";
@@ -22,6 +22,6 @@ server.use("/teams", teamsRouter);
 server.use("/cards", authenticate, cardsRouter);
 server.use("/projects", authenticate, projectsRouter);
 
-createTablesAndFillWithDummyData();
+//createTablesAndFillWithDummyData(); Ota tämä käyttöön jos tietokantasi on tyhjä
 
 export default server;

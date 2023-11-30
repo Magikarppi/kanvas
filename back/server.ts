@@ -6,6 +6,8 @@ import { createTablesAndFillWithDummyData } from "./database/database-service";
 import teamsRouter from "./server/routes/teamsRouter";
 import projectsRouter from "./server/routes/projectsRouter";
 import { authenticate, loggerMiddleWare } from "./server/middleware/middleware";
+import cardsRouter from "./server/routes/cardsRouter";
+
 const server = express();
 
 server.use(cors());
@@ -17,6 +19,7 @@ server.use(loggerMiddleWare);
 
 server.use("/users", userRouter);
 server.use("/teams", teamsRouter);
+server.use("/cards", authenticate, cardsRouter);
 server.use("/projects", authenticate, projectsRouter);
 
 createTablesAndFillWithDummyData();

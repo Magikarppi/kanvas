@@ -60,7 +60,6 @@ export const getUserProjects = async (userId: string) => {
         userId,
     ]);
     if (result) {
-        console.log(result);
         return result.rows;
     }
 };

@@ -1,10 +1,15 @@
 import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
-import { IUpdateUser } from "../../database/utils/interfaces";
+import { IUpdateUser, IUser } from "../../database/utils/interfaces";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { getCurrentTimestamp, validateEmail } from "../utils/utilities";
-import { 
+import {
+    HTTP_RESPONSE_CODES,
+    RESPONSE_MESSAGES,
+    getCurrentTimestamp,
+    validateEmail,
+} from "../utils/utilities";
+import {
     getUserEmailDAO,
     createNewUserDAO,
     getUserDAO,
@@ -31,23 +36,23 @@ users.put(
 
         if (!email || !first_name || !last_name) {
             response
-                .status(400)
-                .send(
-                    "Email, first name or last name missing from the request body"
-                );
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
             return;
         }
 
         if (first_name.length === 0 || last_name.length === 0) {
             response
-                .status(400)
-                .send("First name or last name cannot be empty");
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.FNAME_LNAME_EMPTY);
             return;
         }
 
         const isEmailFormatValid = validateEmail(email);
         if (isEmailFormatValid === false) {
-            response.status(400).send("Invalid email address format");
+            response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.INVALID_EMAIL_FORMAT);
             return;
         }
 
@@ -68,12 +73,12 @@ users.put(
 
         try {
             await updateDAO(id, user);
-            response.status(200).send();
+            response.status(HTTP_RESPONSE_CODES.OK).send();
         } catch (error) {
             console.error(error);
             response
-                .status(500)
-                .send("There was an error updating user information");
+                .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+                .send(RESPONSE_MESSAGES.SERVER_ERROR);
         }
     }
 );
@@ -83,21 +88,23 @@ users.post("/signup", async (request: Request, response: Response) => {
 
     if (!email || !password || !first_name || !last_name) {
         response
-            .status(400)
-            .send(
-                "Email, password, first name or last name missing from the request"
-            );
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
         return;
     }
 
     const isEmailFormatValid = validateEmail(email);
     if (isEmailFormatValid === false) {
-        response.status(400).send("Invalid email address format");
+        response
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_EMAIL_FORMAT);
         return;
     }
 
     if (first_name.trim().length < 1 || last_name.trim().length < 1) {
-        response.status(400).send("First or last name cannot be empty");
+        response
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.FNAME_LNAME_EMPTY);
         return;
     }
 
@@ -107,7 +114,7 @@ users.post("/signup", async (request: Request, response: Response) => {
         last_name.length > 255
     ) {
         response
-            .status(400)
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
             .send(
                 "Email, first name or last name cannot exceed 255 characters"
             );
@@ -118,7 +125,7 @@ users.post("/signup", async (request: Request, response: Response) => {
         const existingUser = await getUserEmailDAO(email);
         if (existingUser) {
             response
-                .status(409)
+                .status(HTTP_RESPONSE_CODES.CONFLICT)
                 .send(
                     "New account not created - a user with that email already exists"
                 );
@@ -127,32 +134,32 @@ users.post("/signup", async (request: Request, response: Response) => {
 
             const timestamp = getCurrentTimestamp();
 
-            const newUser = {
+            const newUser: IUser = {
                 id: uuid(),
-                first_name: first_name,
-                last_name: last_name,
+                firstName: first_name,
+                lastName: last_name,
                 email: email,
-                password_hash: hashedPassword,
-                phone_number: null,
+                passwordHash: hashedPassword,
+                phoneNumber: null,
                 country: null,
                 city: null,
                 picture: null,
-                account_creation_date: timestamp,
-                is_online: false,
-                last_online: timestamp,
-                is_open_to_work: false,
-                linkedin_username: null,
-                job_pitch: null,
+                accountCreationDate: timestamp,
+                isOnline: false,
+                lastOnline: timestamp,
+                isOpenToWork: false,
+                linkedinUsername: null,
+                jobPitch: null,
             };
 
             await createNewUserDAO(newUser);
-            response.status(200).send("New user created.");
+            response.status(HTTP_RESPONSE_CODES.OK).send("New user created.");
         }
     } catch (error) {
         console.error(error);
         response
-            .status(500)
-            .send("There was an error for storing user data in the database");
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
     }
 });
 
@@ -160,14 +167,18 @@ users.post("/login", async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if (!email && !password) {
-        return res.status(400).send("Invalid request body");
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
     }
 
     try {
         const user = await getUserEmailDAO((email as string).toLowerCase());
 
         if (!user) {
-            return res.status(401).send("Invalid username or password");
+            return res
+                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                .send(RESPONSE_MESSAGES.INVALID_UNAME_PWORD);
         }
 
         const isPasswordValid = await argon2.verify(
@@ -176,15 +187,19 @@ users.post("/login", async (req: Request, res: Response) => {
         );
 
         if (!isPasswordValid) {
-            return res.status(401).send("Invalid username or password");
+            return res
+                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                .send(RESPONSE_MESSAGES.INVALID_UNAME_PWORD);
         }
 
         const token = createToken(email);
 
-        res.status(200).json({ token, user });
+        res.status(HTTP_RESPONSE_CODES.OK).json({ token, user });
     } catch (error) {
         console.error(error);
-        res.status(500).send("There was an error with logging in");
+        res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
+            RESPONSE_MESSAGES.SERVER_ERROR
+        );
     }
 });
 
@@ -196,19 +211,23 @@ users.get("/:id", authenticate, async (req: UserRequest, res: Response) => {
         const userInfo = await getUserDAO(id);
 
         if (!userInfo) {
-            return res.status(404).send(`User with id: ${id} not found`);
+            return res
+                .status(HTTP_RESPONSE_CODES.NOT_FOUND)
+                .send(RESPONSE_MESSAGES.USER_NOT_FOUND);
         }
 
         if (userInfo.email === requestingUser) {
-            return res.status(200).json(userInfo);
+            return res.status(HTTP_RESPONSE_CODES.OK).json(userInfo);
         } else {
             return res
-                .status(403)
-                .send("You are not authorized to get this user's info");
+                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                .send(RESPONSE_MESSAGES.FORBIDDEN);
         }
     } catch (error) {
         console.error(error);
-        return res.status(400).send("Getting the user failed");
+        return res
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
     }
 });
 
@@ -220,18 +239,24 @@ users.delete("/:id", authenticate, async (req: UserRequest, res: Response) => {
         const userToDelete = await getUserDAO(id);
 
         if (!userToDelete) {
-            return res.status(404).send("User not found");
+            return res
+                .status(HTTP_RESPONSE_CODES.NOT_FOUND)
+                .send(RESPONSE_MESSAGES.USER_NOT_FOUND);
         }
 
         if (userToDelete.email === user.value) {
             await deleteUserDAO(id);
-            return res.status(200).send();
+            return res.status(HTTP_RESPONSE_CODES.OK).send();
         } else {
-            return res.status(403).send("Unauthorized to delete this user");
+            return res
+                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                .send(RESPONSE_MESSAGES.FORBIDDEN);
         }
     } catch (error) {
         console.error(error);
-        return res.status(400).send();
+        return res
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
     }
 });
 
@@ -240,29 +265,55 @@ users.put(
     authenticate,
     async (request: UserRequest, response: Response) => {
         const userId = request.params.id;
-        const { password } = request.body;
+        const { oldPassword, newPassword, newPasswordConfirmation } =
+            request.body;
 
-        if (!password) {
-            response.status(400).send("Password missing from the request");
+        if (!oldPassword || !newPassword || !newPasswordConfirmation) {
+            response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
+            return;
+        }
+
+        if (newPassword !== newPasswordConfirmation) {
+            response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(
+                    "Password was not updated because the provided passwords do not match"
+                );
             return;
         }
 
         try {
             const user = await getUserDAO(userId);
-
             const userPayLoad = request.user as JwtPayload;
             const isCorrectUser = user?.email === userPayLoad.value;
-            if (isCorrectUser) {
-                const newHashedPassword = await argon2.hash(password);
-                await updatePasswordDAO(userId, newHashedPassword);
-                response.status(204).send();
+
+            if (isCorrectUser && user) {
+                const isOldPasswordValid = await argon2.verify(
+                    user.password_hash,
+                    oldPassword
+                );
+                if (isOldPasswordValid) {
+                    const newHashedPassword = await argon2.hash(newPassword);
+                    await updatePasswordDAO(userId, newHashedPassword);
+                    response.status(HTTP_RESPONSE_CODES.NO_CONTENT).send();
+                } else {
+                    response
+                        .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                        .send(
+                            "Password was not updated because the old password was incorrect"
+                        );
+                }
             } else {
-                response.status(401).send("Unauthorized: invalid user");
+                response
+                    .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                    .send(RESPONSE_MESSAGES.FORBIDDEN);
             }
         } catch (error) {
             response
-                .status(500)
-                .send("There was an error updating the password");
+                .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+                .send(RESPONSE_MESSAGES.SERVER_ERROR);
         }
     }
 );

@@ -2,7 +2,7 @@ import { Router, Response} from "express";
 import { v4 as uuid } from "uuid";
 
 import { UserRequest } from "../middleware/middleware";
-import { 
+import {
     addProjectDao,
     getProjectMemberDAO,
     getSingleProjectDAO,
@@ -11,7 +11,11 @@ import {
     getUserTeams,
 } from "../../database/daos/projectsDao";
 import { IProject } from "../../database/utils/interfaces";
-import { getCurrentTimestamp } from "../utils/utilities";
+import {
+    HTTP_RESPONSE_CODES,
+    RESPONSE_MESSAGES,
+    getCurrentTimestamp,
+} from "../utils/utilities";
 import { getUserEmailDAO } from "../../database/daos/userDao";
 import { JwtPayload } from "jsonwebtoken";
 import { dummyGetProjectData } from "../../database/utils/dummyData";
@@ -24,7 +28,9 @@ router.post("/", async (req: UserRequest, res: Response) => {
             req.body;
 
         if (!name || !isPublic) {
-            return res.status(400).send("Invalid request body");
+            return res
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
         }
 
         const project: IProject = {
@@ -41,13 +47,17 @@ router.post("/", async (req: UserRequest, res: Response) => {
         const addedProject = await addProjectDao({ ...project });
 
         if (addedProject) {
-            return res.status(201).json(addedProject);
+            return res.status(HTTP_RESPONSE_CODES.CREATED).json(addedProject);
         }
 
-        return res.status(400).send("Adding new project failed");
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send("Adding new project failed");
     } catch (error) {
         console.error(error);
-        return res.status(500).send("Server error");
+        return res
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
     }
 });
 
@@ -60,7 +70,9 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
         const existingUser = await getUserEmailDAO(token.value);
 
         if (!existingProject || !existingUser) {
-            res.status(404).send("Project or user not found");
+            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
+                "Project or user not found"
+            );
             return;
         }
 
@@ -75,11 +87,12 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
                     projectMembers: [...dummyGetProjectData.projectMembers],
                     cards: [...dummyGetProjectData.cards],
                 };
-                res.status(200).json(projectData);
+                res.status(HTTP_RESPONSE_CODES.OK).json(projectData);
             } else {
-                res.status(403).send("You are not authorized to get this project information");
+                res.status(HTTP_RESPONSE_CODES.FORBIDDEN).send(
+                    RESPONSE_MESSAGES.FORBIDDEN
+                );
             }
-
         } else {
             const projectData = {
                 ...existingProject,
@@ -87,10 +100,12 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
                 projectMembers: [...dummyGetProjectData.projectMembers],
                 cards: [...dummyGetProjectData.cards],
             };
-            res.status(200).send(projectData);
+            res.status(HTTP_RESPONSE_CODES.OK).send(projectData);
         }
     } catch (error) {
-        res.status(500).send("Error retrieving the project");
+        res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
+            RESPONSE_MESSAGES.SERVER_ERROR
+        );
     }
 });
 

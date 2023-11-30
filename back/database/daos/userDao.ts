@@ -10,28 +10,41 @@ import { IUser, IUpdateUser } from "../utils/interfaces";
 import { executeQuery } from "../database-service";
 
 export const createNewUserDAO = async (user: IUser) => {
-    const values = Object.values(user);
+    const values = [
+        user.id,
+        user.firstName,
+        user.lastName,
+        user.email,
+        user.passwordHash,
+        user.phoneNumber,
+        user.country,
+        user.city,
+        user.picture,
+        user.accountCreationDate,
+        user.isOnline,
+        user.lastOnline,
+        user.isOpenToWork,
+        user.linkedinUsername,
+        user.jobPitch,
+    ];
     await executeQuery(insertNewUser, values);
 };
 
 export const getUserDAO = async (id: string) => {
     const result = await executeQuery(getUserById, [id]);
     if (result) {
-        return result.rows[0] as IUser | null;
+        return result.rows[0];
     }
 };
 
 export const getUserEmailDAO = async (email: string) => {
     const result = await executeQuery(getUserByEmail, [email]);
     if (result) {
-        return result.rows[0] as IUser | null;
+        return result.rows[0];
     }
 };
 
-export const updateDAO = async (
-    id: string,
-    user: IUpdateUser
-) => {
+export const updateDAO = async (id: string, user: IUpdateUser) => {
     const paramsArray = [
         user.firstName,
         user.lastName,

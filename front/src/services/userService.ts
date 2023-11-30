@@ -45,18 +45,27 @@ const userRequests = {
 
     updatePassword: async (
         token: string,
-        updateInformation: IUpdatePasswordBody
+        changePasswordBody: IUpdatePasswordBody
     ) => {
         const client = createClient(token);
-        const response = await client.put(`${updateInformation.id}/password`, {
-            password: updateInformation.password,
-        });
+        const response = await client.put(
+            `${changePasswordBody.id}/password`,
+            changePasswordBody
+        );
         return response;
     },
 
     deleteSingleUser: async (token: string, userId: string) => {
         const client = createClient(token);
         const response = await client.delete(`${userId}`);
+        return response;
+    },
+
+    newPassword: async (userId: string, email: string) => {
+        const client = createClient();
+        const response = await client.put(`${userId}/forgot-password`, {
+            email: email,
+        });
         return response;
     },
 };

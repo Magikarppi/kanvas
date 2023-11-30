@@ -26,5 +26,7 @@ export interface IUpdateUserBodyWithoutPassword {
 
 export interface IUpdatePasswordBody {
     id: string;
-    password: string;
+    oldPassword: string;
+    newPassword: string;
+    newPasswordConfirmation: string;
 }

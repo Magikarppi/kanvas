@@ -96,7 +96,6 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
 
 router.get("/userprojects/:id", async (req: UserRequest, res: Response) => {
     const userId = req.params.id;
-    // Jätetäänkö näin ja lähtee tyhjät taulut ja tehäänkö erikseen endpointit tiimille ja suosikeille
     try {
         const userAllProjects = await getUserProjects(userId);
         const userFavoriteProjects = await getUserFavoritProjects(userId);

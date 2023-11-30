@@ -29,6 +29,7 @@ export default function ForgotPasswordPage() {
                     email
                 );
                 setEmail("");
+                setEmailError("");
                 setTouched(false);
             }
             else{

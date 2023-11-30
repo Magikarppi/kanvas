@@ -21,7 +21,7 @@ cards.put("/:id", async (req: Request, res: Response) => {
     };
     try {
         await cardsDaoUpdate(id, card);
-        res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send();
+        res.status(HTTP_RESPONSE_CODES.OK).send();
     } catch (error) {
         console.error(error);
         res

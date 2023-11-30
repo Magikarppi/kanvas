@@ -23,7 +23,7 @@ const LoginNavBar = ({ open, setOpen }: TOpen) => {
     return (
         <div className="navBarContainer">
             <Box sx={{ display: "flex" }}>
-                <AppBar position="static">
+                <AppBar position="absolute">
                     <Toolbar variant="dense">
                         <IconButton
                             color="inherit"

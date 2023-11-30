@@ -64,7 +64,7 @@ export const getUserProjects = async (userId: string) => {
     }
 };
 
-export const getUserFavoritProjects = async (
+export const getUserFavoriteProjects = async (
     userId: string,
 ) => {
     const result = await executeQuery(favoriteProjectsByUserId, [

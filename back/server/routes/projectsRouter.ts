@@ -7,7 +7,7 @@ import {
     getProjectMemberDAO,
     getSingleProjectDAO,
     getUserProjects,
-    getUserFavoritProjects,
+    getUserFavoriteProjects,
     getUserTeams,
 } from "../../database/daos/projectsDao";
 import { IProject } from "../../database/utils/interfaces";
@@ -113,7 +113,7 @@ router.get("/userprojects/:id", async (req: UserRequest, res: Response) => {
     const userId = req.params.id;
     try {
         const userAllProjects = await getUserProjects(userId);
-        const userFavoriteProjects = await getUserFavoritProjects(userId);
+        const userFavoriteProjects = await getUserFavoriteProjects(userId);
         const userTeams = await getUserTeams(userId);
         const userProjectsData = {
             allProjects:userAllProjects,

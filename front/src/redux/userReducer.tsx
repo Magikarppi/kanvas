@@ -1,6 +1,7 @@
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
-
-
-export const userReducer = (state: any, action: any) => {
-
-}
+export const userReducer = (state = {}, action: any) => {
+    if(action.type == "setUser"){
+        state = action.payload;
+        return state;
+    }
+    return state;
+};

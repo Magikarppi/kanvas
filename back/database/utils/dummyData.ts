@@ -1,115 +1,98 @@
 import { v4 as uuid } from "uuid";
-import { getCurrentTimestamp } from "../../utils/utilities";
+import { getCurrentTimestamp } from "../../server/utils/utilities";
+import { IUser } from "./interfaces";
 
-export type IUser = {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    password_hash: string;
-    phone_number: string | null;
-    country: string | null;
-    city: string | null;
-    picture: string | null;
-    account_creation_date: Date | null;
-    is_online: boolean | null;
-    last_online: Date | null;
-    is_open_to_work: boolean | null;
-    linkedin_username: string | null;
-    job_pitch: string | null;
-};
-
-// password_hash created from "password"
+// passwordHash created from "password"
 export const dummyUsers: IUser[] = [
     {
         id: uuid(),
-        first_name: "John",
-        last_name: "Doe",
+        firstName: "John",
+        lastName: "Doe",
         email: "user1@example.com",
-        password_hash:
+        passwordHash:
             "$argon2id$v=19$m=65536,t=3,p=4$Rqlr5Mz56W+Uoe2a74WaVw$IJWV/bt/Ui/NSTCusopgUsFsjBjDfsTOE0t761N6pEU",
-        phone_number: "+123456789",
+        phoneNumber: "+123456789",
         country: "USA",
         city: "New York",
         picture: "url_to_picture",
-        account_creation_date: new Date("2023-01-01"),
-        is_online: true,
-        last_online: new Date("2023-11-15"),
-        is_open_to_work: true,
-        linkedin_username: "john_doe_linkedin",
-        job_pitch: "Experienced professional seeking new opportunities.",
+        accountCreationDate: new Date("2023-01-01"),
+        isOnline: true,
+        lastOnline: new Date("2023-11-15"),
+        isOpenToWork: true,
+        linkedinUsername: "john_doe_linkedin",
+        jobPitch: "Experienced professional seeking new opportunities.",
     },
     {
         id: uuid(),
-        first_name: "Alice",
-        last_name: "Smith",
+        firstName: "Alice",
+        lastName: "Smith",
         email: "user2@example.com",
-        password_hash:
+        passwordHash:
             "$argon2id$v=19$m=65536,t=3,p=4$Rqlr5Mz56W+Uoe2a74WaVw$IJWV/bt/Ui/NSTCusopgUsFsjBjDfsTOE0t761N6pEU",
-        phone_number: null,
+        phoneNumber: null,
         country: "Canada",
         city: "Toronto",
         picture: null,
-        account_creation_date: new Date("2023-02-15"),
-        is_online: false,
-        last_online: null,
-        is_open_to_work: false,
-        linkedin_username: "alice_smith_linkedin",
-        job_pitch: "Passionate about technology and innovation.",
+        accountCreationDate: new Date("2023-02-15"),
+        isOnline: false,
+        lastOnline: null,
+        isOpenToWork: false,
+        linkedinUsername: "alice_smith_linkedin",
+        jobPitch: "Passionate about technology and innovation.",
     },
     {
         id: uuid(),
-        first_name: "Emily",
-        last_name: "Johnson",
+        firstName: "Emily",
+        lastName: "Johnson",
         email: "user3@example.com",
-        password_hash:
+        passwordHash:
             "$argon2id$v=19$m=65536,t=3,p=4$Rqlr5Mz56W+Uoe2a74WaVw$IJWV/bt/Ui/NSTCusopgUsFsjBjDfsTOE0t761N6pEU",
-        phone_number: "+987654321",
+        phoneNumber: "+987654321",
         country: "UK",
         city: "London",
         picture: "url_to_picture_3",
-        account_creation_date: new Date("2023-03-20"),
-        is_online: true,
-        last_online: new Date("2023-11-14"),
-        is_open_to_work: true,
-        linkedin_username: "emily_johnson_linkedin",
-        job_pitch: "Dedicated and motivated professional seeking challenges.",
+        accountCreationDate: new Date("2023-03-20"),
+        isOnline: true,
+        lastOnline: new Date("2023-11-14"),
+        isOpenToWork: true,
+        linkedinUsername: "emily_johnson_linkedin",
+        jobPitch: "Dedicated and motivated professional seeking challenges.",
     },
     {
         id: uuid(),
-        first_name: "Michael",
-        last_name: "Brown",
+        firstName: "Michael",
+        lastName: "Brown",
         email: "user4@example.com",
-        password_hash:
+        passwordHash:
             "$argon2id$v=19$m=65536,t=3,p=4$Rqlr5Mz56W+Uoe2a74WaVw$IJWV/bt/Ui/NSTCusopgUsFsjBjDfsTOE0t761N6pEU",
-        phone_number: null,
+        phoneNumber: null,
         country: "Australia",
         city: "Sydney",
         picture: "url_to_picture_4",
-        account_creation_date: new Date("2023-04-10"),
-        is_online: true,
-        last_online: new Date("2023-11-15"),
-        is_open_to_work: true,
-        linkedin_username: null,
-        job_pitch: "Aiming for excellence in every task.",
+        accountCreationDate: new Date("2023-04-10"),
+        isOnline: true,
+        lastOnline: new Date("2023-11-15"),
+        isOpenToWork: true,
+        linkedinUsername: null,
+        jobPitch: "Aiming for excellence in every task.",
     },
     {
         id: uuid(),
-        first_name: "Sophia",
-        last_name: "Garcia",
+        firstName: "Sophia",
+        lastName: "Garcia",
         email: "user5@example.com",
-        password_hash:
+        passwordHash:
             "$argon2id$v=19$m=65536,t=3,p=4$Rqlr5Mz56W+Uoe2a74WaVw$IJWV/bt/Ui/NSTCusopgUsFsjBjDfsTOE0t761N6pEU",
-        phone_number: "+1122334455",
+        phoneNumber: "+1122334455",
         country: "Spain",
         city: "Madrid",
         picture: "url_to_picture_5",
-        account_creation_date: new Date("2023-05-05"),
-        is_online: false,
-        last_online: null,
-        is_open_to_work: true,
-        linkedin_username: "sophia_garcia_linkedin",
-        job_pitch: "Passionate about making a difference through technology.",
+        accountCreationDate: new Date("2023-05-05"),
+        isOnline: false,
+        lastOnline: null,
+        isOpenToWork: true,
+        linkedinUsername: "sophia_garcia_linkedin",
+        jobPitch: "Passionate about making a difference through technology.",
     },
 ];
 

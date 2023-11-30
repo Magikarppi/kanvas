@@ -8,8 +8,37 @@ import {
     Tooltip,
     Typography,
 } from "@mui/material";
+import { IUpdateUserBodyWithoutPassword } from "../../models/userModels";
+import userRequests from "../../services/userService";
 
 const UserProfile = () => {
+    const handleSubmit = async () => {
+        const updatedUser: IUpdateUserBodyWithoutPassword = {
+            // get values from form when it is implemented
+            first_name: "formValues.firstName",
+            last_name: "formValues.lastName",
+            email: "formValues.email",
+            phone_number: "formValues.phoneNumber" || null,
+            country: "formValues.country" || null,
+            city: "formValues.city" || null,
+            linkedin_username: "formValues.linkedInUsername" || null,
+            id: "Get this id from state / store",
+            is_open_to_work: false /* formValues.isOpenToWork */,
+            job_pitch: "formValues.jobPitch",
+            picture: "formValues.picture?",
+        };
+
+        try {
+            await userRequests.updateUser(
+                "user-token-replace-with-actual-token",
+                updatedUser
+            );
+        } catch (error) {
+            console.error(error);
+            // Set error notification
+        }
+    };
+
     return (
         <Paper elevation={1} className="userEditProfileContainer">
             <Tooltip title="Change your picture" arrow placement="right">
@@ -99,6 +128,7 @@ const UserProfile = () => {
                         variant="contained"
                         color="secondary"
                         style={{ marginTop: "20px" }}
+                        onClick={handleSubmit}
                     >
                         Submit changes
                     </Button>

@@ -10,6 +10,8 @@ import {
     Typography,
 } from "@mui/material";
 import Icons from "../Icons/Icons";
+import userRequests from "../../services/userService";
+import { IUpdatePasswordBody } from "../../models/userModels";
 
 const UserChangePassword = () => {
     const [password, setPassword] = useState<string>("");
@@ -23,6 +25,29 @@ const UserChangePassword = () => {
 
     const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+    };
+
+    const handleSubmit = async () => {
+        // add validation
+        try {
+            const changePasswordBody: IUpdatePasswordBody = {
+                id: "insert-valid-userid-here",
+                oldPassword: password,
+                newPassword: newPassword,
+                newPasswordConfirmation: newPasswordConfirm,
+            };
+
+            await userRequests.updatePassword(
+                "insert-valid-user-token-here",
+                changePasswordBody
+            );
+            setPassword("");
+            setNewPassword("");
+            setNewPasswordConfirm("");
+        } catch (error) {
+            console.error(error);
+            // set error notification
+        }
     };
 
     return (
@@ -152,6 +177,7 @@ const UserChangePassword = () => {
                         variant="contained"
                         color="secondary"
                         style={{ marginTop: "20px" }}
+                        onClick={handleSubmit}
                     >
                         Submit
                     </Button>

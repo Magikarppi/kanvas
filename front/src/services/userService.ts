@@ -1,9 +1,9 @@
 import axios from "axios";
 import {
-    LoginBody,
-    NewUserBody,
-    UpdatePassWordBody,
-    UpdateUserBodyWithOutPassword,
+    ILoginBody,
+    INewUserBody,
+    IUpdatePasswordBody,
+    IUpdateUserBodyWithoutPassword,
 } from "../models/userModels";
 
 const createClient = (token?: string) =>
@@ -13,13 +13,13 @@ const createClient = (token?: string) =>
     });
 
 const userRequests = {
-    registerUser: async (registerInformation: NewUserBody) => {
+    registerUser: async (registerInformation: INewUserBody) => {
         const client = createClient();
         const response = await client.post("signup", registerInformation);
         return response;
     },
 
-    loginUser: async (loginInfo: LoginBody) => {
+    loginUser: async (loginInfo: ILoginBody) => {
         const client = createClient();
         const response = await client.post("login", loginInfo);
         return response.data;
@@ -33,7 +33,7 @@ const userRequests = {
 
     updateUser: async (
         token: string,
-        userInformation: UpdateUserBodyWithOutPassword
+        userInformation: IUpdateUserBodyWithoutPassword
     ) => {
         const client = createClient(token);
         const response = await client.put(
@@ -45,12 +45,12 @@ const userRequests = {
 
     updatePassword: async (
         token: string,
-        updateInformation: UpdatePassWordBody
+        changePasswordBody: IUpdatePasswordBody
     ) => {
         const client = createClient(token);
         const response = await client.put(
-            `${updateInformation.id}/password`,
-            updateInformation.password
+            `${changePasswordBody.id}/password`,
+            changePasswordBody
         );
         return response;
     },
@@ -58,6 +58,14 @@ const userRequests = {
     deleteSingleUser: async (token: string, userId: string) => {
         const client = createClient(token);
         const response = await client.delete(`${userId}`);
+        return response;
+    },
+
+    newPassword: async (userId: string, email: string) => {
+        const client = createClient();
+        const response = await client.put(`${userId}/forgot-password`, {
+            email: email,
+        });
         return response;
     },
 };

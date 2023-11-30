@@ -19,6 +19,6 @@ server.use("/users", userRouter);
 server.use("/teams", teamsRouter);
 server.use("/projects", authenticate, projectsRouter);
 
-//createTablesAndFillWithDummyData(); Poista tämä kommentti
+//createTablesAndFillWithDummyData(); Ota tämä käyttöön jos tietokantasi on tyhjä
 
 export default server;

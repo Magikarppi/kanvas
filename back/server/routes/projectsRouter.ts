@@ -24,10 +24,20 @@ router.post("/", async (req: UserRequest, res: Response) => {
         const { name, description, picture, endDate, theme, isPublic } =
             req.body;
 
-        if (!name || !isPublic) {
+        if (!name || isPublic === undefined) {
             return res
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
                 .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
+        }
+
+        if (name.length > 50) {
+            return res
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send("Name should not exceed 50 characters");
+        } else if (description.length > 500) {
+            return res
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send("Project description should not exceed 500 characters");
         }
 
         const project: IProject = {

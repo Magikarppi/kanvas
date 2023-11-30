@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import HomePage from "./pages/NonLogin/HomePage/HomePage";
@@ -12,6 +12,7 @@ import Footer from "./components/Footer/Footer";
 
 import MainContainer from "./components/MainContainer/MainContainer";
 import ForgotPasswordPage from "./pages/NonLogin/ForgotPasswordPage/ForgotPasswordPage";
+import AllProjectsPage from "./pages/Project/AllProjectsPage";
 
 const App = () => {
     const user = true;
@@ -34,6 +35,8 @@ const App = () => {
                         path="/forgot-password"
                         element={<ForgotPasswordPage />}
                     />
+
+                    <Route path="/projects" element={<AllProjectsPage />} />
                     <Route path="/profile" element={<UserProfilePage />} />
                     <Route path="*" element={<UnknownUrl />} />
                 </Routes>

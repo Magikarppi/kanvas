@@ -31,7 +31,7 @@ export const addProjectDao = async ({
     ]);
 
     if (result) {
-        return result.rows[0] as IProject | null;
+        return result.rows[0];
     }
 };
 
@@ -48,7 +48,7 @@ export const getProjectMemberDAO = async (
     }
 };
 
-export const getSingleProjectDAO = async (projectId:string) => {
+export const getSingleProjectDAO = async (projectId: string) => {
     const result = await executeQuery(getProjectById, [projectId]);
     if (result) {
         return result.rows[0];

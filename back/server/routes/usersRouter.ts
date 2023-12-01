@@ -32,16 +32,16 @@ users.put(
     authenticate,
     async (request: Request, response: Response) => {
         const id = request.params.id;
-        const { first_name, last_name, email } = request.body.user;
+        const { firstName, lastName, email } = request.body;
 
-        if (!email || !first_name || !last_name) {
+        if (!email || !firstName || !lastName) {
             response
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
                 .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
             return;
         }
 
-        if (first_name.length === 0 || last_name.length === 0) {
+        if (firstName.length === 0 || lastName.length === 0) {
             response
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
                 .send(RESPONSE_MESSAGES.FNAME_LNAME_EMPTY);
@@ -57,18 +57,18 @@ users.put(
         }
 
         const user: IUpdateUser = {
-            firstName: first_name,
-            lastName: last_name,
+            firstName: firstName,
+            lastName: lastName,
             email: email,
-            phoneNumber: request.body.user.phone_number,
-            country: request.body.user.country,
-            city: request.body.user.city,
-            picture: request.body.user.picture,
+            phoneNumber: request.body.phoneNumber,
+            country: request.body.country,
+            city: request.body.city,
+            picture: request.body.picture,
             isOnline: true,
             lastOnline: getCurrentTimestamp(),
-            isOpenToWork: request.body.user.is_open_to_work,
-            linkedinUsername: request.body.user.linkedin_username,
-            jobPitch: request.body.user.job_pitch,
+            isOpenToWork: request.body.isOpenToWork,
+            linkedinUsername: request.body.linkedinUsername,
+            jobPitch: request.body.jobPitch,
         };
 
         try {
@@ -84,9 +84,9 @@ users.put(
 );
 
 users.post("/signup", async (request: Request, response: Response) => {
-    const { email, password, first_name, last_name } = request.body;
+    const { email, password, firstName, lastName } = request.body;
 
-    if (!email || !password || !first_name || !last_name) {
+    if (!email || !password || !firstName || !lastName) {
         response
             .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
             .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
@@ -101,18 +101,14 @@ users.post("/signup", async (request: Request, response: Response) => {
         return;
     }
 
-    if (first_name.trim().length < 1 || last_name.trim().length < 1) {
+    if (firstName.trim().length < 1 || lastName.trim().length < 1) {
         response
             .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
             .send(RESPONSE_MESSAGES.FNAME_LNAME_EMPTY);
         return;
     }
 
-    if (
-        email.length > 255 ||
-        first_name.length > 255 ||
-        last_name.length > 255
-    ) {
+    if (email.length > 255 || firstName.length > 255 || lastName.length > 255) {
         response
             .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
             .send(
@@ -136,8 +132,8 @@ users.post("/signup", async (request: Request, response: Response) => {
 
             const newUser: IUser = {
                 id: uuid(),
-                firstName: first_name,
-                lastName: last_name,
+                firstName: firstName,
+                lastName: lastName,
                 email: email,
                 passwordHash: hashedPassword,
                 phoneNumber: null,
@@ -194,7 +190,25 @@ users.post("/login", async (req: Request, res: Response) => {
 
         const token = createToken(email);
 
-        res.status(HTTP_RESPONSE_CODES.OK).json({ token, user });
+        const formattedUser: IUser = {
+            id: user.id,
+            firstName: user.first_name,
+            lastName: user.last_name,
+            email: user.email,
+            passwordHash: user.password_hash,
+            phoneNumber: user.phone_number,
+            country: user.country,
+            city: user.city,
+            picture: user.picture_url,
+            accountCreationDate: new Date(user.account_created_at),
+            isOnline: user.is_online,
+            lastOnline: new Date(user.last_online),
+            isOpenToWork: user.is_open_to_work,
+            linkedinUsername: user.linkedin_username,
+            jobPitch: user.job_pitch,
+        };
+
+        res.status(HTTP_RESPONSE_CODES.OK).json({ token, formattedUser });
     } catch (error) {
         console.error(error);
         res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
@@ -216,8 +230,26 @@ users.get("/:id", authenticate, async (req: UserRequest, res: Response) => {
                 .send(RESPONSE_MESSAGES.USER_NOT_FOUND);
         }
 
-        if (userInfo.email === requestingUser) {
-            return res.status(HTTP_RESPONSE_CODES.OK).json(userInfo);
+        const user: IUser = {
+            id: userInfo.id,
+            firstName: userInfo.first_name,
+            lastName: userInfo.last_name,
+            email: userInfo.email,
+            passwordHash: userInfo.password_hash,
+            phoneNumber: userInfo.phone_number,
+            country: userInfo.country,
+            city: userInfo.city,
+            picture: userInfo.picture_url,
+            accountCreationDate: new Date(userInfo.account_created_at),
+            isOnline: userInfo.is_online,
+            lastOnline: new Date(userInfo.last_online),
+            isOpenToWork: userInfo.is_open_to_work,
+            linkedinUsername: userInfo.linkedin_username,
+            jobPitch: userInfo.job_pitch,
+        };
+
+        if (user.email === requestingUser) {
+            return res.status(HTTP_RESPONSE_CODES.OK).json(user);
         } else {
             return res
                 .status(HTTP_RESPONSE_CODES.FORBIDDEN)

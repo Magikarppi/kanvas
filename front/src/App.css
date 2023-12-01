@@ -8,12 +8,9 @@ a {
 
 /* Home Page */
 .navBarContainer {
-    height: 65px;
-    background: linear-gradient(
-        180deg,
-        rgba(200, 200, 200, 0.5) 0%,
-        rgba(0, 0, 0, 0.1) 100%
-    );
+    background: linear-gradient(180deg,
+            rgba(200, 200, 200, 0.5) 0%,
+            rgba(0, 0, 0, 0.1) 100%);
 }
 
 .navbarButtonContainer {
@@ -21,19 +18,20 @@ a {
 }
 
 .homeContainer1 {
-    background: linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(28, 28, 28, 0.7329525560224089) 5%,
-        rgba(28, 28, 28, 1) 14%,
-        rgba(28, 28, 28, 1) 53%
-    );
-    min-height: 600px;
+    background: url("styles/images/HomePage/mountain-climb.svg") no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .homeContainer2 {
-    background-color: rgb(68, 68, 68);
     min-height: 600px;
+    background: url("styles/images/HomePage/office-table.svg") no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .homePageCard1 {
@@ -51,11 +49,21 @@ a {
 }
 
 .homeTitle {
+    padding-bottom: 8px;
+}
+
+.homeSubtitle {
     padding-bottom: 30px;
 }
 
 .homeBodyText {
-    padding-bottom: 40px;
+    padding-bottom: 30px;
+}
+
+.homePageButtons {
+    width: 125px;
+    height: 40px;
+    font-size: 15px;
 }
 
 .homePageFooter {

@@ -92,7 +92,7 @@ const RegistrationForm = () => {
         const value = formData[field];
 
         if (field === "email") {
-            return touched[field] && validEmail(value);
+            return touched[field] && !validEmail(value);
         } else if (field === "password") {
             return touched[field] && !passWordRegex.test(value);
         } else if (

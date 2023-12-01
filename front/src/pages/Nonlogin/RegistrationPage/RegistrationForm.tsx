@@ -60,8 +60,8 @@ const RegistrationForm = () => {
 
     const handleSubmit = async () => {
         const userToRegister: INewUserBody = {
-            first_name: formData.firstName,
-            last_name: formData.lastName,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
             email: formData.email,
             password: formData.password,
         };

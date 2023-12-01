@@ -1,4 +1,4 @@
-import { Router, Response} from "express";
+import { Router, Response } from "express";
 import { v4 as uuid } from "uuid";
 
 import { UserRequest } from "../middleware/middleware";
@@ -37,7 +37,7 @@ router.post("/", async (req: UserRequest, res: Response) => {
             return res
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
                 .send("Name should not exceed 50 characters");
-        } else if (description.length > 500) {
+        } else if (description?.length > 500) {
             return res
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
                 .send("Project description should not exceed 500 characters");
@@ -56,13 +56,24 @@ router.post("/", async (req: UserRequest, res: Response) => {
 
         const addedProject = await addProjectDao({ ...project });
 
-        if (addedProject) {
-            return res.status(HTTP_RESPONSE_CODES.CREATED).json(addedProject);
+        if (!addedProject) {
+            return res
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send("Adding new project failed");
         }
 
-        return res
-            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-            .send("Adding new project failed");
+        const formattedProject: IProject = {
+            id: addedProject.id,
+            name: addedProject.name,
+            description: addedProject.description,
+            isPublic: addedProject.is_public,
+            creationDate: addedProject.project_creation_date,
+            endDate: addedProject.project_end_date,
+            theme: addedProject.theme,
+            picture: addedProject.picture_url,
+        };
+
+        return res.status(HTTP_RESPONSE_CODES.CREATED).json(formattedProject);
     } catch (error) {
         console.error(error);
         return res
@@ -86,13 +97,24 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
             return;
         }
 
-        if (existingProject.is_public === false) {
+        const formattedProject: IProject = {
+            id: existingProject.id,
+            name: existingProject.name,
+            description: existingProject.description,
+            isPublic: existingProject.is_public,
+            creationDate: existingProject.project_creation_date,
+            endDate: existingProject.project_end_date,
+            theme: existingProject.theme,
+            picture: existingProject.picture_url,
+        };
+
+        if (formattedProject.isPublic === false) {
             const userId = existingUser.id;
             const projectMember = await getProjectMemberDAO(userId, projectId);
 
             if (projectMember) {
                 const projectData = {
-                    ...existingProject,
+                    ...formattedProject,
                     projectColumns: [...dummyGetProjectData.projectColumns],
                     projectMembers: [...dummyGetProjectData.projectMembers],
                     cards: [...dummyGetProjectData.cards],
@@ -105,7 +127,7 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
             }
         } else {
             const projectData = {
-                ...existingProject,
+                ...formattedProject,
                 projectColumns: [...dummyGetProjectData.projectColumns],
                 projectMembers: [...dummyGetProjectData.projectMembers],
                 cards: [...dummyGetProjectData.cards],
@@ -154,6 +176,5 @@ router.get("/userprojects/:id", async (req: UserRequest, res: Response) => {
             RESPONSE_MESSAGES.USER_NOT_FOUND
         );
     }
-
 });
 export default router;

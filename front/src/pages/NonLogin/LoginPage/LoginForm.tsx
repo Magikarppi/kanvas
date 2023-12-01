@@ -14,6 +14,9 @@ import { useNavigate } from "react-router-dom";
 import Icons from "../../../components/Icons/Icons";
 import userRequests from "../../../services/userService";
 import { ILoginBody } from "../../../models/userModels";
+import { useSelector, useDispatch } from "react-redux";
+import store from "../../../store";
+
 
 interface UserLoginState {
     email: string;
@@ -21,6 +24,7 @@ interface UserLoginState {
 }
 
 const LoginForm = () => {
+    const dispatch = useDispatch();
     const [showPassword, setShowPassword] = useState({
         password: false,
     });
@@ -88,11 +92,13 @@ const LoginForm = () => {
             email: formData.email,
             password: formData.password,
         };
-
+        
         try {
             const user = await userRequests.loginUser(userToLogin);
-            console.log("user", user);
-            // Set user to state / store
+            store.dispatch({
+                type: "setUser",
+                payload: user 
+            });
         } catch (error) {
             console.error("errror", error);
             // Set error notification

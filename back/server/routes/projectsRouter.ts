@@ -1,4 +1,4 @@
-import { Router, Response } from "express";
+import { Router, Response} from "express";
 import { v4 as uuid } from "uuid";
 
 import { UserRequest } from "../middleware/middleware";
@@ -6,6 +6,9 @@ import {
     addProjectDao,
     getProjectMemberDAO,
     getSingleProjectDAO,
+    getUserProjects,
+    getUserFavoriteProjects,
+    getUserTeams,
 } from "../../database/daos/projectsDao";
 import { IProject } from "../../database/utils/interfaces";
 import {
@@ -13,7 +16,7 @@ import {
     RESPONSE_MESSAGES,
     getCurrentTimestamp,
 } from "../utils/utilities";
-import { getUserEmailDAO } from "../../database/daos/userDao";
+import { getUserEmailDAO, getUserDAO } from "../../database/daos/userDao";
 import { JwtPayload } from "jsonwebtoken";
 import { dummyGetProjectData } from "../../database/utils/dummyData";
 
@@ -116,4 +119,41 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
     }
 });
 
+router.get("/userprojects/:id", async (req: UserRequest, res: Response) => {
+    const userId = req.params.id;
+
+    try {
+        const user = await getUserDAO(userId);
+        if (user) {
+            try {
+                const userAllProjects = await getUserProjects(userId);
+                const userFavoriteProjects = await getUserFavoriteProjects(
+                    userId
+                );
+                const userTeams = await getUserTeams(userId);
+                const userProjectsData = {
+                    allProjects: userAllProjects,
+                    favoriteProjects: userFavoriteProjects,
+                    teams: userTeams,
+                };
+                return res
+                    .status(HTTP_RESPONSE_CODES.OK)
+                    .json(userProjectsData);
+            } catch (error) {
+                res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
+                    RESPONSE_MESSAGES.SERVER_ERROR
+                );
+            }
+        } else {
+            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
+                RESPONSE_MESSAGES.USER_NOT_FOUND
+            );
+        }
+    } catch (error) {
+        res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
+            RESPONSE_MESSAGES.USER_NOT_FOUND
+        );
+    }
+
+});
 export default router;

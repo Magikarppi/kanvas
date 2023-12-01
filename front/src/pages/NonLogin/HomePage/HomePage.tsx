@@ -17,10 +17,14 @@ const HomePage = () => {
                         <Typography variant="h3" className="homeTitle">
                             Kanvas
                         </Typography>
-                        <Typography variant="body1" className="homeBodyText">
-                            Sign up for your account today...
+                        <Typography variant="h4" className="homeSubtitle">
+                            The Ultimate Project Management Tool
+                        </Typography>
+                        <Typography variant="h6" className="homeBodyText">
+                            Sign up for your account today
                         </Typography>
                         <Button
+                            className="homePageButtons"
                             variant="contained"
                             color="secondary"
                             onClick={() => handleNavigation("/sign-up")}
@@ -35,10 +39,14 @@ const HomePage = () => {
                 <Grid item xs={1} />
                 <Grid item xs={10}>
                     <div className="homePageCard2">
-                        <Typography variant="body1" className="homeBodyText">
-                            Sign in to your account to get started...
+                        <Typography variant="h4" className="homeSubtitle">
+                            Seamless User Experience
+                        </Typography>
+                        <Typography variant="h6" className="homeBodyText">
+                            Sign in to your account to get started
                         </Typography>
                         <Button
+                            className="homePageButtons"
                             variant="contained"
                             color="primary"
                             onClick={() => handleNavigation("/sign-in")}

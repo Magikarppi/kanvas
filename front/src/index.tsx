@@ -9,6 +9,7 @@ import theme from "./theme/theme";
 import store from "./store";
 import "./App.css";
 
+
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );

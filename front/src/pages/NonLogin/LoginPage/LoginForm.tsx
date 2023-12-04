@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import Icons from "../../../components/Icons/Icons";
 import userRequests from "../../../services/userService";
 import { ILoginBody } from "../../../models/userModels";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { validEmail } from "../../../utils/inputChecks";
 
 

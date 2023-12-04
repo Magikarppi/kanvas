@@ -18,7 +18,7 @@ server.use(cookieParser());
 server.use(loggerMiddleWare);
 
 server.use("/users", userRouter);
-server.use("/teams", teamsRouter);
+server.use("/teams", authenticate, teamsRouter);
 server.use("/cards", authenticate, cardsRouter);
 server.use("/projects", authenticate, projectsRouter);
 

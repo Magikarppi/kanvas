@@ -4,11 +4,10 @@ export const insertNewTeam =  `
         id,
         name,
         admin,
-        is_public,
+        is_public
         ) VALUES (
         $1, $2, $3, $4
         )`;
-
 export const deleteTeam = "DELETE FROM teams WHERE id = $1";
 
 export const updateTeam = `
@@ -20,3 +19,5 @@ export const updateTeam = `
     WHERE id = $4`;
 
 export const getTeamById = "SELECT * FROM teams WHERE id = $1";
+
+export const insertTeamUsersTeam = "INSERT INTO user_teams (id,user_id,team_id) VALUES ($1, $2, $3)";

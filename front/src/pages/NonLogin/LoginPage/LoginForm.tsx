@@ -15,7 +15,8 @@ import Icons from "../../../components/Icons/Icons";
 import userRequests from "../../../services/userService";
 import { ILoginBody } from "../../../models/userModels";
 import { useSelector, useDispatch } from "react-redux";
-import store from "../../../store";
+import { validEmail } from "../../../utils/inputChecks";
+
 
 
 interface UserLoginState {
@@ -95,10 +96,14 @@ const LoginForm = () => {
         
         try {
             const user = await userRequests.loginUser(userToLogin);
-            store.dispatch({
+            dispatch({
                 type: "setUser",
                 payload: user 
             });
+            if(validEmail(userToLogin.email)){
+                const user = await userRequests.loginUser(userToLogin);
+                console.log("user", user);   // Set user to state / store
+            }
         } catch (error) {
             console.error("errror", error);
             // Set error notification

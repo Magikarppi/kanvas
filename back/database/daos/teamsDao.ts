@@ -13,14 +13,14 @@ export const createNewTeamDAO = async ({
     id,
     name,
     admin,
-    is_public,
+    isPublic,
     
 }: ITeam) => {
     const result = await executeQuery(insertNewTeam, [
         id,
         name,
         admin,
-        is_public,     
+        isPublic,     
     ]);
 
     if (result) {

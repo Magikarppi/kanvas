@@ -30,7 +30,7 @@ teams.get("/:id", async (req: Request, res: Response) => {
 
 teams.post("/newteam", async (req: UserRequest, res: Response) => {
     try {
-        const { name, is_public } = req.body;
+        const { name, isPublic } = req.body;
         const token = req.user as JwtPayload;
         const existingUser = await getUserEmailDAO(token.value);
         const userId = existingUser.id;
@@ -38,7 +38,7 @@ teams.post("/newteam", async (req: UserRequest, res: Response) => {
             id: uuid(),
             name,
             admin: userId,
-            is_public,
+            isPublic,
         };
   
         await createNewTeamDAO(team);

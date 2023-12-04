@@ -175,7 +175,7 @@ export const dummyGetProjectData = {
         {
             id: uuid(),
             projectId: uuid(),
-            column_name: "Dummy Column",
+            columnName: "Dummy Column",
             orderIndex: 1,
         },
     ],

@@ -35,7 +35,7 @@ export interface ITeam {
     id: string;
     name: string;
     admin: string;
-    is_public: boolean;
+    isPublic: boolean;
 }
 
 export type IProject = {

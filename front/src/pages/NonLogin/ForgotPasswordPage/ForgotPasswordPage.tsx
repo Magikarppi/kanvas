@@ -2,6 +2,9 @@ import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import userRequests from "../../../services/userService";
 import NavigateBackIcon from "../../../components/NavigationButtons/NavigateBackIcon";
+import { validEmail } from "../../../utils/inputChecks";
+
+
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -15,14 +18,23 @@ export default function ForgotPasswordPage() {
     const getErrorText = touched && !isValidEmail && "Invalid email address";
     const disableButton = email === "" || !isValidEmail;
 
+    const [emailError, setEmailError] = useState("");
+
     const handleSubmit = async () => {
+        
         try {
-            await userRequests.newPassword(
-                "user-id-replace-with-actual-user-id",
-                email
-            );
-            setEmail("");
-            setTouched(false);
+            if(validEmail(email)){
+                await userRequests.newPassword(
+                    "user-id-replace-with-actual-user-id",
+                    email
+                );
+                setEmail("");
+                setEmailError("");
+                setTouched(false);
+            }
+            else{
+                setEmailError("The email address you entered is not valid. ensure correctness.");
+            }
             // Set success notification
         } catch (error) {
             console.error(error);

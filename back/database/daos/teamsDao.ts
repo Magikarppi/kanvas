@@ -5,7 +5,7 @@ import { getTeamById, insertNewTeam, insertTeamUsersTeam } from "../queries/team
 export const getTeamByIdDao = async (id: string) => {
     const teams = await executeQuery(getTeamById, [id]);
     if (teams) {
-        return teams.rows[0] as ITeam;
+        return teams.rows[0];
     }
 };
 

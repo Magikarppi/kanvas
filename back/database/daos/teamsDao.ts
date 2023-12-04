@@ -30,10 +30,10 @@ export const createNewTeamDAO = async ({
 
 export const addTeamUsersTeams = async ({
     id,
-    user_id,
-    team_id,    
+    userId,
+    teamId,    
 }: IUsersTeam) => {
-    const addedTeam = await executeQuery(insertTeamUsersTeam, [id,user_id,team_id]);
+    const addedTeam = await executeQuery(insertTeamUsersTeam, [id,userId,teamId]);
     if (addedTeam) {
         return addedTeam.rows[0];
     }

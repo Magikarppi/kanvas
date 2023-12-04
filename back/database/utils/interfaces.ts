@@ -64,6 +64,6 @@ export interface ICard {
 
 export interface IUsersTeam {
     id: string;
-    user_id: string;
-    team_id: string;
+    userId: string;
+    teamId: string;
 }

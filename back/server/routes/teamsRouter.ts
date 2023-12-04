@@ -40,14 +40,14 @@ teams.post("/newteam", async (req: UserRequest, res: Response) => {
             admin: userId,
             isPublic,
         };
-  
+
         await createNewTeamDAO(team);
         const teamId = team.id;
 
         const addedTeam: IUsersTeam = {
             id: uuid(),
-            user_id: userId,
-            team_id: teamId,
+            userId: userId,
+            teamId: teamId,
         };
   
         await addTeamUsersTeams(addedTeam);

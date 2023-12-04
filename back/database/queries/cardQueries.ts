@@ -1,3 +1,6 @@
+export const createCard =
+    "INSERT INTO cards (id, project_id, title, sub_title, description, status, creation_date, due_date, attachments, in_column) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)";
+
 export const updateCard = `UPDATE cards
   SET
     "project_id" = $1,

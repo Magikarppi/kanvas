@@ -10,6 +10,9 @@ import {
 } from "@mui/material";
 import { IUpdateUserBodyWithoutPassword } from "../../models/userModels";
 import userRequests from "../../services/userService";
+import { validEmail } from "../../utils/inputChecks";
+
+
 
 const UserProfile = () => {
     const handleSubmit = async () => {
@@ -29,10 +32,12 @@ const UserProfile = () => {
         };
 
         try {
-            await userRequests.updateUser(
-                "user-token-replace-with-actual-token",
-                updatedUser
-            );
+            if(validEmail(updatedUser.email)){
+                await userRequests.updateUser(
+                    "user-token-replace-with-actual-token",
+                    updatedUser
+                );
+            }
         } catch (error) {
             console.error(error);
             // Set error notification

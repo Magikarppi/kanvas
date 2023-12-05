@@ -7,7 +7,6 @@ import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
     getCurrentTimestamp,
-    validateEmail,
 } from "../utils/utilities";
 import {
     getUserEmailDAO,
@@ -16,8 +15,13 @@ import {
     deleteUserDAO,
     updatePasswordDAO,
     updateDAO,
+    checkUserEmailConflictDAO,
 } from "../../database/daos/userDao";
-import { UserRequest, authenticate } from "../middleware/middleware";
+import {
+    UserRequest,
+    authenticate,
+    validateEmailAndNames,
+} from "../middleware/middleware";
 
 const users = express.Router();
 const JWT_SECRET = process.env.SECRET as string;
@@ -30,50 +34,51 @@ const createToken = (value: string) =>
 users.put(
     "/:id",
     authenticate,
-    async (request: Request, response: Response) => {
+    validateEmailAndNames,
+    async (request: UserRequest, response: Response) => {
         const id = request.params.id;
-        const { firstName, lastName, email } = request.body;
-
-        if (!email || !firstName || !lastName) {
-            response
-                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-                .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
-            return;
-        }
-
-        if (firstName.length === 0 || lastName.length === 0) {
-            response
-                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-                .send(RESPONSE_MESSAGES.FNAME_LNAME_EMPTY);
-            return;
-        }
-
-        const isEmailFormatValid = validateEmail(email);
-        if (isEmailFormatValid === false) {
-            response
-                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-                .send(RESPONSE_MESSAGES.INVALID_EMAIL_FORMAT);
-            return;
-        }
-
-        const user: IUpdateUser = {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            phoneNumber: request.body.phoneNumber,
-            country: request.body.country,
-            city: request.body.city,
-            picture: request.body.picture,
-            isOnline: true,
-            lastOnline: getCurrentTimestamp(),
-            isOpenToWork: request.body.isOpenToWork,
-            linkedinUsername: request.body.linkedinUsername,
-            jobPitch: request.body.jobPitch,
-        };
 
         try {
-            await updateDAO(id, user);
-            response.status(HTTP_RESPONSE_CODES.OK).send();
+            const userPayLoad = request.user as JwtPayload;
+            const userEmail = userPayLoad.value;
+            const existingUser = await getUserEmailDAO(userEmail);
+
+            if ((existingUser.id as string) !== id) {
+                response
+                    .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                    .send(RESPONSE_MESSAGES.FORBIDDEN);
+                return;
+            }
+
+            const { email } = request.body;
+            const conflictEmailUser = await checkUserEmailConflictDAO(
+                id,
+                email
+            );
+            if (conflictEmailUser) {
+                response
+                    .status(HTTP_RESPONSE_CODES.CONFLICT)
+                    .send(
+                        "Cannot update: another user with different ID already has this email"
+                    );
+            } else {
+                const user: IUpdateUser = {
+                    firstName: request.body.firstName,
+                    lastName: request.body.lastName,
+                    email: email,
+                    phoneNumber: request.body.phoneNumber,
+                    country: request.body.country,
+                    city: request.body.city,
+                    picture: request.body.picture,
+                    isOnline: true,
+                    lastOnline: getCurrentTimestamp(),
+                    isOpenToWork: request.body.isOpenToWork,
+                    linkedinUsername: request.body.linkedinUsername,
+                    jobPitch: request.body.jobPitch,
+                };
+                await updateDAO(id, user);
+                response.status(HTTP_RESPONSE_CODES.OK).send();
+            }
         } catch (error) {
             console.error(error);
             response
@@ -83,81 +88,55 @@ users.put(
     }
 );
 
-users.post("/signup", async (request: Request, response: Response) => {
-    const { email, password, firstName, lastName } = request.body;
+users.post(
+    "/signup",
+    validateEmailAndNames,
+    async (request: Request, response: Response) => {
+        try {
+            const { email } = request.body;
+            const existingUser = await getUserEmailDAO(email);
+            if (existingUser) {
+                response
+                    .status(HTTP_RESPONSE_CODES.CONFLICT)
+                    .send(
+                        "New account not created - a user with that email already exists"
+                    );
+            } else {
+                const { password } = request.body;
+                const hashedPassword = await argon2.hash(password);
 
-    if (!email || !password || !firstName || !lastName) {
-        response
-            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-            .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
-        return;
-    }
+                const timestamp = getCurrentTimestamp();
+                const newUser: IUser = {
+                    id: uuid(),
+                    firstName: request.body.firstName,
+                    lastName: request.body.lastName,
+                    email: request.body.email,
+                    passwordHash: hashedPassword,
+                    phoneNumber: null,
+                    country: null,
+                    city: null,
+                    picture: null,
+                    accountCreationDate: timestamp,
+                    isOnline: false,
+                    lastOnline: timestamp,
+                    isOpenToWork: false,
+                    linkedinUsername: null,
+                    jobPitch: null,
+                };
 
-    const isEmailFormatValid = validateEmail(email);
-    if (isEmailFormatValid === false) {
-        response
-            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-            .send(RESPONSE_MESSAGES.INVALID_EMAIL_FORMAT);
-        return;
-    }
-
-    if (firstName.trim().length < 1 || lastName.trim().length < 1) {
-        response
-            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-            .send(RESPONSE_MESSAGES.FNAME_LNAME_EMPTY);
-        return;
-    }
-
-    if (email.length > 255 || firstName.length > 255 || lastName.length > 255) {
-        response
-            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-            .send(
-                "Email, first name or last name cannot exceed 255 characters"
-            );
-        return;
-    }
-
-    try {
-        const existingUser = await getUserEmailDAO(email);
-        if (existingUser) {
+                await createNewUserDAO(newUser);
+                response
+                    .status(HTTP_RESPONSE_CODES.OK)
+                    .send("New user created.");
+            }
+        } catch (error) {
+            console.error(error);
             response
-                .status(HTTP_RESPONSE_CODES.CONFLICT)
-                .send(
-                    "New account not created - a user with that email already exists"
-                );
-        } else {
-            const hashedPassword = await argon2.hash(password);
-
-            const timestamp = getCurrentTimestamp();
-
-            const newUser: IUser = {
-                id: uuid(),
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                passwordHash: hashedPassword,
-                phoneNumber: null,
-                country: null,
-                city: null,
-                picture: null,
-                accountCreationDate: timestamp,
-                isOnline: false,
-                lastOnline: timestamp,
-                isOpenToWork: false,
-                linkedinUsername: null,
-                jobPitch: null,
-            };
-
-            await createNewUserDAO(newUser);
-            response.status(HTTP_RESPONSE_CODES.OK).send("New user created.");
+                .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+                .send(RESPONSE_MESSAGES.SERVER_ERROR);
         }
-    } catch (error) {
-        console.error(error);
-        response
-            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
-            .send(RESPONSE_MESSAGES.SERVER_ERROR);
     }
-});
+);
 
 users.post("/login", async (req: Request, res: Response) => {
     const { email, password } = req.body;

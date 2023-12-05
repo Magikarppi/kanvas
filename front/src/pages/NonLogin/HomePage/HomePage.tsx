@@ -10,7 +10,12 @@ const HomePage = () => {
 
     return (
         <div>
-            <Grid container spacing={1} className="homeContainer1">
+            <Grid
+                container
+                spacing={1}
+                className="homeContainer1"
+                sx={{ marginTop: "-20px" }}
+            >
                 <Grid item xs={1} />
                 <Grid item xs={10}>
                     <div className="homePageCard1">

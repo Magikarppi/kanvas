@@ -66,8 +66,8 @@ teams.post("/newteam", async (req: UserRequest, res: Response) => {
 teams.put("/update/:id", async (req: UserRequest, res: Response) => {
     try {
         const id = req.params.id;
-        const team2 = await getTeamByIdDao(id);
-        const adminUid = team2.admin;
+        const getTeam = await getTeamByIdDao(id);
+        const adminUid = getTeam.admin;
         const token = req.user as JwtPayload;
         const existingUser = await getUserEmailDAO(token.value);
         const userId = existingUser.id;

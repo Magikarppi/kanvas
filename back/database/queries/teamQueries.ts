@@ -14,9 +14,8 @@ export const updateTeam = `
     UPDATE teams 
     SET 
       name = $1,
-      admin = $2,
-      is_public = $3,
-    WHERE id = $4`;
+      is_public = $2
+    WHERE id = $3`;
 
 export const getTeamById = "SELECT * FROM teams WHERE id = $1";
 

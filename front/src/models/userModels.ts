@@ -1,8 +1,9 @@
 export interface INewUserBody {
-    email: string;
-    password: string;
     firstName: string;
     lastName: string;
+    email: string;
+    password: string;
+    passwordConfirmation: string;
 }
 
 export interface ILoginBody {

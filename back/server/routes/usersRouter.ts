@@ -93,7 +93,15 @@ users.post(
     validateEmailAndNames,
     async (request: Request, response: Response) => {
         try {
-            const { email } = request.body;
+            const { email, password, passwordConfirmation } = request.body;
+
+            if (password !== passwordConfirmation) {
+                response
+                    .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                    .send(RESPONSE_MESSAGES.PASSWORDS_NO_MATCH);
+                return;
+            }
+
             const existingUser = await getUserEmailDAO(email);
             if (existingUser) {
                 response
@@ -102,10 +110,9 @@ users.post(
                         "New account not created - a user with that email already exists"
                     );
             } else {
-                const { password } = request.body;
                 const hashedPassword = await argon2.hash(password);
-
                 const timestamp = getCurrentTimestamp();
+
                 const newUser: IUser = {
                     id: uuid(),
                     firstName: request.body.firstName,
@@ -289,9 +296,7 @@ users.put(
         if (newPassword !== newPasswordConfirmation) {
             response
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-                .send(
-                    "Password was not updated because the provided passwords do not match"
-                );
+                .send(RESPONSE_MESSAGES.PASSWORDS_NO_MATCH);
             return;
         }
 

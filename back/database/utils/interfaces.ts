@@ -50,6 +50,7 @@ export type IProject = {
 };
 
 export interface ICard {
+    rows: any;
     id: string;
     projectId: string;
     title: string;

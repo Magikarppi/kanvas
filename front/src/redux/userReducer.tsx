@@ -8,7 +8,7 @@ export const userReducer = (state = {}, action: any) => {
 import { createSlice } from '@reduxjs/toolkit'
 import { ILoginBody } from '../models/userModels';
 import userService from '../services/userService';
-import { AppDispatch } from '../store';
+import { AppDispatch } from './store';
 
 const initialState ={
     user: null,

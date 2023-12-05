@@ -2,41 +2,43 @@ import axios from "axios";
 
 import { TProject } from "../models/projectModels";
 
-const createClient = () => {
-    const token: string | null = null;
-
+const createClient = (token: string) => {
     return axios.create({
         baseURL: "http://localhost:5000/projects",
         headers: { Authorization: `Bearer ${token}` },
     });
 };
 const projectService = {
-    getUsersProjects: async (userId: string) => {
-        const client = createClient();
+    getUsersProjects: async (token: string, userId: string) => {
+        const client = createClient(token);
         const response = await client.get(`/userprojects/${userId}`);
 
         return response.data;
     },
-    getProjectById: async (projectId: string) => {
-        const client = createClient();
+    getProjectById: async (token: string, projectId: string) => {
+        const client = createClient(token);
         const response = await client.get(`/${projectId}`);
 
         return response.data;
     },
-    createNewProject: async (projectPayload: TProject) => {
-        const client = createClient();
+    createNewProject: async (token: string, projectPayload: TProject) => {
+        const client = createClient(token);
         const response = await client.post("/", projectPayload);
 
         return response.data;
     },
-    deleteProjectById: async (projectId: string) => {
-        const client = createClient();
+    deleteProjectById: async (token: string, projectId: string) => {
+        const client = createClient(token);
         const response = await client.delete(`/${projectId}`);
 
         return response.data;
     },
-    updateProjectById: async (projectPayload: TProject, projectId: string) => {
-        const client = createClient();
+    updateProjectById: async (
+        token: string,
+        projectPayload: TProject,
+        projectId: string
+    ) => {
+        const client = createClient(token);
         const response = await client.put(`/${projectId}`, projectPayload);
 
         return response.data;

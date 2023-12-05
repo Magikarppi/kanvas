@@ -16,16 +16,12 @@ export const createNewTeamDAO = async ({
     isPublic,
     
 }: ITeam) => {
-    const result = await executeQuery(insertNewTeam, [
+    await executeQuery(insertNewTeam, [
         id,
         name,
         admin,
         isPublic,     
     ]);
-
-    if (result) {
-        return result.rows[0] as ITeam;
-    }
 };
 
 export const addTeamUsersTeams = async ({
@@ -33,10 +29,7 @@ export const addTeamUsersTeams = async ({
     userId,
     teamId,    
 }: IUsersTeam) => {
-    const addedTeam = await executeQuery(insertTeamUsersTeam, [id,userId,teamId]);
-    if (addedTeam) {
-        return addedTeam.rows[0];
-    }
+    await executeQuery(insertTeamUsersTeam, [id,userId,teamId]);
 };
 
 

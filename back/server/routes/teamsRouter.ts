@@ -44,16 +44,16 @@ teams.post("/newteam", async (req: UserRequest, res: Response) => {
         await createNewTeamDAO(team);
         const teamId = team.id;
 
-        const addedTeam: IUsersTeam = {
+        const userTeam : IUsersTeam = {
             id: uuid(),
             userId: userId,
             teamId: teamId,
         };
   
-        await addTeamUsersTeams(addedTeam);
+        await addTeamUsersTeams(userTeam );
         res.json({
             team: team,
-            addedTeam: addedTeam,
+            addedTeam: userTeam ,
         });
     } catch (error) {
         return res

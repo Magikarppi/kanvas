@@ -38,4 +38,4 @@ export const getCardWithId = async (id: string) => {
     if (cards) {
         return cards.rows[0];
     }
-}
+};

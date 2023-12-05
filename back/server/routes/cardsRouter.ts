@@ -85,8 +85,8 @@ cards.put("/:id", async (req: Request, res: Response) => {
 });
 
 cards.get("/:id", async (req: Request, res: Response) => {
-   const id = req.params.id;
-   try {
+    const id = req.params.id;
+    try {
         const card: ICard = await getCardWithId(id);
         res.status(HTTP_RESPONSE_CODES.OK).json(card);
     } catch (error) {

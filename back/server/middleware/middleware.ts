@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import dotenv from "dotenv";
+import {
+    HTTP_RESPONSE_CODES,
+    RESPONSE_MESSAGES,
+    validateEmail,
+} from "../utils/utilities";
 
 dotenv.config();
 
@@ -49,6 +54,46 @@ export const loggerMiddleWare = (
     const requestBody = request.body;
     if (Object.keys(requestBody).length !== 0) {
         console.log(`Body:\n${JSON.stringify(requestBody, null, 2)}`);
+    }
+    next();
+};
+
+export const validateEmailAndNames = (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    const { firstName, lastName, email } = request.body;
+
+    if (!email || !firstName || !lastName) {
+        response
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
+        return;
+    }
+
+    if (firstName.trim().length === 0 || lastName.trim().length === 0) {
+        response
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.FNAME_LNAME_EMPTY);
+        return;
+    }
+
+    if (email.length > 255 || firstName.length > 255 || lastName.length > 255) {
+        response
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(
+                "Email, first name or last name cannot exceed 255 characters"
+            );
+        return;
+    }
+
+    const isEmailFormatValid = validateEmail(email);
+    if (isEmailFormatValid === false) {
+        response
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_EMAIL_FORMAT);
+        return;
     }
     next();
 };

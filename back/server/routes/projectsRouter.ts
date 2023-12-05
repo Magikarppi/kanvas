@@ -9,6 +9,7 @@ import {
     getUserProjects,
     getUserFavoriteProjects,
     getUserTeams,
+    deleteProjectDaO,
 } from "../../database/daos/projectsDao";
 import { IProject } from "../../database/utils/interfaces";
 import {
@@ -19,6 +20,10 @@ import {
 import { getUserEmailDAO, getUserDAO } from "../../database/daos/userDao";
 import { JwtPayload } from "jsonwebtoken";
 import { dummyGetProjectData } from "../../database/utils/dummyData";
+import {
+    getProjectAdminDAO,
+    removeUserRoleDAO,
+} from "../../database/daos/rolesDao";
 
 const router = Router();
 
@@ -74,6 +79,34 @@ router.post("/", async (req: UserRequest, res: Response) => {
         };
 
         return res.status(HTTP_RESPONSE_CODES.CREATED).json(formattedProject);
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
+    }
+});
+
+router.delete("/:id", async (req: UserRequest, res: Response) => {
+    try {
+        const userPayLoad = req.user as JwtPayload;
+        const userEmail = userPayLoad.value;
+        const user = await getUserEmailDAO(userEmail);
+
+        const userId = user.id;
+        const projectId = req.params.id;
+
+        const projectAdmin = await getProjectAdminDAO(userId, projectId);
+        if (!projectAdmin) {
+            res.status(HTTP_RESPONSE_CODES.FORBIDDEN).send(
+                RESPONSE_MESSAGES.FORBIDDEN
+            );
+            return;
+        }
+
+        await removeUserRoleDAO(userId, projectId); // for testing the endpoint, TODO: remove this call after we have altered database's delete behaviors
+        await deleteProjectDaO(projectId);
+        res.status(HTTP_RESPONSE_CODES.OK).send();
     } catch (error) {
         console.error(error);
         return res

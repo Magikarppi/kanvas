@@ -42,7 +42,6 @@ const App = () => {
                     <Route path="/projects" element={<AllProjectsPage />} />
 
                     <Route path="/profile" element={<UserProfilePage />} />
-
                     <Route path="*" element={<UnknownUrl />} />
                 </Routes>
                 {!user && <Footer />}

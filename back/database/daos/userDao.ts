@@ -5,6 +5,7 @@ import {
     getUserById,
     getUserByEmail,
     updatePassword,
+    getExistingEmailConflict,
 } from "../queries/userQueries";
 import { IUser, IUpdateUser } from "../utils/interfaces";
 import { executeQuery } from "../database-service";
@@ -39,6 +40,14 @@ export const getUserDAO = async (id: string) => {
 
 export const getUserEmailDAO = async (email: string) => {
     const result = await executeQuery(getUserByEmail, [email]);
+    if (result) {
+        return result.rows[0];
+    }
+};
+
+export const checkUserEmailConflictDAO = async (userId: string, email: string) => {
+    const queryParameters = [userId, email];
+    const result = await executeQuery(getExistingEmailConflict, queryParameters);
     if (result) {
         return result.rows[0];
     }

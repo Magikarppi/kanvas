@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import Icons from "../../../components/Icons/Icons";
 import { useNavigate } from "react-router-dom";
-
+import { validEmail } from "../../../utils/inputChecks";
 import userRequests from "../../../services/userService";
 import { INewUserBody } from "../../../models/userModels";
 
@@ -60,14 +60,16 @@ const RegistrationForm = () => {
 
     const handleSubmit = async () => {
         const userToRegister: INewUserBody = {
-            first_name: formData.firstName,
-            last_name: formData.lastName,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
             email: formData.email,
             password: formData.password,
+            passwordConfirmation: formData.confirmPassword
         };
-
         try {
-            await userRequests.registerUser(userToRegister);
+            if(validEmail(userToRegister.email)){
+                await userRequests.registerUser(userToRegister);
+            }
         } catch (error) {
             console.error(error);
             // Set error notification
@@ -91,7 +93,7 @@ const RegistrationForm = () => {
         const value = formData[field];
 
         if (field === "email") {
-            return touched[field] && !emailRegex.test(value);
+            return touched[field] && !validEmail(value);
         } else if (field === "password") {
             return touched[field] && !passWordRegex.test(value);
         } else if (
@@ -126,7 +128,7 @@ const RegistrationForm = () => {
             touched[field] &&
             formData.password !== formData.confirmPassword
         ) {
-            return "Password not match";
+            return "Passwords do not match";
         } else {
             return null;
         }

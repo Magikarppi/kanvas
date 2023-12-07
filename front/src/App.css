@@ -19,7 +19,8 @@ a {
 }
 
 .homeContainer1 {
-    background: url("styles/images/HomePage/mountain-climb.svg") no-repeat center center;
+    background: url("styles/images/HomePage/mountain-climb.svg") no-repeat
+        center center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -28,7 +29,8 @@ a {
 
 .homeContainer2 {
     min-height: 600px;
-    background: url("styles/images/HomePage/office-table.svg") no-repeat center center;
+    background: url("styles/images/HomePage/office-table.svg") no-repeat center
+        center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;

@@ -35,7 +35,7 @@ export interface ITeam {
     id: string;
     name: string;
     admin: string;
-    is_public: boolean;
+    isPublic: boolean;
 }
 
 export type IProject = {
@@ -60,4 +60,10 @@ export interface ICard {
     dueDate?: Date | null;
     attachments?: string | null;
     inColumn: string;
+}
+
+export interface IUsersTeam {
+    id: string;
+    userId: string;
+    teamId: string;
 }

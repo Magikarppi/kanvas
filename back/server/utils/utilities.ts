@@ -39,6 +39,7 @@ export const RESPONSE_MESSAGES = {
     INVALID_REQ_BODY: "One or more properties missing from the request body",
     INVALID_UNAME_PWORD: "Invalid username or password",
     USER_NOT_FOUND: "User with that id was not found",
-    TEAM_NOT_FOUND: "Team with that id was not found"
+    PASSWORDS_NO_MATCH: "The provided passwords do not match",
+    TEAM_NOT_FOUND: "Team with that id was not found",
+    CARD_NOT_FOUND: "Card with that id was not found",
 };
-

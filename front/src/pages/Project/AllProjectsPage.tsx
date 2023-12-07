@@ -7,6 +7,8 @@ import {
     Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import AddProjectModal from "../../components/Projects/AddProjectModal";
+import { useState } from "react";
 
 export interface IProject {
     id: string;
@@ -170,6 +172,7 @@ const createCard = (output: string) => (
             "&:hover": {
                 backgroundColor: "secondary.main",
             },
+            cursor: "pointer",
         }}
     >
         <CardContent>
@@ -177,65 +180,110 @@ const createCard = (output: string) => (
         </CardContent>
     </Card>
 );
+
 export default function AllProjectsPage() {
+    const [addProjectModalOpen, setAddProjectModalOpen] =
+        useState<boolean>(false);
+
+    const openAddProjectModal = () => setAddProjectModalOpen(true);
+    const closeAddProjectModal = () => setAddProjectModalOpen(false);
+
+    const AddNewProjectCard = () => (
+        <Card
+            onClick={openAddProjectModal}
+            elevation={2}
+            sx={{
+                height: "60px",
+                pl: "10px",
+                pr: "10px",
+                border: "1px solid #ffff",
+                "&:hover": {
+                    backgroundColor: "secondary.main",
+                },
+                cursor: "pointer",
+            }}
+        >
+            <CardContent>
+                <Typography variant="h6" sx={{ color: "primary.main" }}>
+                    + Add new project
+                </Typography>
+            </CardContent>
+        </Card>
+    );
+
     return (
-        <Stack sx={{ minHeight: "90vh" }}>
-            <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
-                <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
-                    My projects
-                </Typography>
-                <Grid
-                    container
-                    rowSpacing={1}
-                    columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-                >
-                    {dummyProjects.map((project) => (
-                        <Grid key={project.id} item xs={12} sm={6} md={3}>
-                            <Link to={`/${project.id}`}>
-                                {createCard(project.name)}
-                            </Link>
+        <>
+            <AddProjectModal
+                open={addProjectModalOpen}
+                close={closeAddProjectModal}
+            />
+            <Stack sx={{ minHeight: "90vh" }}>
+                <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
+                    <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+                        My projects
+                    </Typography>
+                    <Grid
+                        container
+                        rowSpacing={1}
+                        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                    >
+                        <Grid item xs={12} sm={6} md={3}>
+                            <AddNewProjectCard />
                         </Grid>
-                    ))}
+                        {dummyProjects.map((project) => (
+                            <Grid key={project.id} item xs={12} sm={6} md={3}>
+                                <Link to={`/${project.id}`}>
+                                    {createCard(project.name)}
+                                </Link>
+                            </Grid>
+                        ))}
+                    </Grid>
                 </Grid>
-            </Grid>
-            <Divider light sx={{ width: "100%" }} />
-            <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
-                <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
-                    My organizations
-                </Typography>
-                <Grid
-                    container
-                    rowSpacing={1}
-                    columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-                >
-                    {dummyOrganizations.map((organization) => (
-                        <Grid key={organization.id} item xs={12} sm={6} md={3}>
-                            <Link to={`/${organization.id}`}>
-                                {createCard(organization.name)}
-                            </Link>
-                        </Grid>
-                    ))}
+                <Divider light sx={{ width: "100%" }} />
+                <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
+                    <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+                        My organizations
+                    </Typography>
+                    <Grid
+                        container
+                        rowSpacing={1}
+                        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                    >
+                        {dummyOrganizations.map((organization) => (
+                            <Grid
+                                key={organization.id}
+                                item
+                                xs={12}
+                                sm={6}
+                                md={3}
+                            >
+                                <Link to={`/${organization.id}`}>
+                                    {createCard(organization.name)}
+                                </Link>
+                            </Grid>
+                        ))}
+                    </Grid>
                 </Grid>
-            </Grid>
-            <Divider light sx={{ height: "1px", width: "100%" }} />
-            <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
-                <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
-                    Open projects
-                </Typography>
-                <Grid
-                    container
-                    rowSpacing={1}
-                    columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-                >
-                    {dummyOpenProjects.map((project) => (
-                        <Grid key={project.id} item xs={12} sm={6} md={3}>
-                            <Link to={`/${project.id}`}>
-                                {createCard(project.name)}
-                            </Link>
-                        </Grid>
-                    ))}
+                <Divider light sx={{ height: "1px", width: "100%" }} />
+                <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
+                    <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+                        Open projects
+                    </Typography>
+                    <Grid
+                        container
+                        rowSpacing={1}
+                        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                    >
+                        {dummyOpenProjects.map((project) => (
+                            <Grid key={project.id} item xs={12} sm={6} md={3}>
+                                <Link to={`/${project.id}`}>
+                                    {createCard(project.name)}
+                                </Link>
+                            </Grid>
+                        ))}
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Stack>
+            </Stack>
+        </>
     );
 }

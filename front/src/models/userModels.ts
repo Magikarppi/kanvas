@@ -1,8 +1,9 @@
 export interface INewUserBody {
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
-    first_name: string;
-    last_name: string;
+    passwordConfirmation: string;
 }
 
 export interface ILoginBody {
@@ -12,16 +13,16 @@ export interface ILoginBody {
 
 export interface IUpdateUserBodyWithoutPassword {
     id: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     email: string;
-    phone_number: string | null;
+    phoneNumber: string | null;
     country: string | null;
     city: string | null;
     picture: string | null;
-    is_open_to_work: boolean;
-    linkedin_username: string | null;
-    job_pitch: string | null;
+    isOpenToWork: boolean;
+    linkedinUsername: string | null;
+    jobPitch: string | null;
 }
 
 export interface IUpdatePasswordBody {

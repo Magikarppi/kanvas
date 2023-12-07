@@ -6,6 +6,7 @@ import {
     getProjectsByUserId,
     favoriteProjectsByUserId,
     userTeamsByUserId,
+    deleteProject,
 } from "../queries/projectQueries";
 import { IProject } from "../utils/interfaces";
 
@@ -31,8 +32,13 @@ export const addProjectDao = async ({
     ]);
 
     if (result) {
-        return result.rows[0] as IProject | null;
+        return result.rows[0];
     }
+};
+
+export const deleteProjectDaO = async (projectId: string) => {
+    const queryParameters = [projectId];
+    await executeQuery(deleteProject, queryParameters);
 };
 
 export const getProjectMemberDAO = async (
@@ -48,7 +54,7 @@ export const getProjectMemberDAO = async (
     }
 };
 
-export const getSingleProjectDAO = async (projectId:string) => {
+export const getSingleProjectDAO = async (projectId: string) => {
     const result = await executeQuery(getProjectById, [projectId]);
     if (result) {
         return result.rows[0];
@@ -56,31 +62,21 @@ export const getSingleProjectDAO = async (projectId:string) => {
 };
 
 export const getUserProjects = async (userId: string) => {
-    const result = await executeQuery(getProjectsByUserId, [
-        userId,
-    ]);
+    const result = await executeQuery(getProjectsByUserId, [userId]);
     if (result) {
         return result.rows;
     }
 };
 
-export const getUserFavoriteProjects = async (
-    userId: string,
-) => {
-    const result = await executeQuery(favoriteProjectsByUserId, [
-        userId,
-    ]);
+export const getUserFavoriteProjects = async (userId: string) => {
+    const result = await executeQuery(favoriteProjectsByUserId, [userId]);
     if (result) {
         return result.rows;
     }
 };
 
-export const getUserTeams = async (
-    userId: string,
-) => {
-    const result = await executeQuery(userTeamsByUserId, [
-        userId,
-    ]);
+export const getUserTeams = async (userId: string) => {
+    const result = await executeQuery(userTeamsByUserId, [userId]);
     if (result) {
         return result.rows;
     }

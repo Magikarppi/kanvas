@@ -107,8 +107,7 @@ cards.delete("/:id", async (req: UserRequest, res: Response) => {
         const card = await getCardWithId(id);
         if(card){
             await deleteCardDaO(id);
-            res.json("Card deleted");
-            return res.status(HTTP_RESPONSE_CODES.OK).send();
+            return res.status(HTTP_RESPONSE_CODES.OK).send("Card deleted");
         } else {
             res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.CARD_NOT_FOUND);
         }

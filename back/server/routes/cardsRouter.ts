@@ -83,21 +83,6 @@ cards.put("/:id", async (req: Request, res: Response) => {
         );
     }
 });
-
-cards.delete("/:id", async (req: UserRequest, res: Response) => {
-    try {
-        const { id } = req.params;
-        await deleteCardDaO(id);
-        res.json("Card deleted");
-        return res.status(HTTP_RESPONSE_CODES.OK).send();
-        
-    } catch (error) {
-        console.error(error);
-        return res
-            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
-            .send(RESPONSE_MESSAGES.SERVER_ERROR);
-    }
-});
     
 cards.get("/:id", async (req: Request, res: Response) => {
     const id = req.params.id;
@@ -115,4 +100,24 @@ cards.get("/:id", async (req: Request, res: Response) => {
         );
     }
 });
+
+cards.delete("/:id", async (req: UserRequest, res: Response) => {
+    try {
+        const { id } = req.params;
+        const card = await getCardWithId(id);
+        if(card){
+            await deleteCardDaO(id);
+            res.json("Card deleted");
+            return res.status(HTTP_RESPONSE_CODES.OK).send();
+        } else {
+            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.CARD_NOT_FOUND);
+        }
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
+    }
+});
+
 export default cards;

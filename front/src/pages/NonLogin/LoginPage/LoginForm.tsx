@@ -16,6 +16,7 @@ import userRequests from "../../../services/userService";
 import { ILoginBody } from "../../../models/userModels";
 import { useDispatch } from "react-redux";
 import { validEmail } from "../../../utils/inputChecks";
+import { signInUser } from "../../../redux/userReducer";
 
 
 
@@ -96,10 +97,7 @@ const LoginForm = () => {
         
         try {
             const user = await userRequests.loginUser(userToLogin);
-            dispatch({
-                type: "setUser",
-                payload: user 
-            });
+            signInUser(user);
             if(validEmail(userToLogin.email)){
                 const user = await userRequests.loginUser(userToLogin);
                 console.log("user", user);   // Set user to state / store

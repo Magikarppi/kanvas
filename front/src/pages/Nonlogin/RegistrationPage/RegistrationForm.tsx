@@ -64,6 +64,7 @@ const RegistrationForm = () => {
             lastName: formData.lastName,
             email: formData.email,
             password: formData.password,
+            passwordConfirmation: formData.confirmPassword
         };
         try {
             if(validEmail(userToRegister.email)){
@@ -127,7 +128,7 @@ const RegistrationForm = () => {
             touched[field] &&
             formData.password !== formData.confirmPassword
         ) {
-            return "Password not match";
+            return "Passwords do not match";
         } else {
             return null;
         }

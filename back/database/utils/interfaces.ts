@@ -61,3 +61,9 @@ export interface ICard {
     attachments?: string | null;
     inColumn: string;
 }
+
+export interface IUsersTeam {
+    id: string;
+    userId: string;
+    teamId: string;
+}

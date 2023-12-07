@@ -10,10 +10,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import EmailIcon from "@mui/icons-material/Email";
+import GridViewIcon from "@mui/icons-material/GridView";
 import Groups2Icon from "@mui/icons-material/Groups2";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
-import ListIcon from "@mui/icons-material/List";
 import KeyIcon from "@mui/icons-material/Key";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -21,10 +21,12 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import Search from "@mui/icons-material/Search";
+import SettingsIcon from "@mui/icons-material/Settings";
 import ShareIcon from "@mui/icons-material/Share";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ViewListIcon from "@mui/icons-material/ViewList";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
@@ -99,6 +101,13 @@ const Icons = {
             style={{ color: props.iconColor, fontSize: props.size }}
         />
     )),
+    Grid: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <GridViewIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
     Home: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <HomeIcon
             {...props}
@@ -128,7 +137,7 @@ const Icons = {
         />
     )),
     List: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
-        <ListIcon
+        <ViewListIcon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}
@@ -171,6 +180,13 @@ const Icons = {
     )),
     Search: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <Search
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    Settings: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <SettingsIcon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}

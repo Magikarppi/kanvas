@@ -37,14 +37,14 @@ const App = () => {
                         element={<ForgotPasswordPage />}
                     />
 
-                    <Route path="/project" element={<ProjectPage />} />
+                    <Route path="/project/:id" element={<ProjectPage />} />
 
                     <Route path="/projects" element={<AllProjectsPage />} />
 
                     <Route path="/profile" element={<UserProfilePage />} />
                     <Route path="*" element={<UnknownUrl />} />
                 </Routes>
-                <Footer />
+                {!user && <Footer />}
             </MainContainer>
         </div>
     );

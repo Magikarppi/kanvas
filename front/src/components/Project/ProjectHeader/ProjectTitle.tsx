@@ -33,7 +33,7 @@ const ProjectTitle = () => {
 
     return (
         <Grid container>
-            <Grid item xs={12} sm={5} md={3} lg={2.5} xl={1.8}>
+            <Grid item xs={12} sm={6.5} md={4} lg={2.5} xl={1.8}>
                 <Card
                     style={{
                         height: "100px",
@@ -77,8 +77,8 @@ const ProjectTitle = () => {
             <Grid
                 item
                 xs={12}
-                sm={7}
-                md={9}
+                sm={6.5}
+                md={8}
                 lg={9.5}
                 xl={10.2}
                 marginTop={{ xs: "20px", sm: "5px" }}

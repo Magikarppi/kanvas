@@ -1,6 +1,6 @@
 import { executeQuery } from "../database-service";
 import { ITeam, IUsersTeam } from "../utils/interfaces";
-import { getTeamById, insertNewTeam, insertTeamUsersTeam } from "../queries/teamQueries";
+import { getTeamById, insertNewTeam, insertTeamUsersTeam, updateTeam } from "../queries/teamQueries";
 
 export const getTeamByIdDao = async (id: string) => {
     const teams = await executeQuery(getTeamById, [id]);
@@ -30,6 +30,15 @@ export const addTeamUsersTeams = async ({
     teamId,    
 }: IUsersTeam) => {
     await executeQuery(insertTeamUsersTeam, [id,userId,teamId]);
+};
+
+export const updateTeamDao = async (id: string, team: ITeam) => {
+ 
+    await executeQuery(updateTeam, [  
+        team.name,
+        team.isPublic,
+        id
+    ]);
 };
 
 

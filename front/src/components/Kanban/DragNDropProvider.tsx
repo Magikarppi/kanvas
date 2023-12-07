@@ -1,5 +1,5 @@
 import { FC, ReactNode, useState, createContext, useContext } from "react";
-import { DropResult } from "react-beautiful-dnd";
+import { DragStart, DragUpdate, DropResult } from "react-beautiful-dnd";
 import {
     TColumn,
     TDragDropProps,
@@ -43,8 +43,9 @@ const getStyle = (
     clientDirection: "clientHeight" | "clientWidth"
 ) =>
     updatedChildrenArray.slice(0, destinationIndex).reduce((total, curr) => {
-        const style = window.getComputedStyle(curr);
-        const prop = parseFloat(style[property]);
+        const style = window.getComputedStyle(curr) as CSSStyleDeclaration;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const prop = parseFloat((style as any)[property]);
         return total + curr[clientDirection] + prop;
     }, 0);
 
@@ -177,7 +178,7 @@ const DragNDropProvider: FC<{
         });
     };
 
-    const handleDragUpdate = (event) => {
+    const handleDragUpdate = (event: DragUpdate) => {
         const { source, destination } = event;
         if (!destination) return;
 
@@ -188,7 +189,7 @@ const DragNDropProvider: FC<{
         }
     };
 
-    const handleDragStart = (event) => {
+    const handleDragStart = (event: DragStart) => {
         const { index } = event.source;
         if (event.type === "column") {
             handleDropshadowColumn(event, index, index);

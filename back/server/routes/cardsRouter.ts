@@ -92,7 +92,6 @@ cards.get("/:id", async (req: Request, res: Response) => {
             res.status(HTTP_RESPONSE_CODES.OK).json(card);
         } else {
             res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.CARD_NOT_FOUND);
-            
         }
     } catch (error) {
         console.error(error);

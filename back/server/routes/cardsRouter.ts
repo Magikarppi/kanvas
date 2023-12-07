@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { cardsDaoUpdate, createCardDAO } from "../../database/daos/cardsDao";
+import { cardsDaoUpdate, createCardDAO, deleteCardDaO } from "../../database/daos/cardsDao";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
@@ -81,6 +81,21 @@ cards.put("/:id", async (req: Request, res: Response) => {
         res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
             RESPONSE_MESSAGES.SERVER_ERROR
         );
+    }
+});
+
+cards.delete("/:id", async (req: UserRequest, res: Response) => {
+    try {
+        const { id } = req.params;
+        await deleteCardDaO(id);
+        res.json("Card deleted");
+        return res.status(HTTP_RESPONSE_CODES.OK).send();
+        
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
     }
 });
 export default cards;

@@ -1,5 +1,5 @@
 import { executeQuery } from "../database-service";
-import { createCard, updateCard } from "../queries/cardQueries";
+import { createCard, updateCard, deleteCard } from "../queries/cardQueries";
 import { ICard } from "../utils/interfaces";
 
 export const createCardDAO = async (card: ICard) => {
@@ -31,4 +31,9 @@ export const cardsDaoUpdate = async (id: string, card: ICard) => {
         id,
     ];
     await executeQuery(updateCard, array);
+};
+
+export const deleteCardDaO = async (cardId: string) => {
+    const queryParameters = [cardId];
+    await executeQuery(deleteCard, queryParameters);
 };

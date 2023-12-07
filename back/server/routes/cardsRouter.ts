@@ -88,7 +88,12 @@ cards.get("/:id", async (req: Request, res: Response) => {
     const id = req.params.id;
     try {
         const card: ICard = await getCardWithId(id);
-        res.status(HTTP_RESPONSE_CODES.OK).json(card);
+        if(card){
+            res.status(HTTP_RESPONSE_CODES.OK).json(card);
+        } else {
+            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.CARD_NOT_FOUND);
+            
+        }
     } catch (error) {
         console.error(error);
         res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(

@@ -8,6 +8,7 @@ export const insertNewTeam =  `
         ) VALUES (
         $1, $2, $3, $4
         )`;
+export const deleteUserTeam = "DELETE FROM user_teams WHERE team_id = $1";
 export const deleteTeam = "DELETE FROM teams WHERE id = $1";
 
 export const updateTeam = `

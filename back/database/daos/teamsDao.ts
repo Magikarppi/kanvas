@@ -1,6 +1,13 @@
 import { executeQuery } from "../database-service";
 import { ITeam, IUsersTeam } from "../utils/interfaces";
-import { getTeamById, insertNewTeam, insertTeamUsersTeam, updateTeam } from "../queries/teamQueries";
+import {
+    getTeamById,
+    insertNewTeam,
+    insertTeamUsersTeam,
+    updateTeam,
+    deleteTeam,
+    deleteUserTeam,
+} from "../queries/teamQueries";
 
 export const getTeamByIdDao = async (id: string) => {
     const teams = await executeQuery(getTeamById, [id]);
@@ -33,7 +40,7 @@ export const addTeamUsersTeams = async ({
 };
 
 export const updateTeamDao = async (id: string, team: ITeam) => {
- 
+    
     await executeQuery(updateTeam, [  
         team.name,
         team.isPublic,
@@ -41,4 +48,7 @@ export const updateTeamDao = async (id: string, team: ITeam) => {
     ]);
 };
 
-
+export const deleteTeamDAO = async (id: string) => {
+    await executeQuery(deleteUserTeam, [id]);
+    await executeQuery(deleteTeam, [id]);
+};

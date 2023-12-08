@@ -7,6 +7,7 @@ import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
     getCurrentTimestamp,
+    validatePasswordFormat,
 } from "../utils/utilities";
 import {
     getUserEmailDAO,
@@ -94,6 +95,14 @@ users.post(
     async (request: Request, response: Response) => {
         try {
             const { email, password, passwordConfirmation } = request.body;
+
+            const isPasswordFormatValid = validatePasswordFormat(password);
+            if (!isPasswordFormatValid) {
+                response
+                    .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                    .send(RESPONSE_MESSAGES.INVALID_PWORD_FORMAT);
+                return;
+            }
 
             if (password !== passwordConfirmation) {
                 response
@@ -290,6 +299,14 @@ users.put(
             response
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
                 .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
+            return;
+        }
+
+        const isPasswordFormatValid = validatePasswordFormat(newPassword);
+        if (!isPasswordFormatValid) {
+            response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.INVALID_PWORD_FORMAT);
             return;
         }
 

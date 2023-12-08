@@ -19,6 +19,12 @@ export const validateEmail = (email: string): boolean => {
     return validateEmailRegEx.test(email);
 };
 
+export const validatePasswordFormat = (password: string): boolean => {
+    // 8-50 characters long, at least one number and one special character listed inside square brackets
+    const passwordRegEx = /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/\\-\\=-]).{8,50}$/;
+    return passwordRegEx.test(password);
+};
+
 export const HTTP_RESPONSE_CODES = {
     OK: 200,
     CREATED: 201,
@@ -36,6 +42,8 @@ export const RESPONSE_MESSAGES = {
     FNAME_LNAME_EMPTY: "First name or last name cannot be empty",
     FORBIDDEN: "You have no authorization to do this",
     INVALID_EMAIL_FORMAT: "Invalid Email address format",
+    INVALID_PWORD_FORMAT:
+        "Password should be 8-50 characters long and contain at least one special character and one number",
     INVALID_REQ_BODY: "One or more properties missing from the request body",
     INVALID_UNAME_PWORD: "Invalid username or password",
     USER_NOT_FOUND: "User with that id was not found",

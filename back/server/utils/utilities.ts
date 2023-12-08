@@ -41,5 +41,6 @@ export const RESPONSE_MESSAGES = {
     USER_NOT_FOUND: "User with that id was not found",
     PASSWORDS_NO_MATCH: "The provided passwords do not match",
     TEAM_NOT_FOUND: "Team with that id was not found",
+    PROJECT_NOT_FOUND: "Project with that id was not found",
     CARD_NOT_FOUND: "Card with that id was not found",
 };

@@ -10,6 +10,7 @@ import {
     getUserFavoriteProjects,
     getUserTeams,
     deleteProjectDaO,
+    updateProjectDAO,
 } from "../../database/daos/projectsDao";
 import { IProject } from "../../database/utils/interfaces";
 import {
@@ -210,4 +211,63 @@ router.get("/userprojects/:id", async (req: UserRequest, res: Response) => {
         );
     }
 });
+
+router.put("/:id", async (req: UserRequest, res: Response) => {
+    try {
+        const requestingUser = req.user as JwtPayload;
+        const projectId = req.params.id;
+        const {
+            name,
+            description,
+            isPublic,
+            creationDate,
+            endDate,
+            theme,
+            picture,
+        } = req.body;
+
+        const user = await getUserEmailDAO(requestingUser.value);
+
+        const projectAdmin = await getProjectAdminDAO(user.id, projectId);
+        if (!projectAdmin) {
+            res.status(HTTP_RESPONSE_CODES.FORBIDDEN).send(
+                RESPONSE_MESSAGES.FORBIDDEN
+            );
+            return;
+        }
+
+        const project = await getSingleProjectDAO(projectId);
+
+        if (!project) {
+            return res
+                .status(HTTP_RESPONSE_CODES.NOT_FOUND)
+                .send(RESPONSE_MESSAGES.PROJECT_NOT_FOUND);
+        }
+
+        const updatedProject: IProject = {
+            id: project.id,
+            name: name || project.name,
+            description:
+                description !== undefined ? description : project.description,
+            isPublic: isPublic !== undefined ? isPublic : project.is_public,
+            creationDate:
+                creationDate !== undefined
+                    ? creationDate
+                    : project.project_creation_date,
+            endDate: endDate !== undefined ? endDate : project.project_end_date,
+            theme: theme !== undefined ? theme : project.theme,
+            picture: picture !== undefined ? picture : project.picture,
+        };
+
+        await updateProjectDAO(projectId, updatedProject);
+
+        res.status(HTTP_RESPONSE_CODES.OK).send();
+    } catch (error) {
+        console.log(error);
+        res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
+            RESPONSE_MESSAGES.SERVER_ERROR
+        );
+    }
+});
+
 export default router;

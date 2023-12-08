@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import Icons from "../../../components/Icons/Icons";
 import { useNavigate } from "react-router-dom";
-import { validEmail } from "../../../utils/inputChecks";
+import { validEmail, validatePasswordFormat } from "../../../utils/inputChecks";
 import userRequests from "../../../services/userService";
 import { INewUserBody } from "../../../models/userModels";
 
@@ -67,9 +67,7 @@ const RegistrationForm = () => {
             passwordConfirmation: formData.confirmPassword
         };
         try {
-            if(validEmail(userToRegister.email)){
-                await userRequests.registerUser(userToRegister);
-            }
+            await userRequests.registerUser(userToRegister); 
         } catch (error) {
             console.error(error);
             // Set error notification
@@ -85,17 +83,13 @@ const RegistrationForm = () => {
         setTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
     };
 
-    const passWordRegex = /^(?=.*[a-z]).{8,40}$/; // Minimum eight characters, at least one letter
-    const emailRegex =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
     const validateInputs = (field: keyof typeof formData) => {
         const value = formData[field];
 
         if (field === "email") {
             return touched[field] && !validEmail(value);
         } else if (field === "password") {
-            return touched[field] && !passWordRegex.test(value);
+            return touched[field] && !validatePasswordFormat(value);
         } else if (
             field === "confirmPassword" &&
             formData.password !== formData.confirmPassword
@@ -114,15 +108,15 @@ const RegistrationForm = () => {
         } else if (
             field === "email" &&
             touched[field] &&
-            !emailRegex.test(value)
+            !validEmail(value)
         ) {
             return "Invalid email address";
         } else if (
             field === "password" &&
             touched[field] &&
-            !passWordRegex.test(value)
+            !validatePasswordFormat(value)
         ) {
-            return "Minimum eight characters and at least one letter";
+            return "The password should be 8-50 characters long and contain at least one special character and one number";
         } else if (
             field === "confirmPassword" &&
             touched[field] &&
@@ -141,8 +135,8 @@ const RegistrationForm = () => {
         formData.confirmPassword === "" ||
         formData.password !== formData.confirmPassword ||
         formData.email === "" ||
-        !emailRegex.test(formData.email) ||
-        !passWordRegex.test(formData.password);
+        !validEmail(formData.email) ||
+        !validatePasswordFormat(formData.password);
 
     return (
         <Container maxWidth="xs">

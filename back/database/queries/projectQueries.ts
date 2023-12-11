@@ -21,3 +21,16 @@ export const favoriteProjectsByUserId =
 
 export const userTeamsByUserId =
     "SELECT teams.* FROM teams INNER JOIN user_teams ON teams.id = user_teams.team_id INNER JOIN users ON user_teams.user_id = users.id WHERE users.id = $1;";
+
+export const updateProjectByIdQuery = `
+    UPDATE projects
+        SET
+            name = $1,
+            description = $2,
+            is_public = $3,
+            project_creation_date = $4,
+            project_end_date = $5,
+            theme = $6,
+            picture = $7
+        WHERE id = $8
+`;

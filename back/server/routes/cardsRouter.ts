@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { cardsDaoUpdate, createCardDAO } from "../../database/daos/cardsDao";
+import { cardsDaoUpdate, createCardDAO, deleteCardDaO, getCardWithId } from "../../database/daos/cardsDao";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
@@ -83,4 +83,40 @@ cards.put("/:id", async (req: Request, res: Response) => {
         );
     }
 });
+    
+cards.get("/:id", async (req: Request, res: Response) => {
+    const id = req.params.id;
+    try {
+        const card: ICard = await getCardWithId(id);
+        if(card){
+            res.status(HTTP_RESPONSE_CODES.OK).json(card);
+        } else {
+            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.CARD_NOT_FOUND);
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
+            RESPONSE_MESSAGES.SERVER_ERROR
+        );
+    }
+});
+
+cards.delete("/:id", async (req: UserRequest, res: Response) => {
+    try {
+        const { id } = req.params;
+        const card = await getCardWithId(id);
+        if(card){
+            await deleteCardDaO(id);
+            return res.status(HTTP_RESPONSE_CODES.OK).send("Card deleted");
+        } else {
+            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.CARD_NOT_FOUND);
+        }
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
+    }
+});
+
 export default cards;

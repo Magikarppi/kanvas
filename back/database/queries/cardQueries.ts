@@ -13,3 +13,7 @@ export const updateCard = `UPDATE cards
     "in_column" = $8
   WHERE
       "id" = $9;`;
+
+export const deleteCard = "DELETE FROM cards WHERE id = $1";
+
+export const getCard = "SELECT * FROM cards WHERE id = $1";

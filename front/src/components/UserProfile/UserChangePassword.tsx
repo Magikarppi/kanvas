@@ -1,4 +1,4 @@
-import { useState, MouseEvent } from "react";
+import { useState, MouseEvent, ChangeEvent } from "react";
 
 import {
     Button,
@@ -12,43 +12,123 @@ import {
 import Icons from "../Icons/Icons";
 import userRequests from "../../services/userService";
 import { IUpdatePasswordBody } from "../../models/userModels";
+import { validatePasswordFormat } from "../../utils/inputChecks";
+
+interface IChangePasswordState {
+    password: string;
+    newPassword: string;
+    newPasswordConfirm: string;
+}
 
 const UserChangePassword = () => {
-    const [password, setPassword] = useState<string>("");
-    const [newPassword, setNewPassword] = useState<string>("");
-    const [newPasswordConfirm, setNewPasswordConfirm] = useState<string>("");
+    const [formData, setFormData] = useState<IChangePasswordState>({
+        password: "",
+        newPassword: "",
+        newPasswordConfirm: "",
+    });
 
-    const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
-    const [showNewPasswordConfirm, setShowNewPasswordConfirm] =
-        useState<boolean>(false);
+    const [showPasswords, setShowPasswords] = useState({
+        password: false,
+        newPassword: false,
+        newPasswordConfirm: false,
+    });
 
-    const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
+    const [touchedFields, setTouchedFields] = useState({
+        password: false,
+        newPassword: false,
+        newPasswordConfirm: false,
+    });
+
+    const handleMouseDownPassword = (e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
     };
 
     const handleSubmit = async () => {
-        // add validation
         try {
             const changePasswordBody: IUpdatePasswordBody = {
-                id: "insert-valid-userid-here",
-                oldPassword: password,
-                newPassword: newPassword,
-                newPasswordConfirmation: newPasswordConfirm,
+                id: "insert-valid-user-id-here",
+                oldPassword: formData.password,
+                newPassword: formData.newPassword,
+                newPasswordConfirmation: formData.newPasswordConfirm,
             };
 
             await userRequests.updatePassword(
                 "insert-valid-user-token-here",
                 changePasswordBody
             );
-            setPassword("");
-            setNewPassword("");
-            setNewPasswordConfirm("");
+            setFormData({
+                password: "",
+                newPassword: "",
+                newPasswordConfirm: "",
+            });
+            setTouchedFields({
+                password: false,
+                newPassword: false,
+                newPasswordConfirm: false,
+            });
         } catch (error) {
             console.error(error);
-            // set error notification
+            // TODO: set error notification
         }
     };
+
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    const handleClickShowPassword = (field: keyof typeof showPasswords) => {
+        setShowPasswords((prevFields) => ({
+            ...prevFields,
+            [field]: !prevFields[field],
+        }));
+    };
+
+    const handleInputBlur = (field: keyof typeof formData) => {
+        setTouchedFields((prevTouched) => ({ ...prevTouched, [field]: true }));
+    };
+
+    const validateInput = (field: keyof typeof formData) => {
+        const value = formData[field];
+        if (field === "newPassword") {
+            return touchedFields[field] && !validatePasswordFormat(value);
+        } else if (
+            field === "newPasswordConfirm" &&
+            formData.newPassword !== formData.newPasswordConfirm
+        ) {
+            return touchedFields[field];
+        } else {
+            return touchedFields[field] && value === "";
+        }
+    };
+
+    const getErrorText = (field: keyof typeof formData) => {
+        const value = formData[field];
+        if (touchedFields[field] && value === "") {
+            return "The field must be filled out";
+        } else if (
+            touchedFields[field] &&
+            field === "newPassword" &&
+            !validatePasswordFormat(value)
+        ) {
+            return "The password should be 8-50 characters long and contain at least one special character and one number";
+        } else if (
+            touchedFields[field] &&
+            field === "newPasswordConfirm" &&
+            formData.newPassword !== formData.newPasswordConfirm
+        ) {
+            return "Passwords do not match";
+        } else {
+            return null;
+        }
+    };
+
+    const isSubmitDisabled =
+        formData.password === "" ||
+        formData.newPassword === "" ||
+        formData.newPasswordConfirm === "" ||
+        formData.newPassword !== formData.newPasswordConfirm ||
+        !validatePasswordFormat(formData.newPassword);
 
     return (
         <Paper elevation={1} className="userEditProfileContainer">
@@ -67,28 +147,35 @@ const UserChangePassword = () => {
                     <form>
                         <TextField
                             required
+                            sx={{ mb: 2 }}
                             fullWidth
                             autoComplete="off"
                             size="small"
-                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            type={showPasswords.password ? "text" : "password"}
                             id="outlined-required-originalPassword"
                             label="Current password"
-                            value={password}
-                            onChange={({ target }) => setPassword(target.value)}
+                            error={validateInput("password")}
+                            helperText={getErrorText("password")}
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            onBlur={() => handleInputBlur("password")}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton
                                             aria-label="toggle password visibility"
                                             onClick={() =>
-                                                setShowPassword((show) => !show)
+                                                handleClickShowPassword(
+                                                    "password"
+                                                )
                                             }
                                             onMouseDown={
                                                 handleMouseDownPassword
                                             }
                                             edge="end"
                                         >
-                                            {showPassword ? (
+                                            {showPasswords.password ? (
                                                 <Icons.VisibilityOff />
                                             ) : (
                                                 <Icons.Visibility />
@@ -100,24 +187,29 @@ const UserChangePassword = () => {
                         />
                         <TextField
                             required
+                            sx={{ mb: 2 }}
                             fullWidth
                             autoComplete="off"
                             size="small"
-                            type={showNewPassword ? "text" : "password"}
+                            name="newPassword"
+                            type={
+                                showPasswords.newPassword ? "text" : "password"
+                            }
                             id="outlined-required-newPassword1"
                             label="New password"
-                            value={newPassword}
-                            onChange={({ target }) =>
-                                setNewPassword(target.value)
-                            }
+                            error={validateInput("newPassword")}
+                            helperText={getErrorText("newPassword")}
+                            value={formData.newPassword}
+                            onChange={handleInputChange}
+                            onBlur={() => handleInputBlur("newPassword")}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton
                                             aria-label="toggle password visibility"
                                             onClick={() =>
-                                                setShowNewPassword(
-                                                    (show) => !show
+                                                handleClickShowPassword(
+                                                    "newPassword"
                                                 )
                                             }
                                             onMouseDown={
@@ -125,7 +217,7 @@ const UserChangePassword = () => {
                                             }
                                             edge="end"
                                         >
-                                            {showNewPassword ? (
+                                            {showPasswords.newPassword ? (
                                                 <Icons.VisibilityOff />
                                             ) : (
                                                 <Icons.Visibility />
@@ -140,21 +232,27 @@ const UserChangePassword = () => {
                             fullWidth
                             autoComplete="off"
                             size="small"
-                            type={showNewPasswordConfirm ? "text" : "password"}
+                            name="newPasswordConfirm"
+                            type={
+                                showPasswords.newPasswordConfirm
+                                    ? "text"
+                                    : "password"
+                            }
                             id="outlined-required-newPassword2"
                             label="Confirm new password"
-                            value={newPasswordConfirm}
-                            onChange={({ target }) =>
-                                setNewPasswordConfirm(target.value)
-                            }
+                            error={validateInput("newPasswordConfirm")}
+                            helperText={getErrorText("newPasswordConfirm")}
+                            value={formData.newPasswordConfirm}
+                            onChange={handleInputChange}
+                            onBlur={() => handleInputBlur("newPasswordConfirm")}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton
                                             aria-label="toggle password visibility"
                                             onClick={() =>
-                                                setShowNewPasswordConfirm(
-                                                    (show) => !show
+                                                handleClickShowPassword(
+                                                    "newPasswordConfirm"
                                                 )
                                             }
                                             onMouseDown={
@@ -162,7 +260,7 @@ const UserChangePassword = () => {
                                             }
                                             edge="end"
                                         >
-                                            {showNewPasswordConfirm ? (
+                                            {showPasswords.newPasswordConfirm ? (
                                                 <Icons.VisibilityOff />
                                             ) : (
                                                 <Icons.Visibility />
@@ -178,6 +276,7 @@ const UserChangePassword = () => {
                         color="secondary"
                         style={{ marginTop: "20px" }}
                         onClick={handleSubmit}
+                        disabled={isSubmitDisabled}
                     >
                         Submit
                     </Button>

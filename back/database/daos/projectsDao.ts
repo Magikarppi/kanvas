@@ -7,6 +7,7 @@ import {
     favoriteProjectsByUserId,
     userTeamsByUserId,
     deleteProject,
+    updateProjectByIdQuery,
 } from "../queries/projectQueries";
 import { IProject } from "../utils/interfaces";
 
@@ -80,4 +81,21 @@ export const getUserTeams = async (userId: string) => {
     if (result) {
         return result.rows;
     }
+};
+
+export const updateProjectDAO = async (
+    projectId: string,
+    project: IProject
+) => {
+    const params = [
+        project.name,
+        project.description,
+        project.isPublic,
+        project.creationDate,
+        project.endDate,
+        project.theme,
+        project.picture,
+        projectId,
+    ];
+    await executeQuery(updateProjectByIdQuery, params);
 };

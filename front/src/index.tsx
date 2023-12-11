@@ -6,8 +6,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import { Provider } from "react-redux";
 import App from "./App";
 import theme from "./theme/theme";
-import store from "./store";
+import store from "./redux/store";
 import "./App.css";
+
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement

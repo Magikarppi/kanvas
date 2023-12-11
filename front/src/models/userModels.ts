@@ -31,3 +31,21 @@ export interface IUpdatePasswordBody {
     newPassword: string;
     newPasswordConfirmation: string;
 }
+
+export interface IUser {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    passwordHash: string;
+    phoneNumber: string | null;
+    country: string | null;
+    city: string | null;
+    picture: string | null;
+    accountCreationDate: Date | null;
+    isOnline: boolean | null;
+    lastOnline: Date | null;
+    isOpenToWork: boolean | null;
+    linkedinUsername: string | null;
+    jobPitch: string | null;
+}

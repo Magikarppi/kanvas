@@ -230,7 +230,6 @@ users.get("/:id", authenticate, async (req: UserRequest, res: Response) => {
             firstName: userInfo.first_name,
             lastName: userInfo.last_name,
             email: userInfo.email,
-            passwordHash: userInfo.password_hash,
             phoneNumber: userInfo.phone_number,
             country: userInfo.country,
             city: userInfo.city,

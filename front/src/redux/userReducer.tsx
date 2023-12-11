@@ -21,6 +21,9 @@ const userSlice = createSlice({
         setLoading(state, action) {
             state.loadingUser = action.payload;
         },
+        setToken(state, action){
+            state.token = action.payload;
+        }
     },
 });
 

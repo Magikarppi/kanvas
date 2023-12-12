@@ -6,9 +6,10 @@ import {
     Divider,
     Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AddProjectModal from "../../components/Projects/AddProjectModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { selectToken } from "../../redux/hooks";
 
 export interface IProject {
     id: string;
@@ -184,6 +185,15 @@ const createCard = (output: string) => (
 export default function AllProjectsPage() {
     const [addProjectModalOpen, setAddProjectModalOpen] =
         useState<boolean>(false);
+    const token = selectToken();
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!token) {
+            navigate("/");
+        }
+    }, [token]);
 
     const openAddProjectModal = () => setAddProjectModalOpen(true);
     const closeAddProjectModal = () => setAddProjectModalOpen(false);
@@ -210,6 +220,10 @@ export default function AllProjectsPage() {
             </CardContent>
         </Card>
     );
+
+    if (!token) {
+        return null;
+    }
 
     return (
         <>

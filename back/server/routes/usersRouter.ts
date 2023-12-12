@@ -202,7 +202,7 @@ users.post("/login", async (req: Request, res: Response) => {
             jobPitch: user.job_pitch,
         };
 
-        res.status(HTTP_RESPONSE_CODES.OK).json({ token, formattedUser });
+        res.status(HTTP_RESPONSE_CODES.OK).json({ token, user: formattedUser });
     } catch (error) {
         console.error(error);
         res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(

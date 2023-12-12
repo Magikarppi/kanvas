@@ -21,7 +21,7 @@ const UserProfileMenuList = ({
     setSelectedIndex,
 }: listIndex) => {
     const handleSignOut = () => {
-         signOutUser();
+        signOutUser();
     };
     return (
         <Paper elevation={12}>

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 
 import Icons from "../../components/Icons/Icons";
-
+import { signOutUser } from "../../redux/userReducer";
 type listIndex = {
     selectedIndex: number;
     setSelectedIndex: Dispatch<SetStateAction<number>>;
@@ -20,6 +20,9 @@ const UserProfileMenuList = ({
     selectedIndex,
     setSelectedIndex,
 }: listIndex) => {
+    const handleSignOut = () => {
+         signOutUser();
+    };
     return (
         <Paper elevation={12}>
             <List>
@@ -70,7 +73,7 @@ const UserProfileMenuList = ({
                     <ListItemIcon>
                         <Icons.SignOut size="18" />
                     </ListItemIcon>
-                    <Typography variant="body2">Sign out</Typography>
+                    <Typography variant="body2" onClick={handleSignOut}>Sign out</Typography>
                 </ListItemButton>
             </List>
         </Paper>

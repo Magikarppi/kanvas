@@ -21,13 +21,13 @@ const userSlice = createSlice({
         setLoading(state, action) {
             state.loadingUser = action.payload;
         },
-        setToken(state, action){
+        setToken(state, action) {
             state.token = action.payload;
-        }
+        },
     },
 });
 
-export const { setUserInfo, setLoading } = userSlice.actions;
+export const { setUserInfo, setLoading, setToken } = userSlice.actions;
 
 export const signInUser = (userPayload: ILoginBody) => {
     return async (dispatch: AppDispatch) => {
@@ -38,4 +38,10 @@ export const signInUser = (userPayload: ILoginBody) => {
     };
 };
 
+export const signOutUser = () => {
+    return async (dispatch: AppDispatch) => {
+        dispatch(setToken(''))
+           
+    };
+}
 export default userSlice.reducer;

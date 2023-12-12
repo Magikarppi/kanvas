@@ -190,7 +190,6 @@ users.post("/login", async (req: Request, res: Response) => {
             firstName: user.first_name,
             lastName: user.last_name,
             email: user.email,
-            passwordHash: user.password_hash,
             phoneNumber: user.phone_number,
             country: user.country,
             city: user.city,

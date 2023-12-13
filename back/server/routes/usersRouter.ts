@@ -27,8 +27,8 @@ import {
 const users = express.Router();
 const JWT_SECRET = process.env.SECRET as string;
 
-const createToken = (value: string) =>
-    jwt.sign({ value: value.toLowerCase() }, JWT_SECRET, {
+const createToken = (userId: string) =>
+    jwt.sign({ value: userId }, JWT_SECRET, {
         expiresIn: 60000 * 60 * 24,
     });
 
@@ -41,10 +41,9 @@ users.put(
 
         try {
             const userPayLoad = request.user as JwtPayload;
-            const userEmail = userPayLoad.value;
-            const existingUser = await getUserEmailDAO(userEmail);
+            const tokenUserId = userPayLoad.value;
 
-            if ((existingUser.id as string) !== id) {
+            if (tokenUserId !== id) {
                 response
                     .status(HTTP_RESPONSE_CODES.FORBIDDEN)
                     .send(RESPONSE_MESSAGES.FORBIDDEN);
@@ -164,7 +163,7 @@ users.post("/login", async (req: Request, res: Response) => {
     }
 
     try {
-        const user = await getUserEmailDAO((email as string).toLowerCase());
+        const user = await getUserEmailDAO(email);
 
         if (!user) {
             return res
@@ -183,7 +182,7 @@ users.post("/login", async (req: Request, res: Response) => {
                 .send(RESPONSE_MESSAGES.INVALID_UNAME_PWORD);
         }
 
-        const token = createToken(email);
+        const token = createToken(user.id);
 
         const formattedUser: IUser = {
             id: user.id,
@@ -214,17 +213,17 @@ users.post("/login", async (req: Request, res: Response) => {
 users.get("/:id", authenticate, async (req: UserRequest, res: Response) => {
     try {
         const { id } = req.params;
-        const { value: requestingUser } = req.user as JwtPayload;
+        const { value: tokenUserId } = req.user as JwtPayload;
 
-        const userInfo = await getUserDAO(id);
-
-        if (!userInfo) {
-            return res
-                .status(HTTP_RESPONSE_CODES.NOT_FOUND)
-                .send(RESPONSE_MESSAGES.USER_NOT_FOUND);
+        if (id !== tokenUserId) {
+            res.status(HTTP_RESPONSE_CODES.FORBIDDEN).send(
+                RESPONSE_MESSAGES.FORBIDDEN
+            );
+            return;
         }
 
-        const user: IUser = {
+        const userInfo = await getUserDAO(id);
+        const user: Partial<IUser> = {
             id: userInfo.id,
             firstName: userInfo.first_name,
             lastName: userInfo.last_name,
@@ -240,14 +239,7 @@ users.get("/:id", authenticate, async (req: UserRequest, res: Response) => {
             linkedinUsername: userInfo.linkedin_username,
             jobPitch: userInfo.job_pitch,
         };
-
-        if (user.email === requestingUser) {
-            return res.status(HTTP_RESPONSE_CODES.OK).json(user);
-        } else {
-            return res
-                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
-                .send(RESPONSE_MESSAGES.FORBIDDEN);
-        }
+        res.status(HTTP_RESPONSE_CODES.OK).json(user);
     } catch (error) {
         console.error(error);
         return res
@@ -259,24 +251,16 @@ users.get("/:id", authenticate, async (req: UserRequest, res: Response) => {
 users.delete("/:id", authenticate, async (req: UserRequest, res: Response) => {
     try {
         const { id } = req.params;
-        const user = req.user as JwtPayload;
+        const { value: tokenUserId } = req.user as JwtPayload;
 
-        const userToDelete = await getUserDAO(id);
-
-        if (!userToDelete) {
-            return res
-                .status(HTTP_RESPONSE_CODES.NOT_FOUND)
-                .send(RESPONSE_MESSAGES.USER_NOT_FOUND);
+        if (id !== tokenUserId) {
+            res.status(HTTP_RESPONSE_CODES.FORBIDDEN).send(
+                RESPONSE_MESSAGES.FORBIDDEN
+            );
+            return;
         }
-
-        if (userToDelete.email === user.value) {
-            await deleteUserDAO(id);
-            return res.status(HTTP_RESPONSE_CODES.OK).send();
-        } else {
-            return res
-                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
-                .send(RESPONSE_MESSAGES.FORBIDDEN);
-        }
+        await deleteUserDAO(id);
+        return res.status(HTTP_RESPONSE_CODES.OK).send();
     } catch (error) {
         console.error(error);
         return res
@@ -290,9 +274,16 @@ users.put(
     authenticate,
     async (request: UserRequest, response: Response) => {
         const userId = request.params.id;
+        const { value: tokenUserId } = request.user as JwtPayload;
+
+        const isCorrectUser = userId === tokenUserId;
+        if (!isCorrectUser) {
+            response.status(HTTP_RESPONSE_CODES.FORBIDDEN).send(RESPONSE_MESSAGES.FORBIDDEN);
+            return;
+        }
+
         const { oldPassword, newPassword, newPasswordConfirmation } =
             request.body;
-
         if (!oldPassword || !newPassword || !newPasswordConfirmation) {
             response
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
@@ -317,30 +308,23 @@ users.put(
 
         try {
             const user = await getUserDAO(userId);
-            const userPayLoad = request.user as JwtPayload;
-            const isCorrectUser = user?.email === userPayLoad.value;
 
-            if (isCorrectUser && user) {
-                const isOldPasswordValid = await argon2.verify(
-                    user.password_hash,
-                    oldPassword
-                );
-                if (isOldPasswordValid) {
-                    const newHashedPassword = await argon2.hash(newPassword);
-                    await updatePasswordDAO(userId, newHashedPassword);
-                    response.status(HTTP_RESPONSE_CODES.NO_CONTENT).send();
-                } else {
-                    response
-                        .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-                        .send(
-                            "Password was not updated because the old password was incorrect"
-                        );
-                }
+            const isOldPasswordCorrect = await argon2.verify(
+                user.password_hash,
+                oldPassword
+            );
+            if (isOldPasswordCorrect) {
+                const newHashedPassword = await argon2.hash(newPassword);
+                await updatePasswordDAO(userId, newHashedPassword);
+                response.status(HTTP_RESPONSE_CODES.NO_CONTENT).send();
             } else {
                 response
-                    .status(HTTP_RESPONSE_CODES.FORBIDDEN)
-                    .send(RESPONSE_MESSAGES.FORBIDDEN);
+                    .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                    .send(
+                        "Password was not updated because the old password was incorrect"
+                    );
             }
+            
         } catch (error) {
             response
                 .status(HTTP_RESPONSE_CODES.SERVER_ERROR)

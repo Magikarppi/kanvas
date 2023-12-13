@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { TProject } from "../models/projectModels";
+import { IProject, IProjectSubmitNew } from "../models/projectModels";
 
 const createClient = (token: string) => {
     return axios.create({
@@ -21,7 +21,10 @@ const projectService = {
 
         return response.data;
     },
-    createNewProject: async (token: string, projectPayload: TProject) => {
+    createNewProject: async (
+        token: string,
+        projectPayload: IProjectSubmitNew
+    ) => {
         const client = createClient(token);
         const response = await client.post("/", projectPayload);
 
@@ -35,7 +38,7 @@ const projectService = {
     },
     updateProjectById: async (
         token: string,
-        projectPayload: TProject,
+        projectPayload: IProject,
         projectId: string
     ) => {
         const client = createClient(token);

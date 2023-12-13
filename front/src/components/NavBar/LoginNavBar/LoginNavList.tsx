@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 
 import Icons from "../../Icons/Icons";
+import { Link } from "react-router-dom";
 
 const LoginNavList = () => {
     return (
@@ -40,12 +41,14 @@ const LoginNavList = () => {
             </ListItem>
             <Divider />
             <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Account />
-                    </ListItemIcon>
-                    <ListItemText primary="Profile" />
-                </ListItemButton>
+                <Link to="/profile">
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Account />
+                        </ListItemIcon>
+                        <ListItemText primary="Profile" />
+                    </ListItemButton>
+                </Link>
             </ListItem>
             <Divider />
             <ListItem disablePadding>

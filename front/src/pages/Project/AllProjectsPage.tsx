@@ -9,111 +9,9 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import AddProjectModal from "../../components/Projects/AddProjectModal";
 import { useEffect, useState } from "react";
-import { selectToken } from "../../redux/hooks";
-
-export interface IProject {
-    id: string;
-    name: string;
-    description: string | null;
-    isPublic: boolean;
-    creationDate: Date;
-    endDate: Date | null;
-    theme: string;
-    picture: string | null;
-}
-
-export const dummyProjects: IProject[] = [
-    {
-        id: "gj9asg-gjsa9ja0gs-jgsagjj9a-gasas9g9g-gagasagas0g0",
-        name: "Project A",
-        description: "This is Project A, a dummy project.",
-        isPublic: true,
-        creationDate: new Date("2023-01-01"),
-        endDate: new Date("2023-06-30"),
-        theme: "Technology",
-        picture: "url_to_picture_project_a",
-    },
-    {
-        id: "gj9asg-gjsa9ja0gs-jgsagjj9a-gasas9g9g-gagasagas0g1",
-        name: "Project B",
-        description: null,
-        isPublic: false,
-        creationDate: new Date("2023-02-15"),
-        endDate: null,
-        theme: "Art",
-        picture: null,
-    },
-    {
-        id: "gj9asg-gjsa9ja0gs-jgsagjj9a-gasas9g9g-gagasagas0g2",
-        name: "Project C",
-        description: "Project C is another sample project.",
-        isPublic: true,
-        creationDate: new Date("2023-03-20"),
-        endDate: new Date("2023-12-31"),
-        theme: "blank",
-        picture: "url_to_picture_project_c",
-    },
-    {
-        id: "gj9asg-gjsa9ja0gs-jgsagjj9a-gasas9g9g-gagasagas0gf",
-        name: "Project D",
-        description: "Project D description goes here.",
-        isPublic: true,
-        creationDate: new Date("2023-04-10"),
-        endDate: new Date("2024-01-15"),
-        theme: "Science",
-        picture: "url_to_picture_project_d",
-    },
-    {
-        id: "gj9asg-gjsa9ja0gs-jgsagjj9a-gasas9g9g-gagasagas0gg",
-        name: "Project E",
-        description: null,
-        isPublic: false,
-        creationDate: new Date("2023-05-05"),
-        endDate: null,
-        theme: "dark",
-        picture: "url_to_picture_project_e",
-    },
-    {
-        id: "gj9asg-gjsa9ja0gs-jgsagjj9a-gasas9g9g-gagasagas0gl",
-        name: "Project F",
-        description: "Project F description goes here.",
-        isPublic: true,
-        creationDate: new Date("2023-06-20"),
-        endDate: new Date("2023-12-31"),
-        theme: "red",
-        picture: null,
-    },
-    {
-        id: "gj9asg-gjsa9ja0gs-jgsagjj9a-gapas9g9g-gagasagas0gf",
-        name: "Project D",
-        description: "Project D description goes here.",
-        isPublic: true,
-        creationDate: new Date("2023-04-10"),
-        endDate: new Date("2024-01-15"),
-        theme: "Science",
-        picture: "url_to_picture_project_d",
-    },
-    {
-        id: "gj9asg-gjsa9ja0gs-jgsagjj9a-gasaspg9g-gagasagas0gg",
-        name: "Project E",
-        description: null,
-        isPublic: false,
-        creationDate: new Date("2023-05-05"),
-        endDate: null,
-        theme: "dark",
-        picture: "url_to_picture_project_e",
-    },
-    {
-        id: "gj9asg-gjsa9ja0gs-jgsagjj9a-gpsas9g9g-gagasagas0gl",
-        name: "Project F",
-        description: "Project F description goes here.",
-        isPublic: true,
-        creationDate: new Date("2023-06-20"),
-        endDate: new Date("2023-12-31"),
-        theme: "red",
-        picture: null,
-    },
-];
+import { IProject } from "../../models/projectModels";
+import projectService from "../../services/projectService";
+import { selectToken, selectUser } from "../../redux/hooks";
 
 const dummyOrganizations = [
     { id: "j0fsjaj-fj9saja9sfjf9sa-9fsa9s9af", name: "University of potato" },
@@ -183,17 +81,27 @@ const createCard = (output: string) => (
 );
 
 export default function AllProjectsPage() {
+    const [usersProjects, setUsersProjects] = useState<IProject[]>([]);
     const [addProjectModalOpen, setAddProjectModalOpen] =
         useState<boolean>(false);
+
     const token = selectToken();
+    const user = selectUser();
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!token) {
+        if (token && user) {
+            projectService
+                .getUsersProjects(token, user.id)
+                .then((data) => {
+                    setUsersProjects(data.allProjects);
+                })
+                .catch((err) => console.error(err));
+        } else {
             navigate("/");
         }
-    }, [token]);
+    }, [token, user]);
 
     const openAddProjectModal = () => setAddProjectModalOpen(true);
     const closeAddProjectModal = () => setAddProjectModalOpen(false);
@@ -244,7 +152,7 @@ export default function AllProjectsPage() {
                         <Grid item xs={12} sm={6} md={3}>
                             <AddNewProjectCard />
                         </Grid>
-                        {dummyProjects.map((project) => (
+                        {usersProjects?.map((project) => (
                             <Grid key={project.id} item xs={12} sm={6} md={3}>
                                 <Link to={`/${project.id}`}>
                                     {createCard(project.name)}

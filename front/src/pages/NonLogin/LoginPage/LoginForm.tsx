@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import {
     Container,
     TextField,
@@ -15,8 +15,8 @@ import Icons from "../../../components/Icons/Icons";
 import userRequests from "../../../services/userService";
 import { ILoginBody } from "../../../models/userModels";
 import { validEmail } from "../../../utils/inputChecks";
-
-
+import { setToken, setUserInfo } from "../../../redux/userReducer";
+import { useAppDispatch } from "../../../redux/hooks";
 
 interface UserLoginState {
     email: string;
@@ -24,6 +24,7 @@ interface UserLoginState {
 }
 
 const LoginForm = () => {
+    const dispatch = useAppDispatch();
     const [showPassword, setShowPassword] = useState({
         password: false,
     });
@@ -93,9 +94,11 @@ const LoginForm = () => {
         };
 
         try {
-            if(validEmail(userToLogin.email)){
-                const user = await userRequests.loginUser(userToLogin);
-                console.log("user", user);   // Set user to state / store
+            if (validEmail(userToLogin.email)) {
+                const userData = await userRequests.loginUser(userToLogin);
+                dispatch(setToken(userData.token));
+                dispatch(setUserInfo(userData.user));
+                navigate("/projects");
             }
         } catch (error) {
             console.error("errror", error);

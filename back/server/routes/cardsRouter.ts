@@ -8,7 +8,6 @@ import {
 import { ICard } from "../../database/utils/interfaces";
 import { v4 as uuid } from "uuid";
 import { UserRequest } from "../middleware/middleware";
-import { getUserEmailDAO } from "../../database/daos/userDao";
 import { getProjectMemberDAO } from "../../database/daos/projectsDao";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -16,18 +15,10 @@ const cards = express.Router();
 
 cards.post("", async (req: UserRequest, res: Response) => {
     try {
-        const userPayLoad = req.user as JwtPayload;
-        const userEmail = userPayLoad.value;
-
-        const user = await getUserEmailDAO(userEmail);
-        if (!user) {
-            return res
-                .status(HTTP_RESPONSE_CODES.NOT_FOUND)
-                .send(RESPONSE_MESSAGES.USER_NOT_FOUND);
-        }
+        const { value: userId } = req.user as JwtPayload;
 
         const projectMember = await getProjectMemberDAO(
-            user.id,
+            userId,
             req.body.projectId
         );
         if (!projectMember) {

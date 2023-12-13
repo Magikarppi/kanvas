@@ -10,7 +10,6 @@ import { HTTP_RESPONSE_CODES, RESPONSE_MESSAGES } from "../utils/utilities";
 import { v4 as uuid } from "uuid";
 import { UserRequest } from "../middleware/middleware";
 import { ITeam, IUsersTeam } from "../../database/utils/interfaces";
-import { getUserEmailDAO } from "../../database/daos/userDao";
 import { JwtPayload } from "jsonwebtoken";
 
 const teams = express.Router();
@@ -37,16 +36,14 @@ teams.get("/:id", async (req: Request, res: Response) => {
 teams.post("/newteam", async (req: UserRequest, res: Response) => {
     try {
         const { name, isPublic } = req.body;
-        const token = req.user as JwtPayload;
-        const existingUser = await getUserEmailDAO(token.value);
-        const userId = existingUser.id;
+        const { value: userId } = req.user as JwtPayload;
+
         const team: ITeam = {
             id: uuid(),
             name,
             admin: userId,
             isPublic,
         };
-
         await createNewTeamDAO(team);
         const teamId = team.id;
 
@@ -71,26 +68,24 @@ teams.post("/newteam", async (req: UserRequest, res: Response) => {
 teams.put("/update/:id", async (req: UserRequest, res: Response) => {
     try {
         const id = req.params.id;
+
         const getTeam = await getTeamByIdDao(id);
         const adminUid = getTeam.admin;
-        const token = req.user as JwtPayload;
-        const existingUser = await getUserEmailDAO(token.value);
-        const userId = existingUser.id;
-        if(adminUid === userId) {
+
+        const { value: userId } = req.user as JwtPayload;
+        if (adminUid === userId) {
             const team: ITeam = {
-                id: req.body.id,
+                id: id,
                 name: req.body.name,
                 admin: req.body.admin,
-                isPublic: req.body.is_public,
+                isPublic: req.body.isPublic,
             };
             await updateTeamDao(id, team);
-            res.json({
-                team: team,
-            });
-            res.status(HTTP_RESPONSE_CODES.OK).send();
+            res.status(HTTP_RESPONSE_CODES.OK).json({ team: team });
         } else {
-            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send("You are not admin in this team");
-
+            res.status(HTTP_RESPONSE_CODES.FORBIDDEN).send(
+                "You are not admin in this team"
+            );
         }
     } catch (error) {
         console.error(error);
@@ -104,25 +99,21 @@ teams.delete("/delete/:id", async (req: UserRequest, res: Response) => {
     try {
         const id = req.params.id;
         const getTeam = await getTeamByIdDao(id);
-
         if (!getTeam) {
-            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
-                RESPONSE_MESSAGES.TEAM_NOT_FOUND
-            );
-        } else {
-            const adminUid = getTeam.admin;
-            const token = req.user as JwtPayload;
-            const existingUser = await getUserEmailDAO(token.value);
-            const userId = existingUser.id;
+            return res
+                .status(HTTP_RESPONSE_CODES.NOT_FOUND)
+                .send(RESPONSE_MESSAGES.TEAM_NOT_FOUND);
+        }
 
-            if (adminUid === userId) {
-                await deleteTeamDAO(id);
-                res.status(HTTP_RESPONSE_CODES.OK).send();
-            } else {
-                res.status(HTTP_RESPONSE_CODES.UNAUTHORIZED).send(
-                    "You are not admin in this team"
-                );
-            }
+        const adminUid = getTeam.admin;
+        const { value: userId } = req.user as JwtPayload;
+        if (adminUid === userId) {
+            await deleteTeamDAO(id);
+            res.status(HTTP_RESPONSE_CODES.OK).send();
+        } else {
+            res.status(HTTP_RESPONSE_CODES.FORBIDDEN).send(
+                "You are not admin in this team"
+            );
         }
     } catch (error) {
         console.error(error);

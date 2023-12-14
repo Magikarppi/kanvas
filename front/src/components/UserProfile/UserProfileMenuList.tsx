@@ -10,6 +10,9 @@ import {
 } from "@mui/material";
 
 import Icons from "../../components/Icons/Icons";
+import { setToken } from "../../redux/userReducer";
+import { useAppDispatch } from "../../redux/hooks";
+import { useNavigate } from "react-router-dom";
 
 type listIndex = {
     selectedIndex: number;
@@ -20,6 +23,13 @@ const UserProfileMenuList = ({
     selectedIndex,
     setSelectedIndex,
 }: listIndex) => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    const handleSignOut = () => {
+        dispatch(setToken(null));
+        navigate("/");
+    };
     return (
         <Paper elevation={12}>
             <List>
@@ -70,7 +80,7 @@ const UserProfileMenuList = ({
                     <ListItemIcon>
                         <Icons.SignOut size="18" />
                     </ListItemIcon>
-                    <Typography variant="body2">Sign out</Typography>
+                    <Typography variant="body2" onClick={() => handleSignOut()}>Sign out</Typography>
                 </ListItemButton>
             </List>
         </Paper>

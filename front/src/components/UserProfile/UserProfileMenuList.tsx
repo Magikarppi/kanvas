@@ -29,8 +29,7 @@ const UserProfileMenuList = ({
 
     const handleSignOut = () => {
         console.log("TOKEN", token);
-
-        dispatch(setToken(""));
+        dispatch(setToken(null));
         navigate("/");
     };
     console.log("HALOO");

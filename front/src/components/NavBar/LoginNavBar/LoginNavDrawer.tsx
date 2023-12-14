@@ -23,7 +23,7 @@ const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
 
 
     const handleSignOut = () => {
-        dispatch(setToken(""));
+        dispatch(setToken(null));
         navigate("/"); // Token testattu, että arvo on null
     };
     const DrawerHeader = styled("div")(({ theme }) => ({

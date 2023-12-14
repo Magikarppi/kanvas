@@ -28,7 +28,6 @@ const UserProfileMenuList = ({
     const navigate = useNavigate();
 
     const handleSignOut = () => {
-        console.log("TOKEN", token);
         dispatch(setToken(null));
         navigate("/");
     };

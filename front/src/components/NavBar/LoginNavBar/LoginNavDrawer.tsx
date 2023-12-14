@@ -11,11 +11,23 @@ import LoginNavList from "./LoginNavList";
 import Icons from "../../Icons/Icons";
 
 import { TOpen } from "../../../models/themeModels";
+import { selectToken, useAppDispatch } from "../../../redux/hooks";
+import { useNavigate } from "react-router-dom";
+import { setToken } from "../../../redux/userReducer";
 
 const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
     const theme = useTheme();
+    const token = selectToken();
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const drawerWidth = 240;
 
+
+    const handleSignOut = () => {
+        dispatch(setToken(""));
+        navigate("/");
+        console.log('TOKEN', token)
+    };
     const DrawerHeader = styled("div")(({ theme }) => ({
         display: "flex",
         alignItems: "center",
@@ -74,6 +86,7 @@ const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
                     margin: "0 -20px 0px 20px",
                     width: "200px",
                 }}
+                onClick={handleSignOut}
             >
                 Sign out
             </Button>

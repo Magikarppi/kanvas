@@ -154,7 +154,7 @@ export default function AllProjectsPage() {
                         </Grid>
                         {usersProjects?.map((project) => (
                             <Grid key={project.id} item xs={12} sm={6} md={3}>
-                                <Link to={`/${project.id}`}>
+                                <Link to={`/projects/${project.id}`}>
                                     {createCard(project.name)}
                                 </Link>
                             </Grid>
@@ -179,7 +179,7 @@ export default function AllProjectsPage() {
                                 sm={6}
                                 md={3}
                             >
-                                <Link to={`/${organization.id}`}>
+                                <Link to={`/teams/${organization.id}`}>
                                     {createCard(organization.name)}
                                 </Link>
                             </Grid>
@@ -198,7 +198,7 @@ export default function AllProjectsPage() {
                     >
                         {dummyOpenProjects.map((project) => (
                             <Grid key={project.id} item xs={12} sm={6} md={3}>
-                                <Link to={`/${project.id}`}>
+                                <Link to={`/projects/${project.id}`}>
                                     {createCard(project.name)}
                                 </Link>
                             </Grid>

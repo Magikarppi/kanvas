@@ -37,9 +37,8 @@ const App = () => {
                         element={<ForgotPasswordPage />}
                     />
 
-                    <Route path="/project/:id" element={<ProjectPage />} />
-
                     <Route path="/projects" element={<AllProjectsPage />} />
+                    <Route path="/projects/:id" element={<ProjectPage />} />
 
                     <Route path="/profile" element={<UserProfilePage />} />
                     <Route path="*" element={<UnknownUrl />} />

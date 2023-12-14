@@ -23,7 +23,6 @@ import { JwtPayload } from "jsonwebtoken";
 import { dummyGetProjectData } from "../../database/utils/dummyData";
 import {
     getProjectAdminDAO,
-    removeUserRoleDAO,
 } from "../../database/daos/rolesDao";
 
 const router = Router();
@@ -100,7 +99,6 @@ router.delete("/:id", async (req: UserRequest, res: Response) => {
             );
             return;
         }
-        await removeUserRoleDAO(userId, projectId); // for testing the endpoint, TODO: remove this call after we have altered database's delete behaviors
         await deleteProjectDaO(projectId);
         res.status(HTTP_RESPONSE_CODES.OK).send();
     } catch (error) {

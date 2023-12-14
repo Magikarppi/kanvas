@@ -11,7 +11,7 @@ import LoginNavList from "./LoginNavList";
 import Icons from "../../Icons/Icons";
 
 import { TOpen } from "../../../models/themeModels";
-import { selectToken, useAppDispatch } from "../../../redux/hooks";
+import { useAppDispatch } from "../../../redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { setToken } from "../../../redux/userReducer";
 
@@ -24,7 +24,7 @@ const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
 
     const handleSignOut = () => {
         dispatch(setToken(null));
-        navigate("/"); // Token testattu, että arvo on null
+        navigate("/"); 
     };
     const DrawerHeader = styled("div")(({ theme }) => ({
         display: "flex",

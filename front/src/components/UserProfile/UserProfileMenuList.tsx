@@ -11,7 +11,7 @@ import {
 
 import Icons from "../../components/Icons/Icons";
 import { setToken } from "../../redux/userReducer";
-import { selectToken, useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import { useNavigate } from "react-router-dom";
 
 type listIndex = {
@@ -23,7 +23,6 @@ const UserProfileMenuList = ({
     selectedIndex,
     setSelectedIndex,
 }: listIndex) => {
-    const token = selectToken();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 

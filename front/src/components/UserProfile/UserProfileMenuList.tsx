@@ -28,10 +28,12 @@ const UserProfileMenuList = ({
     const navigate = useNavigate();
 
     const handleSignOut = () => {
+        console.log("TOKEN", token);
+
         dispatch(setToken(""));
         navigate("/");
-        console.log('TOKEN', token)
     };
+    console.log("HALOO");
     return (
         <Paper elevation={12}>
             <List>
@@ -82,7 +84,7 @@ const UserProfileMenuList = ({
                     <ListItemIcon>
                         <Icons.SignOut size="18" />
                     </ListItemIcon>
-                    <Typography variant="body2" onClick={handleSignOut}>Sign out</Typography>
+                    <Typography variant="body2" onClick={() => handleSignOut()}>Sign out</Typography>
                 </ListItemButton>
             </List>
         </Paper>

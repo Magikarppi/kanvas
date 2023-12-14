@@ -17,7 +17,6 @@ import { setToken } from "../../../redux/userReducer";
 
 const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
     const theme = useTheme();
-    const token = selectToken();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const drawerWidth = 240;
@@ -25,8 +24,7 @@ const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
 
     const handleSignOut = () => {
         dispatch(setToken(""));
-        navigate("/");
-        console.log('TOKEN', token)
+        navigate("/"); // Token testattu, että arvo on null
     };
     const DrawerHeader = styled("div")(({ theme }) => ({
         display: "flex",
@@ -86,7 +84,7 @@ const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
                     margin: "0 -20px 0px 20px",
                     width: "200px",
                 }}
-                onClick={handleSignOut}
+                onClick={() => handleSignOut()}
             >
                 Sign out
             </Button>

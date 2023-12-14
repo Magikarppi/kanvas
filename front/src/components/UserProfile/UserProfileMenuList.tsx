@@ -31,7 +31,6 @@ const UserProfileMenuList = ({
         dispatch(setToken(null));
         navigate("/");
     };
-    console.log("HALOO");
     return (
         <Paper elevation={12}>
             <List>

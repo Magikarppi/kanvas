@@ -1,5 +1,5 @@
 import {
-    insertNewUser,
+    insertUser,
     deleteUser,
     updateUser,
     getUserById,
@@ -10,7 +10,7 @@ import {
 import { IUser, IUpdateUser } from "../utils/interfaces";
 import { executeQuery } from "../database-service";
 
-export const createNewUserDAO = async (user: IUser) => {
+export const insertUserDAO = async (user: IUser) => {
     const values = [
         user.id,
         user.firstName,
@@ -28,32 +28,38 @@ export const createNewUserDAO = async (user: IUser) => {
         user.linkedinUsername,
         user.jobPitch,
     ];
-    await executeQuery(insertNewUser, values);
+    await executeQuery(insertUser, values);
 };
 
-export const getUserDAO = async (id: string) => {
+export const getUserByIdDAO = async (id: string) => {
     const result = await executeQuery(getUserById, [id]);
     if (result) {
         return result.rows[0];
     }
 };
 
-export const getUserEmailDAO = async (email: string) => {
+export const getUserByEmailDAO = async (email: string) => {
     const result = await executeQuery(getUserByEmail, [email]);
     if (result) {
         return result.rows[0];
     }
 };
 
-export const checkUserEmailConflictDAO = async (userId: string, email: string) => {
+export const getExistingEmailConflictDAO = async (
+    userId: string,
+    email: string
+) => {
     const queryParameters = [userId, email];
-    const result = await executeQuery(getExistingEmailConflict, queryParameters);
+    const result = await executeQuery(
+        getExistingEmailConflict,
+        queryParameters
+    );
     if (result) {
         return result.rows[0];
     }
 };
 
-export const updateDAO = async (id: string, user: IUpdateUser) => {
+export const updateUserDAO = async (id: string, user: IUpdateUser) => {
     const paramsArray = [
         user.firstName,
         user.lastName,

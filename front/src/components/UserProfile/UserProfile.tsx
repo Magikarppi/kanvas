@@ -347,6 +347,7 @@ const UserProfile = () => {
                         <TextField
                             fullWidth
                             name="city"
+                            id="city"
                             size="small"
                             value={formValues.city || ""}
                             onChange={handleInputChange}

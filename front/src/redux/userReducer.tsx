@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import {IUser} from "../models/userModels";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IUser, IUserUpdateWithoutId } from "../models/userModels";
 
 interface IInitialState {
     user: IUser | undefined | null; 
@@ -24,6 +24,6 @@ const userSlice = createSlice({
     },
 });
 
-export const { setUserInfo, setLoading, setToken } = userSlice.actions;
+export const { setUserInfo, setToken, setLoading } = userSlice.actions;
 
 export default userSlice.reducer;

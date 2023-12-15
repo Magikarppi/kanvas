@@ -104,7 +104,7 @@ users.post("/users/:id/forgot-password", async(request: Request, response: Respo
     if( user ){
         const link = "---"; // TODO CREATE LINK
         await transporter.sendMail({
-            from: "kanbanproject8@gmail.com", 
+            from: "kanbanprojectbuutti@gmail.com", 
             to: email,
             subject: "Forgot password for Kanban project", 
             text: "You have forgot your password. Press this link "+link+" to change your password",

@@ -18,7 +18,8 @@ import { IUpdateUserBodyWithoutPassword, IUserUpdateWithoutId } from "../../mode
 import userRequests from "../../services/userService";
 import { validEmail } from "../../utils/inputChecks";
 import Icons from "../Icons/Icons";
-import { useAppDispatch, selectToken, selectUser, updateUserHook} from "../../redux/hooks";
+import { useAppDispatch, selectToken, selectUser} from "../../redux/hooks";
+import { setUserInfo } from "../../redux/userReducer";
 
 
 
@@ -88,18 +89,7 @@ const UserProfile = () => {
                     token,
                     updatedUser
                 );
-                dispatch(updateUserHook(
-                    formValues.firstName,
-                    formValues.lastName,
-                    formValues.email,
-                    formValues.phoneNumber,
-                    formValues.country,
-                    formValues.city,
-                    formValues.picture, 
-                    formValues.isOpenToWork,
-                    formValues.linkedinUsername,
-                    formValues.jobPitch,
-                ));
+                dispatch(setUserInfo(updatedUser));
             }
         } catch (error) {
             console.error(error);

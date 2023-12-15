@@ -23,7 +23,17 @@ import {
     authenticate,
     validateEmailAndNames,
 } from "../middleware/middleware";
+import nodemailer from "nodemailer";
 
+const transporter = nodemailer.createTransport({
+  host: "smtp.forwardemail.net",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "kanbanprojectbuutti@gmail.com",
+    pass: process.env.emailPassword
+  },
+});
 const users = express.Router();
 const JWT_SECRET = process.env.SECRET as string;
 
@@ -87,6 +97,24 @@ users.put(
         }
     }
 );
+
+users.post("/users/:id/forgot-password", async(request: Request, response: Response)  => {
+    const { email } = request.body;
+    const user = await getUserEmailDAO(email);
+    if( user ){
+        const link = "---"; // TODO CREATE LINK
+        await transporter.sendMail({
+            from: "kanbanproject8@gmail.com", 
+            to: email,
+            subject: "Forgot password for Kanban project", 
+            text: "You have forgot your password. Press this link "+link+" to change your password",
+            html: "<b>Hello world?</b>", // TODO HTML BODY
+          });
+        response.status(HTTP_RESPONSE_CODES.OK);
+    } else {
+        response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send(HTTP_RESPONSE_CODES.NO_CONTENT);
+    }
+});
 
 users.post(
     "/signup",

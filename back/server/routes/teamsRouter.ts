@@ -1,23 +1,24 @@
 import express, { Request, Response } from "express";
-import {
-    getTeamByIdDao,
-    createNewTeamDAO,
-    addTeamUsersTeams,
-    updateTeamDao,
-    deleteTeamDAO,
-} from "../../database/daos/teamsDao";
-import { HTTP_RESPONSE_CODES, RESPONSE_MESSAGES } from "../utils/utilities";
+import { JwtPayload } from "jsonwebtoken";
 import { v4 as uuid } from "uuid";
+
+import {
+    getTeamDAO,
+    insertTeamDAO,
+    insertUsersTeamLinkDAO,
+    updateTeamDAO,
+    deleteTeamDAO,
+} from "../../database/DAOs";
+import { HTTP_RESPONSE_CODES, RESPONSE_MESSAGES } from "../utils/utilities";
 import { UserRequest } from "../middleware/middleware";
 import { ITeam, IUsersTeam } from "../../database/utils/interfaces";
-import { JwtPayload } from "jsonwebtoken";
 
 const teams = express.Router();
 
 teams.get("/:id", async (req: Request, res: Response) => {
     const id = req.params.id;
     try {
-        const team = await getTeamByIdDao(id);
+        const team = await getTeamDAO(id);
 
         if (team) {
             res.status(HTTP_RESPONSE_CODES.OK).send(team);
@@ -44,7 +45,7 @@ teams.post("/newteam", async (req: UserRequest, res: Response) => {
             admin: userId,
             isPublic,
         };
-        await createNewTeamDAO(team);
+        await insertTeamDAO(team);
         const teamId = team.id;
 
         const userTeam: IUsersTeam = {
@@ -53,7 +54,7 @@ teams.post("/newteam", async (req: UserRequest, res: Response) => {
             teamId: teamId,
         };
 
-        await addTeamUsersTeams(userTeam);
+        await insertUsersTeamLinkDAO(userTeam);
         res.json({
             team: team,
             addedTeam: userTeam,
@@ -69,7 +70,7 @@ teams.put("/update/:id", async (req: UserRequest, res: Response) => {
     try {
         const id = req.params.id;
 
-        const getTeam = await getTeamByIdDao(id);
+        const getTeam = await getTeamDAO(id);
         const adminUid = getTeam.admin;
 
         const { value: userId } = req.user as JwtPayload;
@@ -80,7 +81,7 @@ teams.put("/update/:id", async (req: UserRequest, res: Response) => {
                 admin: req.body.admin,
                 isPublic: req.body.isPublic,
             };
-            await updateTeamDao(id, team);
+            await updateTeamDAO(id, team);
             res.status(HTTP_RESPONSE_CODES.OK).json({ team: team });
         } else {
             res.status(HTTP_RESPONSE_CODES.FORBIDDEN).send(
@@ -98,7 +99,7 @@ teams.put("/update/:id", async (req: UserRequest, res: Response) => {
 teams.delete("/delete/:id", async (req: UserRequest, res: Response) => {
     try {
         const id = req.params.id;
-        const getTeam = await getTeamByIdDao(id);
+        const getTeam = await getTeamDAO(id);
         if (!getTeam) {
             return res
                 .status(HTTP_RESPONSE_CODES.NOT_FOUND)

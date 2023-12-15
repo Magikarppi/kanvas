@@ -1,8 +1,9 @@
 import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
-import { IUpdateUser, IUser } from "../../database/utils/interfaces";
 import jwt, { JwtPayload } from "jsonwebtoken";
+
+import { IUpdateUser, IUser } from "../../database/utils/interfaces";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
@@ -10,14 +11,14 @@ import {
     validatePasswordFormat,
 } from "../utils/utilities";
 import {
-    getUserEmailDAO,
-    createNewUserDAO,
-    getUserDAO,
+    getUserByEmailDAO,
+    insertUserDAO,
     deleteUserDAO,
     updatePasswordDAO,
-    updateDAO,
-    checkUserEmailConflictDAO,
-} from "../../database/daos/userDao";
+    updateUserDAO,
+    getExistingEmailConflictDAO,
+    getUserByIdDAO,
+} from "../../database/DAOs";
 import {
     UserRequest,
     authenticate,
@@ -51,7 +52,7 @@ users.put(
             }
 
             const { email } = request.body;
-            const conflictEmailUser = await checkUserEmailConflictDAO(
+            const conflictEmailUser = await getExistingEmailConflictDAO(
                 id,
                 email
             );
@@ -76,7 +77,7 @@ users.put(
                     linkedinUsername: request.body.linkedinUsername,
                     jobPitch: request.body.jobPitch,
                 };
-                await updateDAO(id, user);
+                await updateUserDAO(id, user);
                 response.status(HTTP_RESPONSE_CODES.OK).send();
             }
         } catch (error) {
@@ -110,7 +111,7 @@ users.post(
                 return;
             }
 
-            const existingUser = await getUserEmailDAO(email);
+            const existingUser = await getUserByEmailDAO(email);
             if (existingUser) {
                 response
                     .status(HTTP_RESPONSE_CODES.CONFLICT)
@@ -139,7 +140,7 @@ users.post(
                     jobPitch: null,
                 };
 
-                await createNewUserDAO(newUser);
+                await insertUserDAO(newUser);
                 response
                     .status(HTTP_RESPONSE_CODES.OK)
                     .send("New user created.");
@@ -163,7 +164,7 @@ users.post("/login", async (req: Request, res: Response) => {
     }
 
     try {
-        const user = await getUserEmailDAO(email);
+        const user = await getUserByEmailDAO(email);
 
         if (!user) {
             return res
@@ -222,7 +223,7 @@ users.get("/:id", authenticate, async (req: UserRequest, res: Response) => {
             return;
         }
 
-        const userInfo = await getUserDAO(id);
+        const userInfo = await getUserByIdDAO(id);
         const user: Partial<IUser> = {
             id: userInfo.id,
             firstName: userInfo.first_name,
@@ -278,7 +279,9 @@ users.put(
 
         const isCorrectUser = userId === tokenUserId;
         if (!isCorrectUser) {
-            response.status(HTTP_RESPONSE_CODES.FORBIDDEN).send(RESPONSE_MESSAGES.FORBIDDEN);
+            response
+                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                .send(RESPONSE_MESSAGES.FORBIDDEN);
             return;
         }
 
@@ -307,7 +310,7 @@ users.put(
         }
 
         try {
-            const user = await getUserDAO(userId);
+            const user = await getUserByIdDAO(userId);
 
             const isOldPasswordCorrect = await argon2.verify(
                 user.password_hash,
@@ -324,7 +327,6 @@ users.put(
                         "Password was not updated because the old password was incorrect"
                     );
             }
-            
         } catch (error) {
             response
                 .status(HTTP_RESPONSE_CODES.SERVER_ERROR)

@@ -1,7 +1,9 @@
 import pg from "pg";
 import dotenv from "dotenv";
-import { createNewUserDAO } from "./daos/userDao";
+
 import { dummyUsers } from "./utils/dummyData";
+import { insertUserDAO } from "./DAOs";
+
 dotenv.config();
 
 const { PG_HOST, PG_PORT, PG_USERNAME, PG_PASSWORD, PG_DATABASE } = process.env;
@@ -231,7 +233,7 @@ export const alterTableDeleteBehavior = async () => {
 const fillTablesWithDummyData = async () => {
     try {
         for (const user of dummyUsers) {
-            await createNewUserDAO(user);
+            await insertUserDAO(user);
         }
         console.log("Dummy data added successfully");
     } catch (error) {

@@ -1,8 +1,13 @@
 import { executeQuery } from "../database-service";
-import { createCard, updateCard, deleteCard, getCard } from "../queries/cardQueries";
+import {
+    insertCard,
+    updateCard,
+    deleteCard,
+    getCard,
+} from "../queries/cardQueries";
 import { ICard } from "../utils/interfaces";
 
-export const createCardDAO = async (card: ICard) => {
+export const insertCardDAO = async (card: ICard) => {
     const queryParameters = [
         card.id,
         card.projectId,
@@ -15,10 +20,10 @@ export const createCardDAO = async (card: ICard) => {
         card.attachments,
         card.inColumn,
     ];
-    await executeQuery(createCard, queryParameters);
+    await executeQuery(insertCard, queryParameters);
 };
 
-export const cardsDaoUpdate = async (id: string, card: ICard) => {
+export const updateCardDAO = async (id: string, card: ICard) => {
     const array = [
         card.projectId,
         card.title,
@@ -33,12 +38,12 @@ export const cardsDaoUpdate = async (id: string, card: ICard) => {
     await executeQuery(updateCard, array);
 };
 
-export const deleteCardDaO = async (cardId: string) => {
+export const deleteCardDAO = async (cardId: string) => {
     const queryParameters = [cardId];
     await executeQuery(deleteCard, queryParameters);
 };
 
-export const getCardWithId = async (id: string) => {
+export const getCardDAO = async (id: string) => {
     const cards = await executeQuery(getCard, [id]);
     if (cards) {
         return cards.rows[0];

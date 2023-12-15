@@ -18,12 +18,11 @@ import {
     RESPONSE_MESSAGES,
     getCurrentTimestamp,
 } from "../utils/utilities";
-import { getUserEmailDAO, getUserDAO } from "../../database/daos/userDao";
+import { getUserDAO } from "../../database/daos/userDao";
 import { JwtPayload } from "jsonwebtoken";
 import { dummyGetProjectData } from "../../database/utils/dummyData";
 import {
     getProjectAdminDAO,
-    removeUserRoleDAO,
 } from "../../database/daos/rolesDao";
 
 const router = Router();
@@ -90,12 +89,8 @@ router.post("/", async (req: UserRequest, res: Response) => {
 
 router.delete("/:id", async (req: UserRequest, res: Response) => {
     try {
-        const userPayLoad = req.user as JwtPayload;
-        const userEmail = userPayLoad.value;
-        const user = await getUserEmailDAO(userEmail);
-
-        const userId = user.id;
         const projectId = req.params.id;
+        const { value: userId } = req.user as JwtPayload;
 
         const projectAdmin = await getProjectAdminDAO(userId, projectId);
         if (!projectAdmin) {
@@ -104,8 +99,6 @@ router.delete("/:id", async (req: UserRequest, res: Response) => {
             );
             return;
         }
-
-        await removeUserRoleDAO(userId, projectId); // for testing the endpoint, TODO: remove this call after we have altered database's delete behaviors
         await deleteProjectDaO(projectId);
         res.status(HTTP_RESPONSE_CODES.OK).send();
     } catch (error) {
@@ -118,13 +111,11 @@ router.delete("/:id", async (req: UserRequest, res: Response) => {
 
 router.get("/:id", async (req: UserRequest, res: Response) => {
     const projectId = req.params.id;
-    const token = req.user as JwtPayload;
+    const { value: userId } = req.user as JwtPayload;
 
     try {
         const existingProject = await getSingleProjectDAO(projectId);
-        const existingUser = await getUserEmailDAO(token.value);
-
-        if (!existingProject || !existingUser) {
+        if (!existingProject) {
             res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
                 "Project or user not found"
             );
@@ -143,7 +134,6 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
         };
 
         if (formattedProject.isPublic === false) {
-            const userId = existingUser.id;
             const projectMember = await getProjectMemberDAO(userId, projectId);
 
             if (projectMember) {
@@ -214,8 +204,6 @@ router.get("/userprojects/:id", async (req: UserRequest, res: Response) => {
 
 router.put("/:id", async (req: UserRequest, res: Response) => {
     try {
-        const requestingUser = req.user as JwtPayload;
-        const projectId = req.params.id;
         const {
             name,
             description,
@@ -225,10 +213,11 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
             theme,
             picture,
         } = req.body;
+        
+        const { value: userId } = req.user as JwtPayload;
+        const projectId = req.params.id;
 
-        const user = await getUserEmailDAO(requestingUser.value);
-
-        const projectAdmin = await getProjectAdminDAO(user.id, projectId);
+        const projectAdmin = await getProjectAdminDAO(userId, projectId);
         if (!projectAdmin) {
             res.status(HTTP_RESPONSE_CODES.FORBIDDEN).send(
                 RESPONSE_MESSAGES.FORBIDDEN

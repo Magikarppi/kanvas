@@ -16,7 +16,7 @@ import {
 import { ChangeEvent, useState } from "react";
 
 import projectService from "../../services/projectService";
-import { TProject } from "../../models/projectModels";
+import { IProjectSubmitNew } from "../../models/projectModels";
 
 const style = {
     position: "absolute",
@@ -88,7 +88,7 @@ export default function AddProjectModal({ open, close }: Props) {
 
     const handleSubmit = async () => {
         try {
-            const project: TProject = {
+            const project: IProjectSubmitNew = {
                 name,
                 description,
                 endDate: new Date(endDate) || null,

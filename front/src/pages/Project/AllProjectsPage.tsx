@@ -9,7 +9,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import AddProjectModal from "../../components/Projects/AddProjectModal";
 import { useEffect, useState } from "react";
-import { selectToken } from "../../redux/hooks";
+import { selectToken, selectUser } from "../../redux/hooks";
 
 export interface IProject {
     id: string;
@@ -185,7 +185,10 @@ const createCard = (output: string) => (
 export default function AllProjectsPage() {
     const [addProjectModalOpen, setAddProjectModalOpen] =
         useState<boolean>(false);
+    const user = selectUser();
     const token = selectToken();
+    console.log("user: ", user);
+    console.log(token);
 
     const navigate = useNavigate();
 

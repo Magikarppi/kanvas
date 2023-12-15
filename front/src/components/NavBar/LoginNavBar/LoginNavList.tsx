@@ -8,27 +8,32 @@ import {
 } from "@mui/material";
 
 import Icons from "../../Icons/Icons";
+import { Link } from "react-router-dom";
 
 const LoginNavList = () => {
     return (
         <List disablePadding>
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Dashboard />
-                    </ListItemIcon>
-                    <ListItemText primary="Dashboard" />
-                </ListItemButton>
-            </ListItem>
+            <Link to="/projects">
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Dashboard />
+                        </ListItemIcon>
+                        <ListItemText primary="Dashboard"></ListItemText>
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             <Divider />
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Projects />
-                    </ListItemIcon>
-                    <ListItemText primary="Projects" />
-                </ListItemButton>
-            </ListItem>
+            <Link to="/projects">
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Projects />
+                        </ListItemIcon>
+                        <ListItemText primary="Projects" />
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             <Divider />
             <ListItem disablePadding>
                 <ListItemButton>
@@ -39,14 +44,16 @@ const LoginNavList = () => {
                 </ListItemButton>
             </ListItem>
             <Divider />
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Account />
-                    </ListItemIcon>
-                    <ListItemText primary="Profile" />
-                </ListItemButton>
-            </ListItem>
+            <Link to="/profile">
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Account />
+                        </ListItemIcon>
+                        <ListItemText primary="Profile" />
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             <Divider />
             <ListItem disablePadding>
                 <ListItemButton>

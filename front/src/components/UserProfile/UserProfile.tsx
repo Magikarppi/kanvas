@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect, FormEvent } from "react";
 import {
     Avatar,
     Button,
@@ -13,42 +13,49 @@ import {
     IconButton,
     CardActionArea,
     CardMedia,
-
 } from "@mui/material";
-import { IUpdateUserBodyWithoutPassword } from "../../models/userModels";
+import { IUpdateUserBodyWithoutPassword, IUserUpdateWithoutId } from "../../models/userModels";
 import userRequests from "../../services/userService";
 import { validEmail } from "../../utils/inputChecks";
 import Icons from "../Icons/Icons";
+import { useAppDispatch, selectToken, selectUser, updateUserHook} from "../../redux/hooks";
 
-interface UserRegistrationState {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
-    country: string | null;
-    city: string;
-    picture: string;
-    isOpenToWork: boolean;
-    linkedinUsername: string;
-    jobPitch: string;
-    
-}
 
 
 const UserProfile = () => {
-    const [formValues, setFormValues] = useState<UserRegistrationState>({
+    const user = selectUser();
+    const token = selectToken();
+    const dispatch = useAppDispatch();
+
+    const [formValues, setFormValues] = useState<IUserUpdateWithoutId>({
         firstName: "",
         lastName: "",
-        email: "",
-        phoneNumber: "",
-        country: null,
+        email:  "",
+        phoneNumber:  "",
+        country:  "",
         city: "",
-        picture: "",
+        picture:  "",
         isOpenToWork: false,
-        linkedinUsername: "",
-        jobPitch:"",
+        linkedinUsername:  "",
+        jobPitch: "",
     });
-
+    
+    useEffect(() => {
+        setFormValues({
+            firstName: user?.firstName || "",
+            lastName: user?.lastName || "",
+            email: user?.email || "",
+            phoneNumber: user?.phoneNumber || "",
+            country: user?.country || null,
+            city: user?.city || "",
+            picture: user?.picture || "",
+            isOpenToWork: user?.isOpenToWork || false,
+            linkedinUsername: user?.linkedinUsername || "",
+            jobPitch: user?.jobPitch || "",
+        });
+    }, [user]);
+    
+    
     const [touched, setTouched] = useState({
         firstName: false,
         lastName: false,
@@ -56,30 +63,43 @@ const UserProfile = () => {
     });
     const [image, setImage] = useState<string | ArrayBuffer | null>("");
     const [hoveringImage, setHoveringImage] = useState<boolean>(true);
-    
+  
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+        const userId = user?.id;
         const updatedUser: IUpdateUserBodyWithoutPassword = {
-            // get values from form when it is implemented
-            firstName: "formValues.firstName",
-            lastName: "formValues.lastName",
-            email: "formValues.email",
-            phoneNumber: "formValues.phoneNumber" || null,
-            country: "formValues.country" || null,
-            city: "formValues.city" || null,
-            linkedinUsername: "formValues.linkedInUsername" || null,
-            id: "user-id-replace-with-actua-user-id",
-            isOpenToWork: false /* formValues.isOpenToWork */,
-            jobPitch: "formValues.jobPitch",
-            picture: "formValues.picture?",
+            firstName: formValues.firstName,
+            lastName: formValues.lastName,
+            email: formValues.email,
+            phoneNumber: formValues.phoneNumber || null,
+            country: formValues.country || null,
+            city: formValues.city || null,
+            linkedinUsername: formValues.linkedinUsername || null,
+            id: userId || "",
+            isOpenToWork: formValues.isOpenToWork,
+            jobPitch: formValues.jobPitch || null,
+            picture: "Tähän tulee kuvan url" || null,
         };
 
         try {
-            if(validEmail(updatedUser.email)){
+            if(token && user ){
                 await userRequests.updateUser(
-                    "user-token-replace-with-actual-token",
+                    token,
                     updatedUser
                 );
+                dispatch(updateUserHook(
+                    formValues.firstName,
+                    formValues.lastName,
+                    formValues.email,
+                    formValues.phoneNumber,
+                    formValues.country,
+                    formValues.city,
+                    formValues.picture, 
+                    formValues.isOpenToWork,
+                    formValues.linkedinUsername,
+                    formValues.jobPitch,
+                ));
             }
         } catch (error) {
             console.error(error);
@@ -91,6 +111,13 @@ const UserProfile = () => {
         const { name, value } = e.target;
         setFormValues((prevData) => ({ ...prevData, [name]: value }));
     };
+
+    const checkboxOnChange = () => {     
+        setFormValues({
+            ...formValues,
+            isOpenToWork: !formValues.isOpenToWork
+        });        
+    }; 
 
     const handleInputBlur = (field: keyof typeof formValues) => {
         setTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
@@ -207,6 +234,7 @@ const UserProfile = () => {
                     style={{ textAlign: "center" }}
                 > 
                     <Box
+                        component="form"
                         sx={{
                             display: "flex",
                             flexDirection: "column",
@@ -216,7 +244,7 @@ const UserProfile = () => {
                     >
                         <InputLabel
                             style={{ fontSize: 14, marginBottom: 3, marginLeft: 6 }}
-                            htmlFor="outlined-required"
+                            htmlFor="firstName"
                         >
                             First Name *
                         </InputLabel>
@@ -226,8 +254,8 @@ const UserProfile = () => {
                             fullWidth
                             size="small"
                             name="firstName"
-                            value={formValues.firstName}
-                            id="outlined-required"
+                            value={formValues.firstName || ""}
+                            id="firstName"
                             onChange={handleInputChange}
                             onBlur={() => handleInputBlur("firstName")}
                             helperText={getErrorText("firstName")}
@@ -237,7 +265,7 @@ const UserProfile = () => {
                         />
                         <InputLabel
                             style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
-                            htmlFor="outlined-required"
+                            htmlFor="lastName"
                         >
                             Last Name *
                         </InputLabel>
@@ -247,8 +275,8 @@ const UserProfile = () => {
                             fullWidth
                             size="small"
                             name="lastName"
-                            value={formValues.lastName}
-                            id="outlined-required"
+                            value={formValues.lastName || ""}
+                            id="lastName"
                             onChange={handleInputChange}
                             onBlur={() => handleInputBlur("lastName")}
                             helperText={getErrorText("lastName")}
@@ -259,7 +287,7 @@ const UserProfile = () => {
                         />
                         <InputLabel
                             style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
-                            htmlFor="outlined-required"
+                            htmlFor="email"
                         >
                             Email Address *
                         </InputLabel>
@@ -269,8 +297,8 @@ const UserProfile = () => {
                             fullWidth
                             name="email"
                             size="small"
-                            value={formValues.email}
-                            id="outlined-required"
+                            value={formValues.email || ""}
+                            id="email"
                             onChange={handleInputChange}
                             onBlur={() => handleInputBlur("email")}
                             helperText={getErrorText("email")}
@@ -280,7 +308,7 @@ const UserProfile = () => {
                         />
                         <InputLabel
                             style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
-                            htmlFor="outlined-required"
+                            htmlFor="phoneNumber"
                         >
                             Phone number
                         </InputLabel>
@@ -288,15 +316,15 @@ const UserProfile = () => {
                             fullWidth
                             name="phoneNumber"
                             size="small"
-                            value={formValues.phoneNumber}
-                            id="outlined-required"
+                            value={formValues.phoneNumber || ""}
+                            id="phoneNumber"
                             onChange={handleInputChange}
                             autoComplete="off"
                             sx={{ "& input": { fontSize: 14 } }}
                         />
                         <InputLabel
                             style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
-                            htmlFor="outlined-required"
+                            htmlFor="country"
                         >
                             Country
                         </InputLabel>
@@ -304,15 +332,15 @@ const UserProfile = () => {
                             fullWidth
                             name="country"
                             size="small"
-                            value={formValues.country}
-                            id="outlined-required"
+                            value={formValues.country || ""}
+                            id="country"
                             onChange={handleInputChange}
                             autoComplete="off"
                             sx={{ "& input": { fontSize: 14 } }}
                         />
                         <InputLabel
                             style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
-                            htmlFor="outlined-required"
+                            htmlFor="city"
                         >
                             City
                         </InputLabel>
@@ -320,15 +348,14 @@ const UserProfile = () => {
                             fullWidth
                             name="city"
                             size="small"
-                            value={formValues.city}
-                            id="outlined-required"
+                            value={formValues.city || ""}
                             onChange={handleInputChange}
                             autoComplete="off"
                             sx={{ "& input": { fontSize: 14 } }}
                         />
                         <InputLabel
                             style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
-                            htmlFor="outlined-required"
+                            htmlFor="linkedinUsername"
                         >   
                             LinkedIn Username
                         </InputLabel>
@@ -336,39 +363,39 @@ const UserProfile = () => {
                             fullWidth
                             name="linkedinUsername"
                             size="small"
-                            value={formValues.linkedinUsername}
-                            id="outlined-required"
+                            value={formValues.linkedinUsername || ""}
+                            id="linkedinUsername"
                             onChange={handleInputChange}
                             autoComplete="off"
                             sx={{ "& input": { fontSize: 14 } }}
                         />
                         <InputLabel
                             style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
-                            htmlFor="outlined-required"
+                            htmlFor="jobPitch"
                         >   
                             About you
                         </InputLabel>
                         <TextField
                             name="jobPitch"
-                            value={formValues.jobPitch}
+                            value={formValues.jobPitch || ""}
                             fullWidth
                             size="small"
                             autoComplete="off"
                             onChange={handleInputChange}
                             multiline
                             rows={6}
-                            id="outlined-about"
+                            id="jobPitch"
                             type="text"
                         />
                     </Box>
                     <div>
                         <InputLabel
                             style={{ fontSize: 14, marginTop: 17, }}
-                            htmlFor="outlined-required"
+                            htmlFor="isOpenToWork"
                         >   
                             Are you open to finding work?
                         </InputLabel>
-                        <Checkbox />
+                        <Checkbox id="isOpenToWork" name="isOpenToWork" checked={formValues.isOpenToWork} onChange={checkboxOnChange} />
                     </div>
                     <Button
                         variant="contained"

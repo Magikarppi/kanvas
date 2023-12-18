@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 
 import { dummyUsers } from "./utils/dummyData";
 import { insertUserDAO } from "./DAOs";
+import { IParametrizedQuery } from "./utils/interfaces";
 
 dotenv.config();
 
@@ -26,6 +27,33 @@ export const executeQuery = async (
         return result;
     } catch (error) {
         if (error instanceof Error) {
+            console.error(error.stack);
+            error.name = "dbError";
+            throw error;
+        }
+    } finally {
+        client.release();
+    }
+};
+
+export const executeMultipleQueries = async (... args: IParametrizedQuery[]) => {
+    const client = await pool.connect();
+
+    try {
+        const results = [];
+        
+        await client.query("BEGIN");
+        for (const operation of args) {
+            const result = await client.query(operation.query, operation.parameters);
+            if (result) {
+                results.push(result);
+            }
+        }
+        await client.query("COMMIT");
+        return results;
+    } catch (error) {
+        if (error instanceof Error) {
+            await client.query("ROLLBACK");
             console.error(error.stack);
             error.name = "dbError";
             throw error;

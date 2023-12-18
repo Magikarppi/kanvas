@@ -15,7 +15,7 @@ import {
     getUserTeamsDAO,
     getUserByIdDAO,
 } from "../../database/DAOs";
-import { IProject } from "../../database/utils/interfaces";
+import { IProject, IProjectMember, IUserRole } from "../../database/utils/interfaces";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
@@ -58,8 +58,20 @@ router.post("/", async (req: UserRequest, res: Response) => {
             isPublic,
         };
 
-        const addedProject = await insertProjectDAO({ ...project });
+        const { value: userId } = req.user as JwtPayload;
+        const projectMember: IProjectMember = {
+            id: uuid(),
+            userId: userId,
+            projectId: project.id,
+        };
 
+        const userRole: IUserRole = {
+            projectId: project.id,
+            userId: userId,
+            role: "admin",
+        };
+
+        const addedProject = await insertProjectDAO(project, projectMember, userRole);
         if (!addedProject) {
             return res
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)

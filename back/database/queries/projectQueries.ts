@@ -10,6 +10,8 @@ export const getProject = "SELECT * FROM projects WHERE id = $1";
 
 export const deleteProject = "DELETE FROM projects WHERE id = $1";
 
+export const insertProjectMember = "INSERT INTO project_members (id, user_id, project_id) VALUES ($1, $2, $3);";
+
 export const getProjectMember =
     "SELECT * FROM project_members WHERE user_id = $1 AND project_id = $2";
 

@@ -26,9 +26,7 @@ import {
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.forwardemail.net",
-  port: 465,
-  secure: true,
+  service: 'gmail',
   auth: {
     user: "kanbanprojectbuutti@gmail.com",
     pass: process.env.emailPassword
@@ -98,10 +96,9 @@ users.put(
     }
 );
 
-users.post("/users/:id/forgot-password", async(request: Request, response: Response)  => {
+users.post("/users/forgot-password/:id", async(request: Request, response: Response)  => {
     const { email } = request.body;
-    const user = await getUserEmailDAO(email);
-    if( user ){
+    if( email ){
         const link = "---"; // TODO CREATE LINK
         await transporter.sendMail({
             from: "kanbanprojectbuutti@gmail.com", 
@@ -114,6 +111,11 @@ users.post("/users/:id/forgot-password", async(request: Request, response: Respo
     } else {
         response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send(HTTP_RESPONSE_CODES.NO_CONTENT);
     }
+});
+
+
+users.get("/users/testi/:name", async(request: Request, response: Response)  => {
+   response.status(200).send("Hello world");
 });
 
 users.post(

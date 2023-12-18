@@ -5,7 +5,6 @@ import { v4 as uuid } from "uuid";
 import {
     getTeamDAO,
     insertTeamDAO,
-    insertUsersTeamLinkDAO,
     updateTeamDAO,
     deleteTeamDAO,
 } from "../../database/DAOs";
@@ -45,16 +44,15 @@ teams.post("/newteam", async (req: UserRequest, res: Response) => {
             admin: userId,
             isPublic,
         };
-        await insertTeamDAO(team);
-        const teamId = team.id;
 
+        const teamId = team.id;
         const userTeam: IUsersTeam = {
             id: uuid(),
             userId: userId,
             teamId: teamId,
         };
 
-        await insertUsersTeamLinkDAO(userTeam);
+        await insertTeamDAO(team, userTeam);
         res.json({
             team: team,
             addedTeam: userTeam,

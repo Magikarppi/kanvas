@@ -123,7 +123,7 @@ export default function AllProjectsPage() {
         >
             <CardContent>
                 <Typography variant="h6" sx={{ color: "primary.main" }}>
-                    + Add new project
+                    + Add a new project
                 </Typography>
             </CardContent>
         </Card>

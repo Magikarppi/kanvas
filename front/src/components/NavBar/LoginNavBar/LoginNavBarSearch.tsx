@@ -4,6 +4,7 @@ import {
     IconButton,
     InputAdornment,
     TextField,
+    Grid,
 } from "@mui/material";
 
 import Icons from "../../Icons/Icons";
@@ -29,20 +30,14 @@ const LoginNavBarSearch = () => {
                 </IconButton>
             ) : (
                 <ClickAwayListener onClickAway={handleClickAway}>
-                    <div>
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             id="standard-basic"
                             variant="standard"
                             placeholder="Search..."
                             autoFocus
                             sx={{
-                                border: 0,
-                                width: "100vw",
-                                top: 0,
-                                left: 0,
                                 backgroundColor: "#0E0E0E",
-                                position: "absolute",
-                                minHeight: "48px",
                                 zIndex: 9999999,
                                 padding: "10px 10px 10px 30px",
                             }}
@@ -56,6 +51,9 @@ const LoginNavBarSearch = () => {
                                     <InputAdornment
                                         position="start"
                                         onClick={handleCancelSearch}
+                                        style={{
+                                            cursor: "pointer",
+                                        }}
                                     >
                                         <Icons.Close />
                                     </InputAdornment>
@@ -63,7 +61,7 @@ const LoginNavBarSearch = () => {
                                 disableUnderline: true,
                             }}
                         />
-                    </div>
+                    </Grid>
                 </ClickAwayListener>
             )}
         </>

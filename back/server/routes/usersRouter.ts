@@ -96,7 +96,7 @@ users.put(
     }
 );
 
-users.post("/users/forgot-password/:id", async(request: Request, response: Response)  => {
+users.post("/forgot-password/:id", async(request: Request, response: Response)  => {
     const { email } = request.body;
     if( email ){
         const link = "---"; // TODO CREATE LINK
@@ -107,15 +107,10 @@ users.post("/users/forgot-password/:id", async(request: Request, response: Respo
             text: "You have forgot your password. Press this link "+link+" to change your password",
             html: "<b>Hello world?</b>", // TODO HTML BODY
           });
-        response.status(HTTP_RESPONSE_CODES.OK);
+        response.status(HTTP_RESPONSE_CODES.OK).send("SUCCESFUL");
     } else {
-        response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send(HTTP_RESPONSE_CODES.NO_CONTENT);
+        response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send(request.body);
     }
-});
-
-
-users.get("/users/testi/:name", async(request: Request, response: Response)  => {
-   response.status(200).send("Hello world");
 });
 
 users.post(

@@ -98,18 +98,21 @@ users.put(
 
 users.post("/forgot-password/:id", async(request: Request, response: Response)  => {
     const { email } = request.body;
-    if( email ){
-        const link = "---"; // TODO CREATE LINK
+    const emailFetch = await getUserEmailDAO(email);
+   
+    if( emailFetch ){
+        const randomNumber = Math.floor(Math.random() * 10000);
+        const formattedNumber = randomNumber.toString().padStart(4, '0');
         await transporter.sendMail({
             from: "kanbanprojectbuutti@gmail.com", 
             to: email,
             subject: "Forgot password for Kanban project", 
-            text: "You have forgot your password. Press this link "+link+" to change your password",
-            html: "<b>Hello world?</b>", // TODO HTML BODY
+            text: "",
+            html: "<b>You have forgot your password. Send code: "+formattedNumber+" on screen to change your password</b>",
           });
-        response.status(HTTP_RESPONSE_CODES.OK).send("SUCCESFUL");
+        response.status(HTTP_RESPONSE_CODES.OK).send(formattedNumber);
     } else {
-        response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send(request.body);
+        response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Email not found");
     }
 });
 

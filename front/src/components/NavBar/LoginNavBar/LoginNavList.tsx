@@ -19,7 +19,7 @@ const LoginNavList = () => {
                         <ListItemIcon>
                             <Icons.Dashboard />
                         </ListItemIcon>
-                        <ListItemText primary="Dashboard"></ListItemText>
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }} primary="Dashboard"></ListItemText>
                     </ListItemButton>
                 </ListItem>
             </Link>
@@ -30,19 +30,21 @@ const LoginNavList = () => {
                         <ListItemIcon>
                             <Icons.Projects />
                         </ListItemIcon>
-                        <ListItemText primary="Projects" />
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Projects" />
                     </ListItemButton>
                 </ListItem>
             </Link>
             <Divider />
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Team />
-                    </ListItemIcon>
-                    <ListItemText primary="Teams" />
-                </ListItemButton>
-            </ListItem>
+            <Link to="/teams">
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Team />
+                        </ListItemIcon>
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Teams" />
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             <Divider />
             <Link to="/profile">
                 <ListItem disablePadding>
@@ -50,28 +52,32 @@ const LoginNavList = () => {
                         <ListItemIcon>
                             <Icons.Account />
                         </ListItemIcon>
-                        <ListItemText primary="Profile" />
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Profile" />
                     </ListItemButton>
                 </ListItem>
             </Link>
             <Divider />
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Message />
-                    </ListItemIcon>
-                    <ListItemText primary="Messages" />
-                </ListItemButton>
-            </ListItem>
+            <Link to="/messages">
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Message />
+                        </ListItemIcon>
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Messages" />
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             <Divider />
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Notifications />
-                    </ListItemIcon>
-                    <ListItemText primary="Notifications" />
-                </ListItemButton>
-            </ListItem>
+            <Link to="/notifications">
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Notifications />
+                        </ListItemIcon>
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Notifications" />
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             <Divider />
         </List>
     );

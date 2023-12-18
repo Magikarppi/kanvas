@@ -35,7 +35,7 @@ const LoginNavBar = ({ open, setOpen }: TOpen) => {
                             <Icons.Menu />
                         </IconButton>
                         <Typography
-                            variant="h5"
+                            variant="h4"
                             color="inherit"
                             component="div"
                         >

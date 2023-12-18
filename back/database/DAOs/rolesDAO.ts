@@ -1,5 +1,15 @@
 import { executeQuery } from "../database-service";
-import { getProjectAdmin, removeUserRole } from "../queries/rolesQueries";
+import { getProjectAdmin, insertProjectAdmin, removeUserRole } from "../queries/rolesQueries";
+import { IUserRole } from "../utils/interfaces";
+
+export const insertProjectAdminDAO = async (userRole: IUserRole) => {
+    const queryParameters = [
+        userRole.projectId,
+        userRole.userId,
+        userRole.role,
+    ];
+    await executeQuery(insertProjectAdmin, queryParameters);
+};
 
 export const getProjectAdminDAO = async (userId: string, projectId: string) => {
     const queryParameters = [userId, projectId, "admin"];

@@ -1,44 +1,78 @@
-import { executeQuery } from "../database-service";
+import { executeMultipleQueries, executeQuery } from "../database-service";
 import {
     getProject,
     getProjectMember,
-    insertProject,
     getUserProjects,
     getUserFavoriteProjects,
     deleteProject,
     updateProject,
+    insertProjectMember,
+    insertProject,
 } from "../queries/projectQueries";
-import { IProject } from "../utils/interfaces";
+import { insertProjectAdmin } from "../queries/rolesQueries";
+import {
+    IParametrizedQuery,
+    IProject,
+    IProjectMember,
+    IUserRole,
+} from "../utils/interfaces";
 
-export const insertProjectDAO = async ({
-    id,
-    name,
-    description,
-    isPublic,
-    creationDate,
-    endDate,
-    theme,
-    picture,
-}: IProject) => {
-    const result = await executeQuery(insertProject, [
-        id,
-        name,
-        description,
-        isPublic,
-        creationDate,
-        endDate,
-        theme,
-        picture,
-    ]);
+export const insertProjectDAO = async (
+    project: IProject,
+    projectMember: IProjectMember,
+    userRole: IUserRole
+) => {
+    const insertProjectOperation: IParametrizedQuery = {
+        query: insertProject,
+        parameters: [
+            project.id,
+            project.name,
+            project.description,
+            project.isPublic,
+            project.creationDate,
+            project.endDate,
+            project.theme,
+            project.picture,
+        ],
+    };
 
-    if (result) {
-        return result.rows[0];
+    const insertProjectMemberOperation: IParametrizedQuery = {
+        query: insertProjectMember,
+        parameters: [
+            projectMember.id,
+            projectMember.userId,
+            projectMember.projectId,
+        ],
+    };
+
+    const insertProjectAdminOperation: IParametrizedQuery = {
+        query: insertProjectAdmin,
+        parameters: [userRole.projectId, userRole.userId, userRole.role],
+    };
+
+    const results = await executeMultipleQueries(
+        insertProjectOperation,
+        insertProjectMemberOperation,
+        insertProjectAdminOperation
+    );
+
+    if (results) {
+        return results[0].rows[0];
     }
 };
 
 export const deleteProjectDAO = async (projectId: string) => {
     const queryParameters = [projectId];
     await executeQuery(deleteProject, queryParameters);
+};
+
+export const insertProjectMemberDAO = async (projectMember: IProjectMember) => {
+    const queryParameters = [
+        projectMember.id,
+        projectMember.userId,
+        projectMember.projectId,
+    ];
+    await executeQuery(insertProjectMember, queryParameters);
 };
 
 export const getProjectMemberDAO = async (

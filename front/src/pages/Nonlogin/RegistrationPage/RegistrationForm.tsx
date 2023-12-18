@@ -148,7 +148,7 @@ const RegistrationForm = () => {
                     alignItems: "center",
                 }}
             >
-                <Typography variant="h5">Sign up</Typography>
+                <Typography variant="h5">Sign up2</Typography>
                 <Box component="form" sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>

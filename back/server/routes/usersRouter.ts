@@ -96,7 +96,7 @@ users.put(
     }
 );
 
-users.post("/forgot-password/:id", async(request: Request, response: Response)  => {
+users.post("/forgot-password/", async(request: Request, response: Response)  => {
     const { email } = request.body;
     const emailFetch = await getUserEmailDAO(email);
    

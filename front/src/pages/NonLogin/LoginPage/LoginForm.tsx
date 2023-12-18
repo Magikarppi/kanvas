@@ -127,7 +127,7 @@ const LoginForm = () => {
             >
                 <Typography variant="h4">Sign in</Typography>
                 <Box component="form" sx={{ mt: 3 }}>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={1}>
                         <Grid item xs={12}>
                             <InputLabel
                                 style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}

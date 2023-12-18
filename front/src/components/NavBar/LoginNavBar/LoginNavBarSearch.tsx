@@ -39,7 +39,8 @@ const LoginNavBarSearch = () => {
                             sx={{
                                 backgroundColor: "#0E0E0E",
                                 zIndex: 9999999,
-                                padding: "10px 10px 10px 30px",
+                                width:"230px",
+                                padding: "10px 10px 10px 20px",
                             }}
                             onKeyUp={(event) => {
                                 if (event.key === "Escape") {

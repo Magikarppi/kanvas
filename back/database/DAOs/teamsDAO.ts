@@ -1,5 +1,5 @@
-import { executeQuery } from "../database-service";
-import { ITeam, IUsersTeam } from "../utils/interfaces";
+import { executeMultipleQueries, executeQuery } from "../database-service";
+import { IParametrizedQuery, ITeam, IUsersTeam } from "../utils/interfaces";
 import {
     getTeamById,
     insertTeam,
@@ -16,8 +16,21 @@ export const getTeamDAO = async (id: string) => {
     }
 };
 
-export const insertTeamDAO = async ({ id, name, admin, isPublic }: ITeam) => {
-    await executeQuery(insertTeam, [id, name, admin, isPublic]);
+export const insertTeamDAO = async (team: ITeam, userTeam: IUsersTeam) => {
+    const insertTeamOperation: IParametrizedQuery = {
+        query: insertTeam,
+        parameters: [team.id, team.name, team.admin, team.isPublic],
+    };
+
+    const insertUsersTeamLinkOperation: IParametrizedQuery = {
+        query: insertUsersTeamLink,
+        parameters: [userTeam.id, userTeam.userId, userTeam.teamId],
+    };
+
+    await executeMultipleQueries(
+        insertTeamOperation,
+        insertUsersTeamLinkOperation
+    );
 };
 
 export const insertUsersTeamLinkDAO = async ({

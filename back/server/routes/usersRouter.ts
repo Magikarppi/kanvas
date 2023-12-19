@@ -95,6 +95,13 @@ users.put(
         }
     }
 );
+users.put("/forgot-password", async(request: Request, response: Response)  => {
+    const newPassword = request.body.newPassword;
+    const userId = request.body.userId;
+    const hashedPassword = await argon2.hash(newPassword);
+    await updatePasswordDAO(userId, hashedPassword);
+    response.status(HTTP_RESPONSE_CODES.OK).send();
+});
 
 users.post("/forgot-password/", async(request: Request, response: Response)  => {
     const { email } = request.body;

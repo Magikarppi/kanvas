@@ -18,9 +18,7 @@ import {
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 
-import projectService from "../../services/projectService";
 import { IProjectSubmitNew } from "../../models/projectModels";
-import { selectToken } from "../../redux/hooks";
 import {
     isEmpty,
     isProjectDescriptionTooLong,
@@ -45,6 +43,7 @@ type TisPublic = "public" | "not-public";
 interface Props {
     open: boolean;
     close: () => void;
+    handleAddProject: (project: IProjectSubmitNew) => Promise<void>;
 }
 
 const initialTouched = {
@@ -63,11 +62,13 @@ const initialFormValues = {
     isPublic: "not-public",
 };
 
-export default function AddProjectModal({ open, close }: Props) {
+export default function AddProjectModal({
+    open,
+    close,
+    handleAddProject,
+}: Props) {
     const [formValues, setFormValues] = useState(initialFormValues);
     const [touched, setTouched] = useState(initialTouched);
-
-    const token = selectToken();
 
     useEffect(() => {
         if (!open) {
@@ -134,10 +135,10 @@ export default function AddProjectModal({ open, close }: Props) {
                 isPublic: formValues.isPublic === "public" ? true : false,
                 picture: null,
             };
-            await projectService.createNewProject(token!, project);
 
-            // TODO add project to state
+            await handleAddProject(project);
 
+            resetInputs();
             close();
         } catch (error) {
             console.log(error);

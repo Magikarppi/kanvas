@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IUser, IUserUpdateWithoutId } from "../models/userModels";
+import { createSlice } from "@reduxjs/toolkit";
+import { IUser } from "../models/userModels";
 
 interface IInitialState {
     user: IUser | undefined | null; 

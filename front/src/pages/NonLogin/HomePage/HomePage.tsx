@@ -33,6 +33,9 @@ const HomePage = () => {
                             variant="contained"
                             color="secondary"
                             onClick={() => handleNavigation("/sign-up")}
+                            style={{
+                                fontSize: "12px",
+                            }}
                         >
                             Sign up
                         </Button>
@@ -55,6 +58,9 @@ const HomePage = () => {
                             variant="contained"
                             color="primary"
                             onClick={() => handleNavigation("/sign-in")}
+                            style={{
+                                fontSize: "12px",
+                            }}
                         >
                             Sign in
                         </Button>

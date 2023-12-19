@@ -36,11 +36,12 @@ const App = () => {
                         path="/forgot-password"
                         element={<ForgotPasswordPage />}
                     />
-
                     <Route path="/projects" element={<AllProjectsPage />} />
                     <Route path="/projects/:id" element={<ProjectPage />} />
-
                     <Route path="/profile" element={<UserProfilePage />} />
+                    <Route path="/teams" element={<UnknownUrl />} />
+                    <Route path="/messages" element={<UnknownUrl />} />
+                    <Route path="/notifications" element={<UnknownUrl />} />
                     <Route path="*" element={<UnknownUrl />} />
                 </Routes>
                 {!user && <Footer />}

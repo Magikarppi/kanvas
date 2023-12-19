@@ -9,6 +9,7 @@ import {
     Typography,
     InputAdornment,
     IconButton,
+    InputLabel,
 } from "@mui/material";
 import Icons from "../../../components/Icons/Icons";
 import { useNavigate } from "react-router-dom";
@@ -148,10 +149,16 @@ const RegistrationForm = () => {
                     alignItems: "center",
                 }}
             >
-                <Typography variant="h5">Sign up</Typography>
+                <Typography variant="h4">Sign up</Typography>
                 <Box component="form" sx={{ mt: 3 }}>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={1}>
                         <Grid item xs={12} sm={6}>
+                            <InputLabel
+                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                htmlFor="firstName"
+                            >
+                                First Name *                           
+                            </InputLabel>
                             <TextField
                                 error={validateInputs("firstName")}
                                 required
@@ -159,14 +166,22 @@ const RegistrationForm = () => {
                                 value={formData.firstName}
                                 fullWidth
                                 id="firstName"
+                                size="small"
                                 onChange={handleInputChange}
-                                label="First Name"
                                 onBlur={() => handleInputBlur("firstName")}
                                 helperText={getErrorText("firstName")}
                                 autoComplete="off"
+                                sx={{ "& input": { fontSize: 14 } }}
+                                FormHelperTextProps={{ style: { fontSize: 12 } }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
+                            <InputLabel
+                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                htmlFor="firstName"
+                            >
+                                Last Name *                           
+                            </InputLabel>
                             <TextField
                                 error={validateInputs("lastName")}
                                 required
@@ -174,14 +189,22 @@ const RegistrationForm = () => {
                                 id="lastName"
                                 value={formData.lastName}
                                 onChange={handleInputChange}
-                                label="Last Name"
                                 name="lastName"
+                                size="small"
                                 onBlur={() => handleInputBlur("lastName")}
                                 helperText={getErrorText("lastName")}
                                 autoComplete="off"
+                                sx={{ "& input": { fontSize: 14 } }}
+                                FormHelperTextProps={{ style: { fontSize: 12 } }}
                             />
                         </Grid>
                         <Grid item xs={12}>
+                            <InputLabel
+                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                htmlFor="firstName"
+                            >
+                                Email Address *                           
+                            </InputLabel>
                             <TextField
                                 error={validateInputs("email")}
                                 required
@@ -190,14 +213,22 @@ const RegistrationForm = () => {
                                 id="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
-                                label="Email Address"
                                 name="email"
+                                size="small"
                                 onBlur={() => handleInputBlur("email")}
                                 helperText={getErrorText("email")}
                                 autoComplete="off"
+                                sx={{ "& input": { fontSize: 14 } }}
+                                FormHelperTextProps={{ style: { fontSize: 12 } }}
                             />
                         </Grid>
                         <Grid item xs={12}>
+                            <InputLabel
+                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                htmlFor="firstName"
+                            >
+                                Password *                            
+                            </InputLabel>
                             <TextField
                                 error={validateInputs("password")}
                                 required
@@ -205,11 +236,13 @@ const RegistrationForm = () => {
                                 id="password"
                                 value={formData.password}
                                 onChange={handleInputChange}
-                                label="Password"
                                 name="password"
                                 autoComplete="off"
+                                size="small"
                                 onBlur={() => handleInputBlur("password")}
                                 helperText={getErrorText("password")}
+                                sx={{ "& input": { fontSize: 14 } }}
+                                FormHelperTextProps={{ style: { fontSize: 12 } }}
                                 type={
                                     showPassword.password ? "text" : "password"
                                 }
@@ -236,6 +269,12 @@ const RegistrationForm = () => {
                             />
                         </Grid>
                         <Grid item xs={12}>
+                            <InputLabel
+                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                htmlFor="firstName"
+                            >
+                                Confirm password *                       
+                            </InputLabel>
                             <TextField
                                 error={validateInputs("confirmPassword")}
                                 required
@@ -243,13 +282,15 @@ const RegistrationForm = () => {
                                 id="confirmPassword"
                                 value={formData.confirmPassword}
                                 onChange={handleInputChange}
-                                label="Confirm password"
                                 name="confirmPassword"
+                                size="small"
                                 autoComplete="off"
                                 onBlur={() =>
                                     handleInputBlur("confirmPassword")
                                 }
                                 helperText={getErrorText("confirmPassword")}
+                                sx={{ "& input": { fontSize: 14 } }}
+                                FormHelperTextProps={{ style: { fontSize: 12 } }}
                                 type={
                                     showPassword.confirmPassword
                                         ? "text"
@@ -283,6 +324,7 @@ const RegistrationForm = () => {
                         variant="contained"
                         color="secondary"
                         sx={{ mt: 3, mb: 2 }}
+                        style={{fontSize: 13 }}
                         onClick={handleSubmit}
                         disabled={disableButton}
                     >
@@ -291,7 +333,7 @@ const RegistrationForm = () => {
                     <Grid container justifyContent="flex-end">
                         <Grid item>
                             <Link
-                                style={{ cursor: "pointer" }}
+                                style={{ cursor: "pointer", fontSize: 13 }}
                                 onClick={() => handleNavigation("/sign-in")}
                             >
                                 Already have an account? Sign in

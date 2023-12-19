@@ -250,7 +250,7 @@ const UserProfile = () => {
                             onBlur={() => handleInputBlur("firstName")}
                             helperText={getErrorText("firstName")}
                             autoComplete="off"
-                            sx={{ "& input": { fontSize: 12 } }}
+                            sx={{ "& input": { fontSize: 14 } }}
                             FormHelperTextProps={{ style: { fontSize: 12 } }}
                         />
                         <InputLabel
@@ -271,7 +271,7 @@ const UserProfile = () => {
                             onBlur={() => handleInputBlur("lastName")}
                             helperText={getErrorText("lastName")}
                             autoComplete="off"
-                            sx={{ "& input": { fontSize: 12 } }}
+                            sx={{ "& input": { fontSize: 14 } }}
                             FormHelperTextProps={{ style: { fontSize: 12 } }}
 
                         />
@@ -293,7 +293,7 @@ const UserProfile = () => {
                             onBlur={() => handleInputBlur("email")}
                             helperText={getErrorText("email")}
                             autoComplete="off"
-                            sx={{ "& input": { fontSize: 12 } }}
+                            sx={{ "& input": { fontSize: 14 } }}
                             FormHelperTextProps={{ style: { fontSize: 12 } }}
                         />
                         <InputLabel
@@ -377,6 +377,7 @@ const UserProfile = () => {
                             rows={6}
                             id="jobPitch"
                             type="text"
+                            inputProps= { { style: { fontSize: "14px" }}}
                         />
                     </Box>
                     <div>

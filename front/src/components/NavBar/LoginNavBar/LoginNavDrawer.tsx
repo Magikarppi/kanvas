@@ -57,7 +57,7 @@ const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
         >
             <DrawerHeader>
                 <Typography
-                    variant="h5"
+                    variant="h4"
                     color="inherit"
                     component="div"
                     style={{ alignContent: "flex-start" }}
@@ -83,6 +83,7 @@ const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
                     bottom: "10px",
                     margin: "0 -20px 0px 20px",
                     width: "200px",
+                    fontSize: "12px",
                 }}
                 onClick={() => handleSignOut()}
             >

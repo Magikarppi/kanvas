@@ -8,6 +8,8 @@ import {
     Paper,
     TextField,
     Typography,
+    Box,
+    InputLabel,
 } from "@mui/material";
 import Icons from "../Icons/Icons";
 import userRequests from "../../services/userService";
@@ -132,7 +134,7 @@ const UserChangePassword = () => {
 
     return (
         <Paper elevation={1} className="userEditProfileContainer">
-            <Typography variant="h5" style={{ margin: "30px 0 30px 0" }}>
+            <Typography variant="h4" style={{ marginTop: "40px", marginBottom: "30px" }}>
                 Change your password
             </Typography>
             <Grid container style={{ marginBottom: "40px" }}>
@@ -144,22 +146,36 @@ const UserChangePassword = () => {
                     lg={5}
                     style={{ textAlign: "center" }}
                 >
-                    <form>
+                    <Box
+                        component="form"
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "flex-start",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <InputLabel
+                            style={{ fontSize: 14, marginBottom: 3, marginLeft: 6 }}
+                            htmlFor="firstName"
+                        >
+                            Current password *
+                        </InputLabel>
                         <TextField
                             required
-                            sx={{ mb: 2 }}
                             fullWidth
                             autoComplete="off"
                             size="small"
                             name="password"
                             type={showPasswords.password ? "text" : "password"}
                             id="outlined-required-originalPassword"
-                            label="Current password"
                             error={validateInput("password")}
                             helperText={getErrorText("password")}
                             value={formData.password}
                             onChange={handleInputChange}
                             onBlur={() => handleInputBlur("password")}
+                            sx={{ "& input": { fontSize: 14 } }}
+                            FormHelperTextProps={{ style: { fontSize: 12 } }}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
@@ -185,9 +201,14 @@ const UserChangePassword = () => {
                                 ),
                             }}
                         />
+                        <InputLabel
+                            style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
+                            htmlFor="newPassword"
+                        >
+                            New password *
+                        </InputLabel>
                         <TextField
                             required
-                            sx={{ mb: 2 }}
                             fullWidth
                             autoComplete="off"
                             size="small"
@@ -196,12 +217,13 @@ const UserChangePassword = () => {
                                 showPasswords.newPassword ? "text" : "password"
                             }
                             id="outlined-required-newPassword1"
-                            label="New password"
                             error={validateInput("newPassword")}
                             helperText={getErrorText("newPassword")}
                             value={formData.newPassword}
                             onChange={handleInputChange}
                             onBlur={() => handleInputBlur("newPassword")}
+                            sx={{ "& input": { fontSize: 14 } }}
+                            FormHelperTextProps={{ style: { fontSize: 12 } }}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
@@ -227,6 +249,10 @@ const UserChangePassword = () => {
                                 ),
                             }}
                         />
+                        <InputLabel
+                            style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
+                            htmlFor="newPasswordConfirm"
+                        >Confirm new password *</InputLabel>
                         <TextField
                             required
                             fullWidth
@@ -239,12 +265,13 @@ const UserChangePassword = () => {
                                     : "password"
                             }
                             id="outlined-required-newPassword2"
-                            label="Confirm new password"
                             error={validateInput("newPasswordConfirm")}
                             helperText={getErrorText("newPasswordConfirm")}
                             value={formData.newPasswordConfirm}
                             onChange={handleInputChange}
                             onBlur={() => handleInputBlur("newPasswordConfirm")}
+                            sx={{ "& input": { fontSize: 14 } }}
+                            FormHelperTextProps={{ style: { fontSize: 12 } }}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
@@ -270,12 +297,13 @@ const UserChangePassword = () => {
                                 ),
                             }}
                         />
-                    </form>
+                    </Box>
                     <Button
                         variant="contained"
                         color="secondary"
-                        style={{ marginTop: "20px" }}
+                        style={{ marginTop: "20px", fontSize: 13, width: "140px" }}
                         onClick={handleSubmit}
+                        size="large"
                         disabled={isSubmitDisabled}
                     >
                         Submit

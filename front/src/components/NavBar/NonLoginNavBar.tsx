@@ -16,7 +16,7 @@ const NonLoginNavBar = () => {
         <div className="navBarContainer">
             <AppBar position="static">
                 <Toolbar variant="dense">
-                    <Typography variant="h5" color="inherit" component="div">
+                    <Typography variant="h4" color="inherit" component="div">
                         Kanvas
                     </Typography>
                     <div className="navbarButtonContainer">
@@ -24,6 +24,7 @@ const NonLoginNavBar = () => {
                             color="inherit"
                             startIcon={<Icons.User />}
                             onClick={handleSignInNavigation}
+                            style={{fontSize: 13 }}
                         >
                             Sign in
                         </Button>

@@ -9,6 +9,7 @@ import {
     Box,
     InputAdornment,
     IconButton,
+    InputLabel,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Icons from "../../../components/Icons/Icons";
@@ -124,10 +125,16 @@ const LoginForm = () => {
                     alignItems: "center",
                 }}
             >
-                <Typography variant="h5">Sign in</Typography>
+                <Typography variant="h4">Sign in</Typography>
                 <Box component="form" sx={{ mt: 3 }}>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={1}>
                         <Grid item xs={12}>
+                            <InputLabel
+                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                htmlFor="firstName"
+                            >
+                                Email Address                            
+                            </InputLabel>
                             <TextField
                                 error={validateInputs("email")}
                                 required
@@ -136,14 +143,22 @@ const LoginForm = () => {
                                 id="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
-                                label="Email Address"
                                 name="email"
+                                size="small"
                                 onBlur={() => handleInputBlur("email")}
                                 helperText={getErrorText("email")}
                                 autoComplete="off"
+                                sx={{ "& input": { fontSize: 14 } }}
+                                FormHelperTextProps={{ style: { fontSize: 12 } }}
                             />
                         </Grid>
                         <Grid item xs={12}>
+                            <InputLabel
+                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                htmlFor="firstName"
+                            >
+                            Password *
+                            </InputLabel>
                             <TextField
                                 error={validateInputs("password")}
                                 required
@@ -151,11 +166,13 @@ const LoginForm = () => {
                                 id="password"
                                 value={formData.password}
                                 onChange={handleInputChange}
-                                label="Password"
                                 name="password"
+                                size="small"
                                 autoComplete="off"
                                 onBlur={() => handleInputBlur("password")}
                                 helperText={getErrorText("password")}
+                                sx={{ "& input": { fontSize: 14 } }}
+                                FormHelperTextProps={{ style: { fontSize: 12 } }}
                                 type={
                                     showPassword.password ? "text" : "password"
                                 }
@@ -188,7 +205,7 @@ const LoginForm = () => {
                         >
                             <Grid item>
                                 <Link
-                                    style={{ cursor: "pointer" }}
+                                    style={{ cursor: "pointer", fontSize: 13 }}
                                     onClick={() =>
                                         handleNavigation("/forgot-password")
                                     }
@@ -203,6 +220,7 @@ const LoginForm = () => {
                         variant="contained"
                         color="secondary"
                         sx={{ mt: 3, mb: 2 }}
+                        style={{fontSize: 13 }}
                         disabled={disableButton}
                         onClick={handleSubmit}
                     >
@@ -211,7 +229,7 @@ const LoginForm = () => {
                     <Grid container justifyContent="flex-end">
                         <Grid item>
                             <Link
-                                style={{ cursor: "pointer" }}
+                                style={{ cursor: "pointer", fontSize: 13 }}
                                 onClick={() => handleNavigation("/sign-up")}
                             >
                                 Dont have an account yet? Sign Up

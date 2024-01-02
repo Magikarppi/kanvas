@@ -1,7 +1,10 @@
 import pg from "pg";
 import dotenv from "dotenv";
-import { createNewUserDAO } from "./daos/userDao";
+
 import { dummyUsers } from "./utils/dummyData";
+import { insertUserDAO } from "./DAOs";
+import { IParametrizedQuery } from "./utils/interfaces";
+
 dotenv.config();
 
 const { PG_HOST, PG_PORT, PG_USERNAME, PG_PASSWORD, PG_DATABASE } = process.env;
@@ -24,6 +27,33 @@ export const executeQuery = async (
         return result;
     } catch (error) {
         if (error instanceof Error) {
+            console.error(error.stack);
+            error.name = "dbError";
+            throw error;
+        }
+    } finally {
+        client.release();
+    }
+};
+
+export const executeMultipleQueries = async (... args: IParametrizedQuery[]) => {
+    const client = await pool.connect();
+
+    try {
+        const results = [];
+        
+        await client.query("BEGIN");
+        for (const operation of args) {
+            const result = await client.query(operation.query, operation.parameters);
+            if (result) {
+                results.push(result);
+            }
+        }
+        await client.query("COMMIT");
+        return results;
+    } catch (error) {
+        if (error instanceof Error) {
+            await client.query("ROLLBACK");
             console.error(error.stack);
             error.name = "dbError";
             throw error;
@@ -169,10 +199,69 @@ const createTables = async () => {
     }
 };
 
+export const alterTableDeleteBehavior = async () => {
+    try {
+        const deleteBehavQuery = `
+    ALTER TABLE roles DROP CONSTRAINT roles_project_id_fkey, ADD CONSTRAINT roles_project_id_fkey FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE;
+
+    ALTER TABLE roles DROP CONSTRAINT roles_user_id_fkey, ADD CONSTRAINT roles_user_id_fkey FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+    ALTER TABLE favorite_projects DROP CONSTRAINT favorite_projects_project_id_fkey, ADD CONSTRAINT favorite_projects_project_id_fkey FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE;
+
+    ALTER TABLE favorite_projects DROP CONSTRAINT favorite_projects_user_id_fkey, ADD CONSTRAINT favorite_projects_user_id_fkey FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+    ALTER TABLE project_columns DROP CONSTRAINT project_columns_project_id_fkey, ADD CONSTRAINT project_columns_project_id_fkey FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE;
+
+    ALTER TABLE project_members DROP CONSTRAINT project_members_project_id_fkey, ADD CONSTRAINT project_members_project_id_fkey FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE;
+
+    ALTER TABLE project_members DROP CONSTRAINT project_members_user_id_fkey, ADD CONSTRAINT project_members_user_id_fkey FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+    ALTER TABLE cards DROP CONSTRAINT cards_in_column_fkey, ADD CONSTRAINT cards_in_column_fkey FOREIGN KEY(in_column) REFERENCES project_columns(id) ON DELETE CASCADE;
+
+    ALTER TABLE cards DROP CONSTRAINT cards_project_id_fkey, ADD CONSTRAINT cards_project_id_fkey FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE;
+
+    ALTER TABLE project_keywords DROP CONSTRAINT project_keywords_keyword_id_fkey, ADD CONSTRAINT project_keywords_keyword_id_fkey FOREIGN KEY(keyword_id) REFERENCES keywords(id) ON DELETE CASCADE;
+
+    ALTER TABLE project_keywords DROP CONSTRAINT project_keywords_project_id_fkey, ADD CONSTRAINT project_keywords_project_id_fkey FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE;
+
+    ALTER TABLE card_keywords DROP CONSTRAINT card_keywords_card_id_fkey, ADD CONSTRAINT card_keywords_card_id_fkey FOREIGN KEY(card_id) REFERENCES cards(id) ON DELETE CASCADE;
+
+    ALTER TABLE card_keywords DROP CONSTRAINT card_keywords_keyword_id_fkey, ADD CONSTRAINT card_keywords_keyword_id_fkey FOREIGN KEY(keyword_id) REFERENCES keywords(id) ON DELETE CASCADE;
+
+    ALTER TABLE card_responsible_persons DROP CONSTRAINT card_responsible_persons_card_id_fkey, ADD CONSTRAINT card_responsible_persons_card_id_fkey FOREIGN KEY(card_id) REFERENCES cards(id) ON DELETE CASCADE;
+    
+    ALTER TABLE card_responsible_persons DROP CONSTRAINT card_responsible_persons_user_id_fkey, ADD CONSTRAINT card_responsible_persons_user_id_fkey FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+    ALTER TABLE card_comments DROP CONSTRAINT card_comments_author_fkey, ADD CONSTRAINT card_comments_author_fkey FOREIGN KEY(author) REFERENCES users(id) ON DELETE CASCADE;
+    
+    ALTER TABLE card_comments DROP CONSTRAINT card_comments_card_id_fkey, ADD CONSTRAINT card_comments_card_id_fkey FOREIGN KEY(card_id) REFERENCES cards(id) ON DELETE CASCADE;
+
+    ALTER TABLE reactions DROP CONSTRAINT reactions_card_comment_fkey, ADD CONSTRAINT reactions_card_comment_fkey FOREIGN KEY(card_comment) REFERENCES card_comments(id) ON DELETE CASCADE;
+
+    ALTER TABLE reactions DROP CONSTRAINT reactions_user_id_fkey, ADD CONSTRAINT reactions_user_id_fkey FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+    ALTER TABLE teams DROP CONSTRAINT teams_admin_fkey, ADD CONSTRAINT teams_admin_fkey FOREIGN KEY(admin) REFERENCES users(id) ON DELETE CASCADE;
+
+    ALTER TABLE team_projects DROP CONSTRAINT team_projects_project_id_fkey, ADD CONSTRAINT team_projects_project_id_fkey FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE;
+
+    ALTER TABLE team_projects DROP CONSTRAINT team_projects_team_id_fkey, ADD CONSTRAINT team_projects_team_id_fkey FOREIGN KEY(team_id) REFERENCES teams(id) ON DELETE CASCADE;
+
+    ALTER TABLE user_teams DROP CONSTRAINT user_teams_team_id_fkey, ADD CONSTRAINT user_teams_team_id_fkey FOREIGN KEY(team_id) REFERENCES teams(id) ON DELETE CASCADE;
+
+    ALTER TABLE user_teams DROP CONSTRAINT user_teams_user_id_fkey, ADD CONSTRAINT user_teams_user_id_fkey FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE;
+    `;
+
+        await executeQuery(deleteBehavQuery);
+        console.log("Alter table commands successfully completed");
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 const fillTablesWithDummyData = async () => {
     try {
         for (const user of dummyUsers) {
-            await createNewUserDAO(user);
+            await insertUserDAO(user);
         }
         console.log("Dummy data added successfully");
     } catch (error) {

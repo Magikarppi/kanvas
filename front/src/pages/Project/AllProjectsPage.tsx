@@ -9,7 +9,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import AddProjectModal from "../../components/Projects/AddProjectModal";
 import { useEffect, useState } from "react";
-import { IProject } from "../../models/projectModels";
+import { IProject, IProjectSubmitNew } from "../../models/projectModels";
 import projectService from "../../services/projectService";
 import { selectToken, selectUser } from "../../redux/hooks";
 
@@ -60,11 +60,13 @@ const dummyOpenProjects: IProject[] = [
     },
 ];
 
+const cardHeight = "80px";
+
 const createCard = (output: string) => (
     <Card
         elevation={2}
         sx={{
-            height: "60px",
+            height: cardHeight,
             pl: "10px",
             pr: "10px",
             border: "1px solid #ffff",
@@ -106,12 +108,33 @@ export default function AllProjectsPage() {
     const openAddProjectModal = () => setAddProjectModalOpen(true);
     const closeAddProjectModal = () => setAddProjectModalOpen(false);
 
+    const handleAddProject = async (project: IProjectSubmitNew) => {
+        if (token) {
+            try {
+                const addedProject = await projectService.createNewProject(
+                    token,
+                    project
+                );
+
+                if (addedProject) {
+                    setUsersProjects((prevProjects) => [
+                        ...prevProjects,
+                        addedProject,
+                    ]);
+                }
+            } catch (error) {
+                console.error(error);
+                // Todo: Set error message
+            }
+        }
+    };
+
     const AddNewProjectCard = () => (
         <Card
             onClick={openAddProjectModal}
             elevation={2}
             sx={{
-                height: "60px",
+                height: cardHeight,
                 pl: "10px",
                 pr: "10px",
                 border: "1px solid #ffff",
@@ -123,7 +146,7 @@ export default function AllProjectsPage() {
         >
             <CardContent>
                 <Typography variant="h6" sx={{ color: "primary.main" }}>
-                    + Add new project
+                    + Add a new project
                 </Typography>
             </CardContent>
         </Card>
@@ -138,6 +161,7 @@ export default function AllProjectsPage() {
             <AddProjectModal
                 open={addProjectModalOpen}
                 close={closeAddProjectModal}
+                handleAddProject={handleAddProject}
             />
             <Stack sx={{ minHeight: "90vh" }}>
                 <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>

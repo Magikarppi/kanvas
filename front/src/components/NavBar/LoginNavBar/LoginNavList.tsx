@@ -13,61 +13,71 @@ import { Link } from "react-router-dom";
 const LoginNavList = () => {
     return (
         <List disablePadding>
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Dashboard />
-                    </ListItemIcon>
-                    <ListItemText primary="Dashboard" />
-                </ListItemButton>
-            </ListItem>
+            <Link to="/projects">
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Dashboard />
+                        </ListItemIcon>
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }} primary="Dashboard"></ListItemText>
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             <Divider />
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Projects />
-                    </ListItemIcon>
-                    <ListItemText primary="Projects" />
-                </ListItemButton>
-            </ListItem>
+            <Link to="/projects">
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Projects />
+                        </ListItemIcon>
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Projects" />
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             <Divider />
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Team />
-                    </ListItemIcon>
-                    <ListItemText primary="Teams" />
-                </ListItemButton>
-            </ListItem>
+            <Link to="/teams">
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Team />
+                        </ListItemIcon>
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Teams" />
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             <Divider />
-            <ListItem disablePadding>
-                <Link to="/profile">
+            <Link to="/profile">
+                <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemIcon>
                             <Icons.Account />
                         </ListItemIcon>
-                        <ListItemText primary="Profile" />
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Profile" />
                     </ListItemButton>
-                </Link>
-            </ListItem>
+                </ListItem>
+            </Link>
             <Divider />
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Message />
-                    </ListItemIcon>
-                    <ListItemText primary="Messages" />
-                </ListItemButton>
-            </ListItem>
+            <Link to="/messages">
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Message />
+                        </ListItemIcon>
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Messages" />
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             <Divider />
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Icons.Notifications />
-                    </ListItemIcon>
-                    <ListItemText primary="Notifications" />
-                </ListItemButton>
-            </ListItem>
+            <Link to="/notifications">
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Icons.Notifications />
+                        </ListItemIcon>
+                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Notifications" />
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             <Divider />
         </List>
     );

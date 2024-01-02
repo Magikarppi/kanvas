@@ -9,9 +9,11 @@ a {
 /* Home Page */
 .navBarContainer {
     height: 65px;
-    background: linear-gradient(180deg,
-            rgba(200, 200, 200, 0.5) 0%,
-            rgba(0, 0, 0, 0.1) 100%);
+    background: linear-gradient(
+        180deg,
+        rgba(200, 200, 200, 0.5) 0%,
+        rgba(0, 0, 0, 0.1) 100%
+    );
 }
 
 .navbarButtonContainer {
@@ -19,7 +21,7 @@ a {
 }
 
 .homeContainer1 {
-    background: url("styles/images/HomePage/mountain-climb.svg") no-repeat
+    background: url("styles/images/HomePage/mountain-climb.png") no-repeat
         center center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -29,7 +31,7 @@ a {
 
 .homeContainer2 {
     min-height: 600px;
-    background: url("styles/images/HomePage/office-table.svg") no-repeat center
+    background: url("styles/images/HomePage/office-table.png") no-repeat center
         center;
     -webkit-background-size: cover;
     -moz-background-size: cover;

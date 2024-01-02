@@ -1,3 +1,8 @@
+export interface IParametrizedQuery {
+    query: string;
+    parameters?: (string | boolean | Date | null | undefined)[];
+}
+
 export interface IUser {
     id: string;
     firstName: string;
@@ -66,4 +71,16 @@ export interface IUsersTeam {
     id: string;
     userId: string;
     teamId: string;
+}
+
+export interface IProjectMember {
+    id: string;
+    userId: string;
+    projectId: string;
+}
+
+export interface IUserRole {
+    projectId: string;
+    userId: string;
+    role: string;
 }

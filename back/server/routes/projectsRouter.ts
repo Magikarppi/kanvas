@@ -3,28 +3,26 @@ import { v4 as uuid } from "uuid";
 
 import { UserRequest } from "../middleware/middleware";
 import {
-    addProjectDao,
+    insertProjectDAO,
     getProjectMemberDAO,
-    getSingleProjectDAO,
-    getUserProjects,
-    getUserFavoriteProjects,
-    getUserTeams,
-    deleteProjectDaO,
+    getProjectDAO,
+    getUserProjectsDAO,
+    getUserFavoriteProjectsDAO,
+    deleteProjectDAO,
     updateProjectDAO,
-} from "../../database/daos/projectsDao";
-import { IProject } from "../../database/utils/interfaces";
+    getProjectAdminDAO,
+    removeUserRoleDAO,
+    getUserTeamsDAO,
+    getUserByIdDAO,
+} from "../../database/DAOs";
+import { IProject, IProjectMember, IUserRole } from "../../database/utils/interfaces";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
     getCurrentTimestamp,
 } from "../utils/utilities";
-import { getUserDAO } from "../../database/daos/userDao";
 import { JwtPayload } from "jsonwebtoken";
 import { dummyGetProjectData } from "../../database/utils/dummyData";
-import {
-    getProjectAdminDAO,
-    removeUserRoleDAO,
-} from "../../database/daos/rolesDao";
 
 const router = Router();
 
@@ -60,8 +58,20 @@ router.post("/", async (req: UserRequest, res: Response) => {
             isPublic,
         };
 
-        const addedProject = await addProjectDao({ ...project });
+        const { value: userId } = req.user as JwtPayload;
+        const projectMember: IProjectMember = {
+            id: uuid(),
+            userId: userId,
+            projectId: project.id,
+        };
 
+        const userRole: IUserRole = {
+            projectId: project.id,
+            userId: userId,
+            role: "admin",
+        };
+
+        const addedProject = await insertProjectDAO(project, projectMember, userRole);
         if (!addedProject) {
             return res
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
@@ -101,7 +111,7 @@ router.delete("/:id", async (req: UserRequest, res: Response) => {
             return;
         }
         await removeUserRoleDAO(userId, projectId); // for testing the endpoint, TODO: remove this call after we have altered database's delete behaviors
-        await deleteProjectDaO(projectId);
+        await deleteProjectDAO(projectId);
         res.status(HTTP_RESPONSE_CODES.OK).send();
     } catch (error) {
         console.error(error);
@@ -116,7 +126,7 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
     const { value: userId } = req.user as JwtPayload;
 
     try {
-        const existingProject = await getSingleProjectDAO(projectId);
+        const existingProject = await getProjectDAO(projectId);
         if (!existingProject) {
             res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
                 "Project or user not found"
@@ -171,14 +181,14 @@ router.get("/userprojects/:id", async (req: UserRequest, res: Response) => {
     const userId = req.params.id;
 
     try {
-        const user = await getUserDAO(userId);
+        const user = await getUserByIdDAO(userId);
         if (user) {
             try {
-                const userAllProjects = await getUserProjects(userId);
-                const userFavoriteProjects = await getUserFavoriteProjects(
+                const userAllProjects = await getUserProjectsDAO(userId);
+                const userFavoriteProjects = await getUserFavoriteProjectsDAO(
                     userId
                 );
-                const userTeams = await getUserTeams(userId);
+                const userTeams = await getUserTeamsDAO(userId);
                 const userProjectsData = {
                     allProjects: userAllProjects,
                     favoriteProjects: userFavoriteProjects,
@@ -215,7 +225,7 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
             theme,
             picture,
         } = req.body;
-        
+
         const { value: userId } = req.user as JwtPayload;
         const projectId = req.params.id;
 
@@ -227,7 +237,7 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
             return;
         }
 
-        const project = await getSingleProjectDAO(projectId);
+        const project = await getProjectDAO(projectId);
 
         if (!project) {
             return res

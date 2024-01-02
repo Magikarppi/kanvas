@@ -1,4 +1,4 @@
-export const insertNewUser = `
+export const insertUser = `
         INSERT INTO users (
         id,
         first_name,
@@ -38,10 +38,13 @@ export const updateUser = `
       job_pitch = $12
     WHERE id = $13`;
 
-export const updatePassword = "UPDATE users SET password_hash = $2 WHERE id = $1";
+export const updatePassword =
+    "UPDATE users SET password_hash = $2 WHERE id = $1";
 
 export const getUserById = "SELECT * FROM users WHERE id = $1";
 
-export const getUserByEmail = "SELECT * FROM users WHERE LOWER(email) = LOWER($1)";
+export const getUserByEmail =
+    "SELECT * FROM users WHERE LOWER(email) = LOWER($1)";
 
-export const getExistingEmailConflict = "SELECT * FROM users WHERE id <> $1 AND LOWER(email) = LOWER($2)";
+export const getExistingEmailConflict =
+    "SELECT * FROM users WHERE id <> $1 AND LOWER(email) = LOWER($2)";

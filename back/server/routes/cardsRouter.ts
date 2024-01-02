@@ -1,15 +1,21 @@
 import express, { Request, Response } from "express";
-import { cardsDaoUpdate, createCardDAO, deleteCardDaO, getCardWithId } from "../../database/daos/cardsDao";
+import { JwtPayload } from "jsonwebtoken";
+import { v4 as uuid } from "uuid";
+
+import {
+    updateCardDAO,
+    insertCardDAO,
+    deleteCardDAO,
+    getCardDAO,
+    getProjectMemberDAO,
+} from "../../database/DAOs";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
     getCurrentTimestamp,
 } from "../utils/utilities";
 import { ICard } from "../../database/utils/interfaces";
-import { v4 as uuid } from "uuid";
 import { UserRequest } from "../middleware/middleware";
-import { getProjectMemberDAO } from "../../database/daos/projectsDao";
-import { JwtPayload } from "jsonwebtoken";
 
 const cards = express.Router();
 
@@ -40,7 +46,7 @@ cards.post("", async (req: UserRequest, res: Response) => {
             inColumn: req.body.inColumn,
         };
 
-        await createCardDAO(card);
+        await insertCardDAO(card);
         res.status(HTTP_RESPONSE_CODES.CREATED).send(card);
     } catch (error) {
         console.error(error);
@@ -65,7 +71,7 @@ cards.put("/:id", async (req: Request, res: Response) => {
         projectId: req.body.projectId,
     };
     try {
-        await cardsDaoUpdate(id, card);
+        await updateCardDAO(id, card);
         res.status(HTTP_RESPONSE_CODES.OK).send();
     } catch (error) {
         console.error(error);
@@ -74,15 +80,17 @@ cards.put("/:id", async (req: Request, res: Response) => {
         );
     }
 });
-    
+
 cards.get("/:id", async (req: Request, res: Response) => {
     const id = req.params.id;
     try {
-        const card: ICard = await getCardWithId(id);
-        if(card){
+        const card: ICard = await getCardDAO(id);
+        if (card) {
             res.status(HTTP_RESPONSE_CODES.OK).json(card);
         } else {
-            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.CARD_NOT_FOUND);
+            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
+                RESPONSE_MESSAGES.CARD_NOT_FOUND
+            );
         }
     } catch (error) {
         console.error(error);
@@ -95,12 +103,14 @@ cards.get("/:id", async (req: Request, res: Response) => {
 cards.delete("/:id", async (req: UserRequest, res: Response) => {
     try {
         const { id } = req.params;
-        const card = await getCardWithId(id);
-        if(card){
-            await deleteCardDaO(id);
+        const card = await getCardDAO(id);
+        if (card) {
+            await deleteCardDAO(id);
             return res.status(HTTP_RESPONSE_CODES.OK).send("Card deleted");
         } else {
-            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.CARD_NOT_FOUND);
+            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
+                RESPONSE_MESSAGES.CARD_NOT_FOUND
+            );
         }
     } catch (error) {
         console.error(error);

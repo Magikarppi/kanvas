@@ -1,4 +1,4 @@
-import RegistrationForm from "./RegistrationForm";
+import RegistrationForm from "./RegistrationFormi";
 import NavigateBackIcon from "../../../components/NavigationButtons/NavigateBackIcon";
 
 const RegistrationPage = () => {

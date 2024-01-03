@@ -14,6 +14,7 @@ export const insertResetPasswordRequestDAO = async(resetPasswordRequest: IResetP
     await executeQuery(insertResetPasswordRequest, [token, userID]);
 };
 
-export const deleteResetPasswordRequestDAO = async(token: string) => {
-    await executeQuery(deleteResetPasswordRequest, [token]);
+export const deleteResetPasswordRequestDAO = async(id: string) => {
+    await executeQuery(deleteResetPasswordRequest, [id]);
 };
+

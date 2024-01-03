@@ -109,7 +109,7 @@ users.put("/reset-password/:token", async(request: Request, response: Response) 
         if( decoded ) {
             const hashedPassword = await argon2.hash(newPassword);
             await updatePasswordDAO(resetPasswordRequest.userID, hashedPassword);
-            await deleteResetPasswordRequestDAO(token);
+            await deleteResetPasswordRequestDAO(resetPasswordRequest.userID);
             response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
 
         } else {

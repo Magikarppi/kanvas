@@ -25,6 +25,10 @@ import {
     validateEmailAndNames,
 } from "../middleware/middleware";
 import nodemailer from "nodemailer";
+import redis from 'redis';
+import JWTR from 'jwt-redis';
+import { insertResetPasswordRequestDAO, getResetPasswordRequestDAO } from "../../database/DAOs/resetPasswordRequestDAO";
+
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -35,6 +39,7 @@ const transporter = nodemailer.createTransport({
 });
 const users = express.Router();
 const JWT_SECRET = process.env.SECRET as string;
+const app_path = process.env.appPath;
 
 const createToken = (userId: string) =>
     jwt.sign({ value: userId }, JWT_SECRET, {
@@ -100,15 +105,21 @@ users.put(
 users.put("/reset-password/:token", async(request: Request, response: Response) => {
     const {newPassword, userId} = request.body;
     const token = request.params.token;
-    const decodedToken = jwt.verify(token, JWT_SECRET);
-    if(decodedToken){
-        const hashedPassword = await argon2.hash(newPassword);
-        await updatePasswordDAO(userId, hashedPassword);
-        response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
-    } else{
+    const resetPasswordRequest = await getResetPasswordRequestDAO(token);
+    if ( resetPasswordRequest ) {
+        const decoded = await jwt.verify(token, JWT_SECRET);
+        if( decoded ) {
+            const hashedPassword = await argon2.hash(newPassword);
+            await updatePasswordDAO(userId, hashedPassword);
+            response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
+
+        } else {
+            response.status(HTTP_RESPONSE_CODES.UNAUTHORIZED).send("Invalid token");
+        }
+    } else {
         response.status(HTTP_RESPONSE_CODES.UNAUTHORIZED).send("Invalid token");
     }
-   
+    
 })
 
 users.post("/forgot-password/", async(request: Request, response: Response)  => {
@@ -116,8 +127,8 @@ users.post("/forgot-password/", async(request: Request, response: Response)  => 
     const emailFetch = await getUserByEmailDAO(email);
    
     if( emailFetch ){
-        const token = createToken("");
-        const url = "http://localhost:3001/resetpassword/"+token;
+        const token = await createToken(emailFetch.id);
+        const url = app_path+token;
         await transporter.sendMail({
             from: "kanbanprojectbuutti@gmail.com", 
             to: email,
@@ -125,9 +136,10 @@ users.post("/forgot-password/", async(request: Request, response: Response)  => 
             text: "",
             html: "<b>You have forgot your password. Link for reseting password: "+url+"</b>",
           });
+        await insertResetPasswordRequestDAO({token: token, userID: emailFetch.id})
         response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
     } else {
-        response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Email not found");
+        response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Invalid Request");
     }
 });
 

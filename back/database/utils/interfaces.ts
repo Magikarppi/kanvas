@@ -3,6 +3,11 @@ export interface IParametrizedQuery {
     parameters?: (string | boolean | Date | null | undefined)[];
 }
 
+export interface IResetPasswordRequest {
+    token: string;
+    userID: string;
+}
+
 export interface IUser {
     id: string;
     firstName: string;

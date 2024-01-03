@@ -25,9 +25,7 @@ import {
     validateEmailAndNames,
 } from "../middleware/middleware";
 import nodemailer from "nodemailer";
-import redis from 'redis';
-import JWTR from 'jwt-redis';
-import { insertResetPasswordRequestDAO, getResetPasswordRequestDAO } from "../../database/DAOs/resetPasswordRequestDAO";
+import { insertResetPasswordRequestDAO, getResetPasswordRequestDAO, deleteResetPasswordRequestDAO } from "../../database/DAOs/resetPasswordRequestDAO";
 
 
 const transporter = nodemailer.createTransport({
@@ -111,6 +109,7 @@ users.put("/reset-password/:token", async(request: Request, response: Response) 
         if( decoded ) {
             const hashedPassword = await argon2.hash(newPassword);
             await updatePasswordDAO(userId, hashedPassword);
+            await deleteResetPasswordRequestDAO(token);
             response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
 
         } else {

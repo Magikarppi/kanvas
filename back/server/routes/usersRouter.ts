@@ -101,7 +101,7 @@ users.put(
 );
 
 users.put("/reset-password/:token", async(request: Request, response: Response) => {
-    const {newPassword } = request.body;
+    const { newPassword } = request.body;
     const token = request.params.token;
     const resetPasswordRequest: IResetPasswordRequest = await getResetPasswordRequestDAO(token);
     if ( resetPasswordRequest ) {
@@ -125,15 +125,15 @@ users.post("/forgot-password/", async(request: Request, response: Response)  => 
     const { email } = request.body;
     const emailFetch = await getUserByEmailDAO(email);
    
-    if( emailFetch ){
+    if( emailFetch ) {
         const token = await createToken(emailFetch.id);
-        const url = app_path+token;
+        const url = app_path + token;
         await transporter.sendMail({
             from: "kanbanprojectbuutti@gmail.com", 
             to: email,
             subject: "Forgot password for Kanban project", 
             text: "",
-            html: "<b>You have forgot your password. Link for reseting password: "+url+"</b>",
+            html: "<b>You have forgotten your password. Link for resetting password: "+url+"</b>",
           });
         await insertResetPasswordRequestDAO({token: token, userID: emailFetch.id})
         response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");

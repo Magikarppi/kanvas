@@ -97,11 +97,18 @@ users.put(
     }
 );
 
-users.put("/reset-password", async(request: Request, response: Response) => {
-    const {resetPassLink, newPassword, userId} = request.body;
-    const hashedPassword = await argon2.hash(newPassword);
-    await updatePasswordDAO(userId, hashedPassword);
-    response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
+users.put("/reset-password/:token", async(request: Request, response: Response) => {
+    const {newPassword, userId} = request.body;
+    const token = request.params.token;
+    const decodedToken = jwt.verify(token, JWT_SECRET);
+    if(decodedToken){
+        const hashedPassword = await argon2.hash(newPassword);
+        await updatePasswordDAO(userId, hashedPassword);
+        response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
+    } else{
+        response.status(HTTP_RESPONSE_CODES.UNAUTHORIZED).send("Invalid token");
+    }
+   
 })
 
 users.post("/forgot-password/", async(request: Request, response: Response)  => {
@@ -109,9 +116,8 @@ users.post("/forgot-password/", async(request: Request, response: Response)  => 
     const emailFetch = await getUserByEmailDAO(email);
    
     if( emailFetch ){
-        const randomNumber = Math.floor(Math.random() * 10000);
-        const formattedNumber = randomNumber.toString().padStart(4, '0');
-        const url = "http://localhost:3000/resetpassword/"+formattedNumber;
+        const token = createToken("");
+        const url = "http://localhost:3001/resetpassword/"+token;
         await transporter.sendMail({
             from: "kanbanprojectbuutti@gmail.com", 
             to: email,

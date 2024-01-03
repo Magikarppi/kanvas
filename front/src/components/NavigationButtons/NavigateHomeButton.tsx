@@ -17,6 +17,7 @@ const NavigateHomeButton = () => {
             variant="contained"
             startIcon={<Icons.Home size="16" />}
             style={{ marginTop: "30px" }}
+            data-testid="navigationHomeButton"
         >
             Go home
         </Button>

@@ -3,7 +3,7 @@ import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-import { IUpdateUser, IUser } from "../../database/utils/interfaces";
+import { IResetPasswordRequest, IUpdateUser, IUser } from "../../database/utils/interfaces";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
@@ -101,14 +101,14 @@ users.put(
 );
 
 users.put("/reset-password/:token", async(request: Request, response: Response) => {
-    const {newPassword, userId} = request.body;
+    const {newPassword } = request.body;
     const token = request.params.token;
-    const resetPasswordRequest = await getResetPasswordRequestDAO(token);
+    const resetPasswordRequest: IResetPasswordRequest = await getResetPasswordRequestDAO(token);
     if ( resetPasswordRequest ) {
         const decoded = await jwt.verify(token, JWT_SECRET);
         if( decoded ) {
             const hashedPassword = await argon2.hash(newPassword);
-            await updatePasswordDAO(userId, hashedPassword);
+            await updatePasswordDAO(resetPasswordRequest.userID, hashedPassword);
             await deleteResetPasswordRequestDAO(token);
             response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
 

@@ -29,11 +29,11 @@ import { insertResetPasswordRequestDAO, getResetPasswordRequestDAO, deleteResetP
 
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: "kanbanprojectbuutti@gmail.com",
-    pass: process.env.emailPassword
-  },
+    service: "gmail",
+    auth: {
+        user: "kanbanprojectbuutti@gmail.com",
+        pass: process.env.emailPassword
+    },
 });
 const users = express.Router();
 const JWT_SECRET = process.env.SECRET as string;
@@ -119,7 +119,7 @@ users.put("/reset-password/:token", async(request: Request, response: Response) 
         response.status(HTTP_RESPONSE_CODES.UNAUTHORIZED).send("Invalid token");
     }
     
-})
+});
 
 users.post("/forgot-password/", async(request: Request, response: Response)  => {
     const { email } = request.body;
@@ -134,8 +134,8 @@ users.post("/forgot-password/", async(request: Request, response: Response)  => 
             subject: "Forgot password for Kanban project", 
             text: "",
             html: "<b>You have forgotten your password. Link for resetting password: "+url+"</b>",
-          });
-        await insertResetPasswordRequestDAO({token: token, userID: emailFetch.id})
+        });
+        await insertResetPasswordRequestDAO({token: token, userID: emailFetch.id});
         response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
     } else {
         response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Invalid Request");

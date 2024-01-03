@@ -96,29 +96,30 @@ users.put(
         }
     }
 );
-users.put("/forgot-password", async(request: Request, response: Response)  => {
-    const newPassword = request.body.newPassword;
-    const userId = request.body.userId;
+
+users.put("/reset-password", async(request: Request, response: Response) => {
+    const {resetPassLink, newPassword, userId} = request.body;
     const hashedPassword = await argon2.hash(newPassword);
     await updatePasswordDAO(userId, hashedPassword);
-    response.status(HTTP_RESPONSE_CODES.OK).send();
-});
+    response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
+})
 
 users.post("/forgot-password/", async(request: Request, response: Response)  => {
     const { email } = request.body;
-    const emailFetch = await getUserEmailDAO(email);
+    const emailFetch = await getUserByEmailDAO(email);
    
     if( emailFetch ){
         const randomNumber = Math.floor(Math.random() * 10000);
         const formattedNumber = randomNumber.toString().padStart(4, '0');
+        const url = "http://localhost:3000/resetpassword/"+formattedNumber;
         await transporter.sendMail({
             from: "kanbanprojectbuutti@gmail.com", 
             to: email,
             subject: "Forgot password for Kanban project", 
             text: "",
-            html: "<b>You have forgot your password. Send code: "+formattedNumber+" on screen to change your password</b>",
+            html: "<b>You have forgot your password. Link for reseting password: "+url+"</b>",
           });
-        response.status(HTTP_RESPONSE_CODES.OK).send(formattedNumber);
+        response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
     } else {
         response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Email not found");
     }

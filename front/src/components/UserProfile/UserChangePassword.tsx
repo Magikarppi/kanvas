@@ -15,6 +15,9 @@ import Icons from "../Icons/Icons";
 import userRequests from "../../services/userService";
 import { IUpdatePasswordBody } from "../../models/userModels";
 import { validatePasswordFormat } from "../../utils/inputChecks";
+import { toast } from "react-toastify";
+import { selectToken, selectUser } from "../../redux/hooks";
+import DefaultToastContainer from "../Toast/DefaultToastContainer";
 
 interface IChangePasswordState {
     password: string;
@@ -23,6 +26,10 @@ interface IChangePasswordState {
 }
 
 const UserChangePassword = () => {
+
+    const user = selectUser();
+    const token = selectToken();
+
     const [formData, setFormData] = useState<IChangePasswordState>({
         password: "",
         newPassword: "",
@@ -48,14 +55,14 @@ const UserChangePassword = () => {
     const handleSubmit = async () => {
         try {
             const changePasswordBody: IUpdatePasswordBody = {
-                id: "insert-valid-user-id-here",
+                id: user?.id || "",
                 oldPassword: formData.password,
                 newPassword: formData.newPassword,
                 newPasswordConfirmation: formData.newPasswordConfirm,
             };
 
             await userRequests.updatePassword(
-                "insert-valid-user-token-here",
+                token as string,
                 changePasswordBody
             );
             setFormData({
@@ -68,9 +75,9 @@ const UserChangePassword = () => {
                 newPassword: false,
                 newPasswordConfirm: false,
             });
+            toast.success("Password successfully updated");
         } catch (error) {
-            console.error(error);
-            // TODO: set error notification
+            toast.error("An error occurred while updating the password");
         }
     };
 
@@ -134,6 +141,7 @@ const UserChangePassword = () => {
 
     return (
         <Paper elevation={1} className="userEditProfileContainer">
+            <DefaultToastContainer />
             <Typography variant="h4" style={{ marginTop: "40px", marginBottom: "30px" }}>
                 Change your password
             </Typography>

@@ -18,6 +18,10 @@ import { validatePasswordFormat } from "../../utils/inputChecks";
 import { toast } from "react-toastify";
 import { selectToken, selectUser } from "../../redux/hooks";
 import DefaultToastContainer from "../Toast/DefaultToastContainer";
+import {
+    passwordsNoMatchHelperText,
+    validPasswordHelperText,
+} from "../../utils/helperMessages";
 
 interface IChangePasswordState {
     password: string;
@@ -26,7 +30,6 @@ interface IChangePasswordState {
 }
 
 const UserChangePassword = () => {
-
     const user = selectUser();
     const token = selectToken();
 
@@ -120,13 +123,13 @@ const UserChangePassword = () => {
             field === "newPassword" &&
             !validatePasswordFormat(value)
         ) {
-            return "The password should be 8-50 characters long and contain at least one special character and one number";
+            return validPasswordHelperText;
         } else if (
             touchedFields[field] &&
             field === "newPasswordConfirm" &&
             formData.newPassword !== formData.newPasswordConfirm
         ) {
-            return "Passwords do not match";
+            return passwordsNoMatchHelperText;
         } else {
             return null;
         }
@@ -142,7 +145,10 @@ const UserChangePassword = () => {
     return (
         <Paper elevation={1} className="userEditProfileContainer">
             <DefaultToastContainer />
-            <Typography variant="h4" style={{ marginTop: "40px", marginBottom: "30px" }}>
+            <Typography
+                variant="h4"
+                style={{ marginTop: "40px", marginBottom: "30px" }}
+            >
                 Change your password
             </Typography>
             <Grid container style={{ marginBottom: "40px" }}>
@@ -164,7 +170,11 @@ const UserChangePassword = () => {
                         }}
                     >
                         <InputLabel
-                            style={{ fontSize: 14, marginBottom: 3, marginLeft: 6 }}
+                            style={{
+                                fontSize: 14,
+                                marginBottom: 3,
+                                marginLeft: 6,
+                            }}
                             htmlFor="firstName"
                         >
                             Current password *
@@ -210,7 +220,12 @@ const UserChangePassword = () => {
                             }}
                         />
                         <InputLabel
-                            style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
+                            style={{
+                                fontSize: 14,
+                                marginBottom: 4,
+                                marginLeft: 6,
+                                marginTop: 8,
+                            }}
                             htmlFor="newPassword"
                         >
                             New password *
@@ -258,9 +273,16 @@ const UserChangePassword = () => {
                             }}
                         />
                         <InputLabel
-                            style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
+                            style={{
+                                fontSize: 14,
+                                marginBottom: 4,
+                                marginLeft: 6,
+                                marginTop: 8,
+                            }}
                             htmlFor="newPasswordConfirm"
-                        >Confirm new password *</InputLabel>
+                        >
+                            Confirm new password *
+                        </InputLabel>
                         <TextField
                             required
                             fullWidth
@@ -309,7 +331,11 @@ const UserChangePassword = () => {
                     <Button
                         variant="contained"
                         color="secondary"
-                        style={{ marginTop: "20px", fontSize: 13, width: "140px" }}
+                        style={{
+                            marginTop: "20px",
+                            fontSize: 13,
+                            width: "140px",
+                        }}
                         onClick={handleSubmit}
                         size="large"
                         disabled={isSubmitDisabled}

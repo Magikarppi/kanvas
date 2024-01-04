@@ -16,6 +16,14 @@ import { useNavigate } from "react-router-dom";
 import { validEmail, validatePasswordFormat } from "../../../utils/inputChecks";
 import userRequests from "../../../services/userService";
 import { INewUserBody } from "../../../models/userModels";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import {
+    emptyFieldHelperText,
+    invalidEmailHelperText,
+    passwordsNoMatchHelperText,
+    validPasswordHelperText,
+} from "../../../utils/helperMessages";
 
 interface UserRegistrationState {
     firstName: string;
@@ -30,6 +38,7 @@ const RegistrationForm = () => {
         password: false,
         confirmPassword: false,
     });
+
     const [formData, setFormData] = useState<UserRegistrationState>({
         firstName: "",
         lastName: "",
@@ -48,10 +57,6 @@ const RegistrationForm = () => {
 
     const navigate = useNavigate();
 
-    const handleNavigation = (location: string) => {
-        navigate(location);
-    };
-
     const handleClickShowPassword = (field: keyof typeof showPassword) => {
         setShowPassword((prevField) => ({
             ...prevField,
@@ -65,13 +70,16 @@ const RegistrationForm = () => {
             lastName: formData.lastName,
             email: formData.email,
             password: formData.password,
-            passwordConfirmation: formData.confirmPassword
+            passwordConfirmation: formData.confirmPassword,
         };
         try {
-            await userRequests.registerUser(userToRegister); 
+            await userRequests.registerUser(userToRegister);
+            toast.success("User registered! Please sign in.");
+            navigate("/sign-in");
         } catch (error) {
-            console.error(error);
-            // Set error notification
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data);
+            }
         }
     };
 
@@ -97,41 +105,37 @@ const RegistrationForm = () => {
         ) {
             return touched[field];
         } else {
-            return touched[field] && value === "";
+            return touched[field] && value.trim() === "";
         }
     };
 
     const getErrorText = (field: keyof typeof formData) => {
         const value = formData[field];
 
-        if (touched[field] && value === "") {
-            return "Field must be filled out";
-        } else if (
-            field === "email" &&
-            touched[field] &&
-            !validEmail(value)
-        ) {
-            return "Invalid email address";
+        if (touched[field] && value.trim() === "") {
+            return emptyFieldHelperText;
+        } else if (field === "email" && touched[field] && !validEmail(value)) {
+            return invalidEmailHelperText;
         } else if (
             field === "password" &&
             touched[field] &&
             !validatePasswordFormat(value)
         ) {
-            return "The password should be 8-50 characters long and contain at least one special character and one number";
+            return validPasswordHelperText;
         } else if (
             field === "confirmPassword" &&
             touched[field] &&
             formData.password !== formData.confirmPassword
         ) {
-            return "Passwords do not match";
+            return passwordsNoMatchHelperText;
         } else {
             return null;
         }
     };
 
     const disableButton =
-        formData.firstName === "" ||
-        formData.lastName === "" ||
+        formData.firstName.trim() === "" ||
+        formData.lastName.trim() === "" ||
         formData.password === "" ||
         formData.confirmPassword === "" ||
         formData.password !== formData.confirmPassword ||
@@ -154,12 +158,17 @@ const RegistrationForm = () => {
                     <Grid container spacing={1}>
                         <Grid item xs={12} sm={6}>
                             <InputLabel
-                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                style={{
+                                    fontSize: 14,
+                                    marginBottom: 2,
+                                    marginLeft: 6,
+                                }}
                                 htmlFor="firstName"
                             >
-                                First Name *                           
+                                First Name *
                             </InputLabel>
                             <TextField
+                                data-cy="first-name-input"
                                 error={validateInputs("firstName")}
                                 required
                                 name="firstName"
@@ -172,17 +181,24 @@ const RegistrationForm = () => {
                                 helperText={getErrorText("firstName")}
                                 autoComplete="off"
                                 sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{ style: { fontSize: 12 } }}
+                                FormHelperTextProps={{
+                                    style: { fontSize: 12 },
+                                }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <InputLabel
-                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                style={{
+                                    fontSize: 14,
+                                    marginBottom: 2,
+                                    marginLeft: 6,
+                                }}
                                 htmlFor="firstName"
                             >
-                                Last Name *                           
+                                Last Name *
                             </InputLabel>
                             <TextField
+                                data-cy="last-name-input"
                                 error={validateInputs("lastName")}
                                 required
                                 fullWidth
@@ -195,17 +211,24 @@ const RegistrationForm = () => {
                                 helperText={getErrorText("lastName")}
                                 autoComplete="off"
                                 sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{ style: { fontSize: 12 } }}
+                                FormHelperTextProps={{
+                                    style: { fontSize: 12 },
+                                }}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <InputLabel
-                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                style={{
+                                    fontSize: 14,
+                                    marginBottom: 2,
+                                    marginLeft: 6,
+                                }}
                                 htmlFor="firstName"
                             >
-                                Email Address *                           
+                                Email Address *
                             </InputLabel>
                             <TextField
+                                data-cy="email-input"
                                 error={validateInputs("email")}
                                 required
                                 fullWidth
@@ -219,17 +242,24 @@ const RegistrationForm = () => {
                                 helperText={getErrorText("email")}
                                 autoComplete="off"
                                 sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{ style: { fontSize: 12 } }}
+                                FormHelperTextProps={{
+                                    style: { fontSize: 12 },
+                                }}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <InputLabel
-                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                style={{
+                                    fontSize: 14,
+                                    marginBottom: 2,
+                                    marginLeft: 6,
+                                }}
                                 htmlFor="firstName"
                             >
-                                Password *                            
+                                Password *
                             </InputLabel>
                             <TextField
+                                data-cy="password-input"
                                 error={validateInputs("password")}
                                 required
                                 fullWidth
@@ -242,7 +272,9 @@ const RegistrationForm = () => {
                                 onBlur={() => handleInputBlur("password")}
                                 helperText={getErrorText("password")}
                                 sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{ style: { fontSize: 12 } }}
+                                FormHelperTextProps={{
+                                    style: { fontSize: 12 },
+                                }}
                                 type={
                                     showPassword.password ? "text" : "password"
                                 }
@@ -270,12 +302,17 @@ const RegistrationForm = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <InputLabel
-                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                style={{
+                                    fontSize: 14,
+                                    marginBottom: 2,
+                                    marginLeft: 6,
+                                }}
                                 htmlFor="firstName"
                             >
-                                Confirm password *                       
+                                Confirm password *
                             </InputLabel>
                             <TextField
+                                data-cy="confirm-password-input"
                                 error={validateInputs("confirmPassword")}
                                 required
                                 fullWidth
@@ -290,7 +327,9 @@ const RegistrationForm = () => {
                                 }
                                 helperText={getErrorText("confirmPassword")}
                                 sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{ style: { fontSize: 12 } }}
+                                FormHelperTextProps={{
+                                    style: { fontSize: 12 },
+                                }}
                                 type={
                                     showPassword.confirmPassword
                                         ? "text"
@@ -320,11 +359,12 @@ const RegistrationForm = () => {
                         </Grid>
                     </Grid>
                     <Button
+                        data-cy="signup-submit"
                         fullWidth
                         variant="contained"
                         color="secondary"
                         sx={{ mt: 3, mb: 2 }}
-                        style={{fontSize: 13 }}
+                        style={{ fontSize: 13 }}
                         onClick={handleSubmit}
                         disabled={disableButton}
                     >
@@ -334,7 +374,7 @@ const RegistrationForm = () => {
                         <Grid item>
                             <Link
                                 style={{ cursor: "pointer", fontSize: 13 }}
-                                onClick={() => handleNavigation("/sign-in")}
+                                onClick={() => navigate("/sign-in")}
                             >
                                 Already have an account? Sign in
                             </Link>

@@ -14,6 +14,7 @@ import Footer from "./components/Footer/Footer";
 import MainContainer from "./components/MainContainer/MainContainer";
 import ForgotPasswordPage from "./pages/NonLogin/ForgotPasswordPage/ForgotPasswordPage";
 import AllProjectsPage from "./pages/Project/AllProjectsPage";
+import DefaultToastContainer from "./components/Toast/DefaultToastContainer";
 import { selectToken } from "./redux/hooks";
 
 const App = () => {
@@ -33,6 +34,7 @@ const App = () => {
                 <NonLoginNavBar />
             )}
             <MainContainer open={navDrawerOpen}>
+                <DefaultToastContainer />
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/sign-in" element={<LoginPage />} />

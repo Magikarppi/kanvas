@@ -53,8 +53,11 @@ const sendEmail = async(link: string, email: string) => {
         text: "",
         html: "<b>You have forgotten your password. Link for resetting password: "+link+"</b>",
     });
-    
 } 
+
+const addPwResetRequest = () => {
+
+}
 
 users.put(
     "/:id",
@@ -138,21 +141,15 @@ users.post("/forgot-password/", async(request: Request, response: Response)  => 
     const emailFetch = await getUserByEmailDAO(email);
     
     if( emailFetch ) {
+        const token = await createToken(email);
+        const reqObject: IResetPasswordRequest = {token: token, userID: emailFetch.id}
+        const url = app_path + token;
         const existsResetPasswordReq = await getResetPasswordRequestDAO(emailFetch.id);
-        if( existsResetPasswordReq ) {
-            const token = await createToken(email);
-            const reqObject: IResetPasswordRequest = {token: token, userID: emailFetch.id}
-            const url = app_path + token;
-            await updateResetPasswordRequestDAO(reqObject);
-            await sendEmail(url, email);
-            response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
-        } else {
-            const token = await createToken(email);
-            const url = app_path + token;
-            await sendEmail(url, email);
-            await insertResetPasswordRequestDAO({token: token, userID: emailFetch.id});
-            response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
-        }
+        await sendEmail(url, email);
+        existsResetPasswordReq ? await updateResetPasswordRequestDAO(reqObject) 
+            : await insertResetPasswordRequestDAO({token: token, userID: emailFetch.id});
+        response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
+
     } else {
         response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Invalid Request");
     }

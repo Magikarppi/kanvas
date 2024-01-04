@@ -24,6 +24,10 @@ import { validEmail } from "../../utils/inputChecks";
 import Icons from "../Icons/Icons";
 import { useAppDispatch, selectToken, selectUser } from "../../redux/hooks";
 import { setUserInfo } from "../../redux/userReducer";
+import {
+    emptyFieldHelperText,
+    invalidEmailHelperText,
+} from "../../utils/helperMessages";
 
 const UserProfile = () => {
     const user = selectUser();
@@ -124,9 +128,9 @@ const UserProfile = () => {
                 !validEmail(value)
             );
         } else if (field === "firstName") {
-            return touched[field] && value === "";
+            return touched[field] && value?.toString().trim() === "";
         } else if (field === "lastName") {
-            return touched[field] && value === "";
+            return touched[field] && value?.toString().trim() === "";
         } else {
             return;
         }
@@ -136,18 +140,18 @@ const UserProfile = () => {
         const value = formValues[field];
 
         if (field === "email" && touched[field] && value === "") {
-            return "Field must be filled out";
+            return emptyFieldHelperText;
         } else if (
             field === "email" &&
             touched[field] &&
             typeof value === "string" &&
             !validEmail(value)
         ) {
-            return "Invalid email address";
+            return invalidEmailHelperText;
         } else if (field === "lastName" && touched[field] && value === "") {
-            return "Field must be filled out";
+            return emptyFieldHelperText;
         } else if (field === "firstName" && touched[field] && value === "") {
-            return "Field must be filled out";
+            return emptyFieldHelperText;
         } else {
             return null;
         }

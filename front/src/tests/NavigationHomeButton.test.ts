@@ -2,7 +2,6 @@ import NavigateHomeButton from "../components/NavigationButtons/NavigateHomeButt
 import { render, screen, fireEvent } from "@testing-library/react";
 import * as router from "react-router";
 
-
 describe("Test NavigationHomeButton", () => {
     test("When NavigationHomeButton is pressed, make sure that  navigate function is called", () => {
         const navigate = jest.fn();

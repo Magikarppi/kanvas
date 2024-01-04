@@ -18,6 +18,9 @@ import { ILoginBody, IUser } from "../../../models/userModels";
 import { validEmail } from "../../../utils/inputChecks";
 import { setToken, setUserInfo } from "../../../redux/userReducer";
 import { useAppDispatch } from "../../../redux/hooks";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { invalidEmailHelperText } from "../../../utils/helperMessages";
 
 interface UserLoginState {
     email: string;
@@ -82,7 +85,7 @@ const LoginForm = () => {
             touched[field] &&
             !emailRegex.test(value)
         ) {
-            return "Invalid email address";
+            return invalidEmailHelperText;
         } else {
             return null;
         }
@@ -105,10 +108,12 @@ const LoginForm = () => {
                     dispatch(setUserInfo(userData.user as IUser));
                 }
                 navigate("/projects");
+                toast.success("Welcome!");
             }
         } catch (error) {
-            console.error(error);
-            // Set error notification
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data);
+            }
         }
     };
 

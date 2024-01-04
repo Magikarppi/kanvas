@@ -26,7 +26,6 @@ import {
 } from "../middleware/middleware";
 import nodemailer from "nodemailer";
 import { insertResetPasswordRequestDAO, getResetPasswordRequestDAO, deleteResetPasswordRequestDAO, updateResetPasswordRequestDAO } from "../../database/DAOs/resetPasswordRequestDAO";
-import { updateResetPasswordRequest } from "../../database/queries/resetPasswordQueries";
 
 
 const transporter = nodemailer.createTransport({

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 
 import Icons from "../../components/Icons/Icons";
-import { setToken } from "../../redux/userReducer";
+import { logOut } from "../../redux/userReducer";
 import { useAppDispatch } from "../../redux/hooks";
 import { useNavigate } from "react-router-dom";
 
@@ -27,7 +27,7 @@ const UserProfileMenuList = ({
     const navigate = useNavigate();
 
     const handleSignOut = () => {
-        dispatch(setToken(null));
+        dispatch(logOut());
         navigate("/");
     };
     return (
@@ -80,7 +80,9 @@ const UserProfileMenuList = ({
                     <ListItemIcon>
                         <Icons.SignOut size="18" />
                     </ListItemIcon>
-                    <Typography variant="body2" onClick={() => handleSignOut()}>Sign out</Typography>
+                    <Typography variant="body2" onClick={() => handleSignOut()}>
+                        Sign out
+                    </Typography>
                 </ListItemButton>
             </List>
         </Paper>

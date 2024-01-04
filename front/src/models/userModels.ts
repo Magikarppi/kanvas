@@ -11,33 +11,6 @@ export interface ILoginBody {
     password: string;
 }
 
-export interface IUpdateUserBodyWithoutPassword {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string | null;
-    country: string | null;
-    city: string | null;
-    picture: string | null | ArrayBuffer;
-    isOpenToWork: boolean;
-    linkedinUsername: string | null;
-    jobPitch: string | null;
-}
-
-export interface IUserUpdateWithoutId {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string | null;
-    country: string | null;
-    city: string | null;
-    picture: string;
-    isOpenToWork: boolean;
-    linkedinUsername: string | null;
-    jobPitch: string | null;
-}
-
 export interface IUpdatePasswordBody {
     id: string;
     oldPassword: string;
@@ -50,15 +23,14 @@ export interface IUser {
     firstName: string;
     lastName: string;
     email: string;
-    passwordHash: string;
     phoneNumber: string | null;
     country: string | null;
     city: string | null;
-    picture: string | null;
-    accountCreationDate: Date | null;
-    isOnline: boolean | null;
+    picture: string | null | ArrayBuffer;
+    accountCreationDate: Date | string;
+    isOnline: boolean;
     lastOnline: Date | null;
-    isOpenToWork: boolean | null;
+    isOpenToWork: boolean;
     linkedinUsername: string | null;
     jobPitch: string | null;
 }

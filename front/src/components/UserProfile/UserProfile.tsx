@@ -14,13 +14,11 @@ import {
     CardActionArea,
     CardMedia,
 } from "@mui/material";
-import { toast } from "react-toastify";
-import DefaultToastContainer from "../Toast/DefaultToastContainer";
 import { AxiosError } from "axios";
-import {
-    IUpdateUserBodyWithoutPassword,
-    IUserUpdateWithoutId,
-} from "../../models/userModels";
+import { toast } from "react-toastify";
+
+import { IUser } from "../../models/userModels";
+import DefaultToastContainer from "../Toast/DefaultToastContainer";
 import userRequests from "../../services/userService";
 import { validEmail } from "../../utils/inputChecks";
 import Icons from "../Icons/Icons";
@@ -32,7 +30,7 @@ const UserProfile = () => {
     const token = selectToken();
     const dispatch = useAppDispatch();
 
-    const [formValues, setFormValues] = useState<IUserUpdateWithoutId>({
+    const [formValues, setFormValues] = useState<Partial<IUser>>({
         firstName: "",
         lastName: "",
         email: "",
@@ -70,19 +68,21 @@ const UserProfile = () => {
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        const userId = user?.id;
-        const updatedUser: IUpdateUserBodyWithoutPassword = {
-            firstName: formValues.firstName,
-            lastName: formValues.lastName,
-            email: formValues.email,
+        const updatedUser: IUser = {
+            firstName: formValues.firstName!,
+            lastName: formValues.lastName!,
+            email: formValues.email!,
             phoneNumber: formValues.phoneNumber || null,
             country: formValues.country || null,
             city: formValues.city || null,
             linkedinUsername: formValues.linkedinUsername || null,
-            id: userId || "",
-            isOpenToWork: formValues.isOpenToWork,
+            isOpenToWork: formValues.isOpenToWork!,
             jobPitch: formValues.jobPitch || null,
             picture: "Tähän tulee kuvan url" || null,
+            id: user!.id,
+            accountCreationDate: user!.accountCreationDate,
+            isOnline: user!.isOnline,
+            lastOnline: user!.lastOnline,
         };
 
         try {
@@ -172,7 +172,7 @@ const UserProfile = () => {
         formValues.firstName === "" ||
         formValues.lastName === "" ||
         formValues.email === "" ||
-        !validEmail(formValues.email);
+        !validEmail(formValues.email!);
 
     return (
         <Paper elevation={1} className="userEditProfileContainer">

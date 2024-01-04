@@ -55,10 +55,6 @@ const sendEmail = async(link: string, email: string) => {
     });
 } 
 
-const addPwResetRequest = () => {
-
-}
-
 users.put(
     "/:id",
     authenticate,

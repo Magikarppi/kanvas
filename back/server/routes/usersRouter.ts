@@ -25,7 +25,8 @@ import {
     validateEmailAndNames,
 } from "../middleware/middleware";
 import nodemailer from "nodemailer";
-import { insertResetPasswordRequestDAO, getResetPasswordRequestDAO, deleteResetPasswordRequestDAO } from "../../database/DAOs/resetPasswordRequestDAO";
+import { insertResetPasswordRequestDAO, getResetPasswordRequestDAO, deleteResetPasswordRequestDAO, updateResetPasswordRequestDAO } from "../../database/DAOs/resetPasswordRequestDAO";
+import { updateResetPasswordRequest } from "../../database/queries/resetPasswordQueries";
 
 
 const transporter = nodemailer.createTransport({
@@ -43,6 +44,17 @@ const createToken = (userId: string) =>
     jwt.sign({ value: userId }, JWT_SECRET, {
         expiresIn: 60000 * 60 * 24,
     });
+
+const sendEmail = async(link: string, email: string) => {
+    await transporter.sendMail({
+        from: "kanbanprojectbuutti@gmail.com", 
+        to: email,
+        subject: "Forgot password for Kanban project", 
+        text: "",
+        html: "<b>You have forgotten your password. Link for resetting password: "+link+"</b>",
+    });
+    
+} 
 
 users.put(
     "/:id",
@@ -124,19 +136,23 @@ users.put("/reset-password/:token", async(request: Request, response: Response) 
 users.post("/forgot-password/", async(request: Request, response: Response)  => {
     const { email } = request.body;
     const emailFetch = await getUserByEmailDAO(email);
-   
+    
     if( emailFetch ) {
-        const token = await createToken(emailFetch.id);
-        const url = app_path + token;
-        await transporter.sendMail({
-            from: "kanbanprojectbuutti@gmail.com", 
-            to: email,
-            subject: "Forgot password for Kanban project", 
-            text: "",
-            html: "<b>You have forgotten your password. Link for resetting password: "+url+"</b>",
-        });
-        await insertResetPasswordRequestDAO({token: token, userID: emailFetch.id});
-        response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
+        const existsResetPasswordReq = await getResetPasswordRequestDAO(emailFetch.id);
+        if( existsResetPasswordReq ) {
+            const token = await createToken(email);
+            const reqObject: IResetPasswordRequest = {token: token, userID: emailFetch.id}
+            const url = app_path + token;
+            await updateResetPasswordRequestDAO(reqObject);
+            await sendEmail(url, email);
+            response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
+        } else {
+            const token = await createToken(emailFetch.id);
+            const url = app_path + token;
+            await sendEmail(url, email);
+            await insertResetPasswordRequestDAO({token: token, userID: emailFetch.id});
+            response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
+        }
     } else {
         response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Invalid Request");
     }

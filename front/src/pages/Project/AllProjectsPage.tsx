@@ -12,12 +12,9 @@ import { useEffect, useState } from "react";
 import { IProject, IProjectSubmitNew } from "../../models/projectModels";
 import projectService from "../../services/projectService";
 import { selectToken, selectUser } from "../../redux/hooks";
+import { ITeam } from "../../models/teamModels";
 
-const dummyOrganizations = [
-    { id: "j0fsjaj-fj9saja9sfjf9sa-9fsa9s9af", name: "University of potato" },
-];
-
-const dummyOpenProjects: IProject[] = [
+const dummyPublicProjects: IProject[] = [
     {
         id: "gj9adg-gjsa9ja0gs-jgsagjj9a-gasas9g9g-gagasagas0gl",
         name: "Langguage moddel",
@@ -70,6 +67,7 @@ const createCard = (output: string) => (
             pl: "10px",
             pr: "10px",
             border: "1px solid #ffff",
+            transition: "0.6s",
             "&:hover": {
                 backgroundColor: "secondary.main",
             },
@@ -82,8 +80,18 @@ const createCard = (output: string) => (
     </Card>
 );
 
+// ToDo issue 167: add favorite projects array to this interface and to dashboardData state. Also, move this interface to models folder?
+interface IDashboard {
+    userProjects: IProject[];
+    userTeams: ITeam[];
+}
+
 export default function AllProjectsPage() {
-    const [usersProjects, setUsersProjects] = useState<IProject[]>([]);
+    const [dashboardData, setDashboardData] = useState<IDashboard>({
+        userProjects: [],
+        userTeams: [],
+    });
+
     const [addProjectModalOpen, setAddProjectModalOpen] =
         useState<boolean>(false);
 
@@ -97,7 +105,10 @@ export default function AllProjectsPage() {
             projectService
                 .getUsersProjects(token, user.id)
                 .then((data) => {
-                    setUsersProjects(data.allProjects);
+                    setDashboardData({
+                        userProjects: [...data.allProjects],
+                        userTeams: [...data.teams],
+                    });
                 })
                 .catch((err) => console.error(err));
         } else {
@@ -117,10 +128,13 @@ export default function AllProjectsPage() {
                 );
 
                 if (addedProject) {
-                    setUsersProjects((prevProjects) => [
-                        ...prevProjects,
-                        addedProject,
-                    ]);
+                    setDashboardData({
+                        ...dashboardData,
+                        userProjects: [
+                            ...dashboardData.userProjects,
+                            addedProject,
+                        ],
+                    });
                 }
             } catch (error) {
                 console.error(error);
@@ -129,15 +143,16 @@ export default function AllProjectsPage() {
         }
     };
 
-    const AddNewProjectCard = () => (
+    const AddNewCreateCard = (cardType: string) => (
         <Card
-            onClick={openAddProjectModal}
+            onClick={cardType === "project" ? openAddProjectModal : () => null}
             elevation={2}
             sx={{
                 height: cardHeight,
                 pl: "10px",
                 pr: "10px",
                 border: "1px solid #ffff",
+                transition: "0.4s",
                 "&:hover": {
                     backgroundColor: "secondary.main",
                 },
@@ -146,17 +161,15 @@ export default function AllProjectsPage() {
         >
             <CardContent>
                 <Typography variant="h6" sx={{ color: "primary.main" }}>
-                    + Add a new project
+                    {cardType === "project"
+                        ? "+ Create a new project"
+                        : "+ Create a new team"}
                 </Typography>
             </CardContent>
         </Card>
     );
 
-    if (!token) {
-        return null;
-    }
-
-    return (
+    return !token ? null : (
         <>
             <AddProjectModal
                 open={addProjectModalOpen}
@@ -174,9 +187,9 @@ export default function AllProjectsPage() {
                         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
                     >
                         <Grid item xs={12} sm={6} md={3}>
-                            <AddNewProjectCard />
+                            {AddNewCreateCard("project")}
                         </Grid>
-                        {usersProjects?.map((project) => (
+                        {dashboardData?.userProjects?.map((project) => (
                             <Grid key={project.id} item xs={12} sm={6} md={3}>
                                 <Link to={`/projects/${project.id}`}>
                                     {createCard(project.name)}
@@ -188,23 +201,20 @@ export default function AllProjectsPage() {
                 <Divider light sx={{ width: "100%" }} />
                 <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
                     <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
-                        My organizations
+                        My teams
                     </Typography>
                     <Grid
                         container
                         rowSpacing={1}
                         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
                     >
-                        {dummyOrganizations.map((organization) => (
-                            <Grid
-                                key={organization.id}
-                                item
-                                xs={12}
-                                sm={6}
-                                md={3}
-                            >
-                                <Link to={`/teams/${organization.id}`}>
-                                    {createCard(organization.name)}
+                        <Grid item xs={12} sm={6} md={3}>
+                            {AddNewCreateCard("team")}
+                        </Grid>
+                        {dashboardData?.userTeams?.map((team) => (
+                            <Grid key={team.id} item xs={12} sm={6} md={3}>
+                                <Link to={`/teams/${team.id}`}>
+                                    {createCard(team.name)}
                                 </Link>
                             </Grid>
                         ))}
@@ -213,17 +223,23 @@ export default function AllProjectsPage() {
                 <Divider light sx={{ height: "1px", width: "100%" }} />
                 <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
                     <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
-                        Open projects
+                        Public projects
                     </Typography>
                     <Grid
                         container
                         rowSpacing={1}
                         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
                     >
-                        {dummyOpenProjects.map((project) => (
-                            <Grid key={project.id} item xs={12} sm={6} md={3}>
-                                <Link to={`/projects/${project.id}`}>
-                                    {createCard(project.name)}
+                        {dummyPublicProjects.map((publicProject) => (
+                            <Grid
+                                key={publicProject.id}
+                                item
+                                xs={12}
+                                sm={6}
+                                md={3}
+                            >
+                                <Link to={`/projects/${publicProject.id}`}>
+                                    {createCard(publicProject.name)}
                                 </Link>
                             </Grid>
                         ))}

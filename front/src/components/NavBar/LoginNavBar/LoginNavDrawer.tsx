@@ -13,7 +13,7 @@ import Icons from "../../Icons/Icons";
 import { TOpen } from "../../../models/themeModels";
 import { useAppDispatch } from "../../../redux/hooks";
 import { useNavigate } from "react-router-dom";
-import { setToken } from "../../../redux/userReducer";
+import { logOut } from "../../../redux/userReducer";
 
 const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
     const theme = useTheme();
@@ -21,10 +21,9 @@ const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
     const navigate = useNavigate();
     const drawerWidth = 240;
 
-
     const handleSignOut = () => {
-        dispatch(setToken(null));
-        navigate("/"); 
+        dispatch(logOut());
+        navigate("/");
     };
     const DrawerHeader = styled("div")(({ theme }) => ({
         display: "flex",

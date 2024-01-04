@@ -139,7 +139,6 @@ users.put("/reset-password/:token", async(request: Request, response: Response) 
 users.post("/forgot-password/", async(request: Request, response: Response)  => {
     const { email } = request.body;
     const emailFetch = await getUserByEmailDAO(email);
-    
     if( emailFetch ) {
         const token = await createToken(email);
         const reqObject: IResetPasswordRequest = {token: token, userID: emailFetch.id}
@@ -149,7 +148,6 @@ users.post("/forgot-password/", async(request: Request, response: Response)  => 
         existsResetPasswordReq ? await updateResetPasswordRequestDAO(reqObject) 
             : await insertResetPasswordRequestDAO({token: token, userID: emailFetch.id});
         response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
-
     } else {
         response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Invalid Request");
     }

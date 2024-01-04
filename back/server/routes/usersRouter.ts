@@ -18,6 +18,7 @@ import {
     updateUserDAO,
     getExistingEmailConflictDAO,
     getUserByIdDAO,
+    insertResetPasswordRequestDAO, getResetPasswordRequestDAO, deleteResetPasswordRequestDAO, updateResetPasswordRequestDAO
 } from "../../database/DAOs";
 import {
     UserRequest,
@@ -25,7 +26,6 @@ import {
     validateEmailAndNames,
 } from "../middleware/middleware";
 import nodemailer from "nodemailer";
-import { insertResetPasswordRequestDAO, getResetPasswordRequestDAO, deleteResetPasswordRequestDAO, updateResetPasswordRequestDAO } from "../../database/DAOs/resetPasswordRequestDAO";
 
 
 const transporter = nodemailer.createTransport({

@@ -9,6 +9,7 @@ import {
     updateProject,
     insertProjectMember,
     insertProject,
+    insertProjectFavoriteProjects,
 } from "../queries/projectQueries";
 import { insertProjectAdmin } from "../queries/rolesQueries";
 import {
@@ -143,4 +144,13 @@ export const updateProjectDAO = async (
         projectId,
     ];
     await executeQuery(updateProject, params);
+};
+
+export const insertProjectFavoriteProjectsDAO = async (favoriteProject: IProjectMember) => {
+    const queryParameters = [
+        favoriteProject.id,
+        favoriteProject.projectId,
+        favoriteProject.userId,
+    ];
+    await executeQuery(insertProjectFavoriteProjects, queryParameters);
 };

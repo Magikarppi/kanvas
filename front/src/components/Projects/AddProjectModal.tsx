@@ -24,6 +24,7 @@ import {
     isProjectDescriptionTooLong,
     isValidUSDateFormat,
 } from "../../utils/inputChecks";
+import { DatePickerComponent } from "../DatePicker/Datepicker";
 
 const style = {
     position: "absolute",
@@ -69,6 +70,7 @@ export default function AddProjectModal({
 }: Props) {
     const [formValues, setFormValues] = useState(initialFormValues);
     const [touched, setTouched] = useState(initialTouched);
+    const [date, setDate] = useState<Date>(new Date());
 
     useEffect(() => {
         if (!open) {
@@ -144,6 +146,10 @@ export default function AddProjectModal({
             console.log(error);
             // TODO set error notification
         }
+    };
+
+    const handleCallBackDatePicker = (date:Date) => {
+        setDate(date);
     };
 
     const disableButton =
@@ -229,16 +235,7 @@ export default function AddProjectModal({
                                 >
                                     End date
                                 </InputLabel>
-                                <TextField
-                                    name="endDate"
-                                    placeholder="MM/DD/YYYY"
-                                    onChange={(e) => handleInputChange(e)}
-                                    error={validateInputs("endDate")}
-                                    helperText={getErrorText("endDate")}
-                                    onBlur={() => handleInputBlur("endDate")}
-                                    value={formValues.endDate}
-                                    fullWidth
-                                />
+                                <DatePickerComponent date={date} handleCallBack={handleCallBackDatePicker}/> 
                             </Grid>
                             <Grid item xs={12}>
                                 <InputLabel

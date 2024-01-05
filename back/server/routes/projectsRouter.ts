@@ -14,6 +14,7 @@ import {
     removeUserRoleDAO,
     getUserTeamsDAO,
     getUserByIdDAO,
+    deleteFavoriteProjectDAO,
 } from "../../database/DAOs";
 import {
     IProject,
@@ -299,6 +300,33 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
         res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
             RESPONSE_MESSAGES.SERVER_ERROR
         );
+    }
+});
+
+router.delete("/deletefavoriteproject/:id", async (req: UserRequest, res: Response) => {
+    try {
+        const { value: userId } = req.user as JwtPayload;
+        const favoriteProjectId = req.params.id;
+        const userFavoriteProjects = await getUserFavoriteProjectsDAO(
+            userId
+        );
+        const userFavoriteProjectsIds = userFavoriteProjects?.map((val) => val.favorite_project_id);
+        const found = userFavoriteProjectsIds?.includes(favoriteProjectId);
+
+        if (!found) {
+            return res
+                .status(HTTP_RESPONSE_CODES.NOT_FOUND)
+                .send("Favorite project not found");
+        } else {
+
+            await deleteFavoriteProjectDAO(favoriteProjectId);
+            res.status(HTTP_RESPONSE_CODES.OK).send("Favorite project deleted");
+        }
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
     }
 });
 

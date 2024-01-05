@@ -19,7 +19,7 @@ export const getUserProjects =
     "SELECT projects.* FROM project_members INNER JOIN users ON project_members.user_id = users.id INNER JOIN projects ON project_members.project_id = projects.id WHERE users.id = $1";
 
 export const getUserFavoriteProjects =
-    "SELECT projects.* FROM projects INNER JOIN favorite_projects ON projects.id = favorite_projects.project_id WHERE favorite_projects.user_id = $1;";
+    "SELECT favorite_projects.id as favorite_project_id, projects.* FROM projects INNER JOIN favorite_projects ON projects.id = favorite_projects.project_id WHERE favorite_projects.user_id = $1;";
 
 export const updateProject = `
     UPDATE projects
@@ -33,3 +33,5 @@ export const updateProject = `
             picture = $7
         WHERE id = $8
 `;
+
+export const deleteFavoriteProject = "DELETE FROM favorite_projects WHERE id = $1";

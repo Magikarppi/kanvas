@@ -192,7 +192,7 @@ const createTables = async () => {
 
         CREATE TABLE IF NOT EXISTS "reset_password_requests" (
             "user_id" uuid PRIMARY KEY,
-            "token" varchar(100) NOT NULL
+            "token" varchar(1000) NOT NULL
         );
         `;
 

@@ -51,9 +51,22 @@ export const loggerMiddleWare = (
     console.log("Method: " + request.method);
     console.log("Url: " + request.originalUrl);
 
-    const requestBody = request.body;
-    if (Object.keys(requestBody).length !== 0) {
-        console.log(`Body:\n${JSON.stringify(requestBody, null, 2)}`);
+    const requestBodyCopy = JSON.parse(JSON.stringify(request.body));
+    const requestBodyKeys = Object.keys(requestBodyCopy);
+
+    if (requestBodyKeys.length !== 0) {
+        const requestBodyPasswordsObscured: { [key: string]: string } = {};
+
+        for (const key of requestBodyKeys) {
+            const includesPassword = key.toLowerCase().includes("password");
+            requestBodyPasswordsObscured[key] = includesPassword
+                ? "**********"
+                : request.body[key];
+        }
+
+        console.log(
+            `Body:\n${JSON.stringify(requestBodyPasswordsObscured, null, 2)}`
+        );
     }
     next();
 };

@@ -33,3 +33,5 @@ export const updateProject = `
             picture = $7
         WHERE id = $8
 `;
+
+export const insertProjectFavoriteProjects = "INSERT INTO favorite_projects (id, project_id, user_id) VALUES ($1, $2, $3);";

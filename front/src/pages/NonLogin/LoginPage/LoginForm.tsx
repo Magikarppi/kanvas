@@ -14,10 +14,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import Icons from "../../../components/Icons/Icons";
 import userRequests from "../../../services/userService";
-import { ILoginBody } from "../../../models/userModels";
+import { ILoginBody, IUser } from "../../../models/userModels";
 import { validEmail } from "../../../utils/inputChecks";
 import { setToken, setUserInfo } from "../../../redux/userReducer";
 import { useAppDispatch } from "../../../redux/hooks";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { invalidEmailHelperText } from "../../../utils/helperMessages";
 
 interface UserLoginState {
     email: string;
@@ -82,7 +85,7 @@ const LoginForm = () => {
             touched[field] &&
             !emailRegex.test(value)
         ) {
-            return "Invalid email address";
+            return invalidEmailHelperText;
         } else {
             return null;
         }
@@ -97,13 +100,20 @@ const LoginForm = () => {
         try {
             if (validEmail(userToLogin.email)) {
                 const userData = await userRequests.loginUser(userToLogin);
-                dispatch(setToken(userData.token));
-                dispatch(setUserInfo(userData.user));
+                if (userData.token) {
+                    dispatch(setToken(userData.token as string));
+                }
+
+                if (userData.user) {
+                    dispatch(setUserInfo(userData.user as IUser));
+                }
                 navigate("/projects");
+                toast.success("Welcome!");
             }
         } catch (error) {
-            console.error("errror", error);
-            // Set error notification
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data);
+            }
         }
     };
 
@@ -130,10 +140,14 @@ const LoginForm = () => {
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
                             <InputLabel
-                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                style={{
+                                    fontSize: 14,
+                                    marginBottom: 2,
+                                    marginLeft: 6,
+                                }}
                                 htmlFor="firstName"
                             >
-                                Email Address                            
+                                Email Address
                             </InputLabel>
                             <TextField
                                 error={validateInputs("email")}
@@ -149,15 +163,21 @@ const LoginForm = () => {
                                 helperText={getErrorText("email")}
                                 autoComplete="off"
                                 sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{ style: { fontSize: 12 } }}
+                                FormHelperTextProps={{
+                                    style: { fontSize: 12 },
+                                }}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <InputLabel
-                                style={{ fontSize: 14, marginBottom: 2, marginLeft: 6 }}
+                                style={{
+                                    fontSize: 14,
+                                    marginBottom: 2,
+                                    marginLeft: 6,
+                                }}
                                 htmlFor="firstName"
                             >
-                            Password *
+                                Password *
                             </InputLabel>
                             <TextField
                                 error={validateInputs("password")}
@@ -172,7 +192,9 @@ const LoginForm = () => {
                                 onBlur={() => handleInputBlur("password")}
                                 helperText={getErrorText("password")}
                                 sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{ style: { fontSize: 12 } }}
+                                FormHelperTextProps={{
+                                    style: { fontSize: 12 },
+                                }}
                                 type={
                                     showPassword.password ? "text" : "password"
                                 }
@@ -220,7 +242,7 @@ const LoginForm = () => {
                         variant="contained"
                         color="secondary"
                         sx={{ mt: 3, mb: 2 }}
-                        style={{fontSize: 13 }}
+                        style={{ fontSize: 13 }}
                         disabled={disableButton}
                         onClick={handleSubmit}
                     >

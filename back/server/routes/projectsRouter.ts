@@ -15,7 +15,12 @@ import {
     getUserTeamsDAO,
     getUserByIdDAO,
 } from "../../database/DAOs";
-import { IProject, IProjectMember, IUserRole } from "../../database/utils/interfaces";
+import {
+    IProject,
+    IProjectColumn,
+    IProjectMember,
+    IUserRole,
+} from "../../database/utils/interfaces";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
@@ -71,7 +76,33 @@ router.post("/", async (req: UserRequest, res: Response) => {
             role: "admin",
         };
 
-        const addedProject = await insertProjectDAO(project, projectMember, userRole);
+        const placeholderColumns: IProjectColumn[] = [
+            {
+                id: uuid(),
+                projectId: project.id,
+                columnName: "To Do",
+                orderIndex: 0,
+            },
+            {
+                id: uuid(),
+                projectId: project.id,
+                columnName: "In Progress",
+                orderIndex: 1,
+            },
+            {
+                id: uuid(),
+                projectId: project.id,
+                columnName: "Done",
+                orderIndex: 2,
+            },
+        ];
+
+        const addedProject = await insertProjectDAO(
+            project,
+            projectMember,
+            userRole,
+            placeholderColumns
+        );
         if (!addedProject) {
             return res
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)

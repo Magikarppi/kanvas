@@ -1,4 +1,5 @@
 import { executeMultipleQueries, executeQuery } from "../database-service";
+import { insertPlaceholderColumns } from "../queries/projectColumnsQueries";
 import {
     getProject,
     getProjectMember,
@@ -13,6 +14,7 @@ import { insertProjectAdmin } from "../queries/rolesQueries";
 import {
     IParametrizedQuery,
     IProject,
+    IProjectColumn,
     IProjectMember,
     IUserRole,
 } from "../utils/interfaces";
@@ -20,7 +22,8 @@ import {
 export const insertProjectDAO = async (
     project: IProject,
     projectMember: IProjectMember,
-    userRole: IUserRole
+    userRole: IUserRole,
+    placeholderColumns: IProjectColumn[]
 ) => {
     const insertProjectOperation: IParametrizedQuery = {
         query: insertProject,
@@ -50,10 +53,29 @@ export const insertProjectDAO = async (
         parameters: [userRole.projectId, userRole.userId, userRole.role],
     };
 
+    const insertPlaceholderColumnsOperation: IParametrizedQuery = {
+        query: insertPlaceholderColumns,
+        parameters: [
+            placeholderColumns[0].id,
+            placeholderColumns[0].projectId,
+            placeholderColumns[0].columnName,
+            placeholderColumns[0].orderIndex,
+            placeholderColumns[1].id,
+            placeholderColumns[1].projectId,
+            placeholderColumns[1].columnName,
+            placeholderColumns[1].orderIndex,
+            placeholderColumns[2].id,
+            placeholderColumns[2].projectId,
+            placeholderColumns[2].columnName,
+            placeholderColumns[2].orderIndex,
+        ],
+    };
+
     const results = await executeMultipleQueries(
         insertProjectOperation,
         insertProjectMemberOperation,
-        insertProjectAdminOperation
+        insertProjectAdminOperation,
+        insertPlaceholderColumnsOperation,
     );
 
     if (results) {

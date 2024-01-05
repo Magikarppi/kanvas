@@ -5,7 +5,7 @@ export const validEmail = (value: string) => {
 };
 
 export const validatePasswordFormat = (password: string) => {
-    // 8-50 characters long, at least one number and one special character listed inside square brackets
+    // 8-50 characters long, at least one letter and one special character listed inside square brackets
     const passwordRegEx =
         /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/\\-\\=-]).{8,50}$/;
     return passwordRegEx.test(password);

@@ -1,6 +1,6 @@
 export interface IParametrizedQuery {
     query: string;
-    parameters?: (string | boolean | Date | null | undefined)[];
+    parameters?: (string | boolean | Date | null | number | undefined)[];
 }
 
 export interface IResetPasswordRequest {
@@ -88,4 +88,11 @@ export interface IUserRole {
     projectId: string;
     userId: string;
     role: string;
+}
+
+export interface IProjectColumn {
+    id: string;
+    projectId: string;
+    columnName: string;
+    orderIndex: number;
 }

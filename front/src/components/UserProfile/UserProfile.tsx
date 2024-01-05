@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect, FormEvent } from "react";
+import { useState, ChangeEvent, useEffect, FormEvent } from "react";
 import {
     Avatar,
     Button,
@@ -14,33 +14,39 @@ import {
     CardActionArea,
     CardMedia,
 } from "@mui/material";
-import { IUpdateUserBodyWithoutPassword, IUserUpdateWithoutId } from "../../models/userModels";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
+
+import { IUser } from "../../models/userModels";
+import DefaultToastContainer from "../Toast/DefaultToastContainer";
 import userRequests from "../../services/userService";
 import { validEmail } from "../../utils/inputChecks";
 import Icons from "../Icons/Icons";
-import { useAppDispatch, selectToken, selectUser} from "../../redux/hooks";
+import { useAppDispatch, selectToken, selectUser } from "../../redux/hooks";
 import { setUserInfo } from "../../redux/userReducer";
-
-
+import {
+    emptyFieldHelperText,
+    invalidEmailHelperText,
+} from "../../utils/helperMessages";
 
 const UserProfile = () => {
     const user = selectUser();
     const token = selectToken();
     const dispatch = useAppDispatch();
 
-    const [formValues, setFormValues] = useState<IUserUpdateWithoutId>({
+    const [formValues, setFormValues] = useState<Partial<IUser>>({
         firstName: "",
         lastName: "",
-        email:  "",
-        phoneNumber:  "",
-        country:  "",
+        email: "",
+        phoneNumber: "",
+        country: "",
         city: "",
-        picture:  "",
+        picture: "",
         isOpenToWork: false,
-        linkedinUsername:  "",
+        linkedinUsername: "",
         jobPitch: "",
     });
-    
+
     useEffect(() => {
         setFormValues({
             firstName: user?.firstName || "",
@@ -55,8 +61,7 @@ const UserProfile = () => {
             jobPitch: user?.jobPitch || "",
         });
     }, [user]);
-    
-    
+
     const [touched, setTouched] = useState({
         firstName: false,
         lastName: false,
@@ -64,36 +69,36 @@ const UserProfile = () => {
     });
     const [image, setImage] = useState<string | ArrayBuffer | null>("");
     const [hoveringImage, setHoveringImage] = useState<boolean>(true);
-  
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        const userId = user?.id;
-        const updatedUser: IUpdateUserBodyWithoutPassword = {
-            firstName: formValues.firstName,
-            lastName: formValues.lastName,
-            email: formValues.email,
+        const updatedUser: IUser = {
+            firstName: formValues.firstName!,
+            lastName: formValues.lastName!,
+            email: formValues.email!,
             phoneNumber: formValues.phoneNumber || null,
             country: formValues.country || null,
             city: formValues.city || null,
             linkedinUsername: formValues.linkedinUsername || null,
-            id: userId || "",
-            isOpenToWork: formValues.isOpenToWork,
+            isOpenToWork: formValues.isOpenToWork!,
             jobPitch: formValues.jobPitch || null,
             picture: "Tähän tulee kuvan url" || null,
+            id: user!.id,
+            accountCreationDate: user!.accountCreationDate,
+            isOnline: user!.isOnline,
+            lastOnline: user!.lastOnline,
         };
 
         try {
-            if(token && user ){
-                await userRequests.updateUser(
-                    token,
-                    updatedUser
-                );
+            if (token && user) {
+                await userRequests.updateUser(token, updatedUser);
                 dispatch(setUserInfo(updatedUser));
+                toast.success("Profile successfully updated");
             }
         } catch (error) {
-            console.error(error);
-            // Set error notification
+            if (error instanceof AxiosError) {
+                toast.error(error?.response?.data);
+            }
         }
     };
 
@@ -102,12 +107,12 @@ const UserProfile = () => {
         setFormValues((prevData) => ({ ...prevData, [name]: value }));
     };
 
-    const checkboxOnChange = () => {     
+    const checkboxOnChange = () => {
         setFormValues({
             ...formValues,
-            isOpenToWork: !formValues.isOpenToWork
-        });        
-    }; 
+            isOpenToWork: !formValues.isOpenToWork,
+        });
+    };
 
     const handleInputBlur = (field: keyof typeof formValues) => {
         setTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
@@ -117,12 +122,15 @@ const UserProfile = () => {
         const value = formValues[field];
 
         if (field === "email") {
-            return touched[field] && typeof value === "string" && !validEmail(value);
-
+            return (
+                touched[field] &&
+                typeof value === "string" &&
+                !validEmail(value)
+            );
         } else if (field === "firstName") {
-            return touched[field] && value === "";
+            return touched[field] && value?.toString().trim() === "";
         } else if (field === "lastName") {
-            return touched[field] && value === "";
+            return touched[field] && value?.toString().trim() === "";
         } else {
             return;
         }
@@ -132,15 +140,19 @@ const UserProfile = () => {
         const value = formValues[field];
 
         if (field === "email" && touched[field] && value === "") {
-            return "Field must be filled out";
-        } else if (field === "email" && touched[field] && typeof value === "string" && !validEmail(value)) {
-            return "Invalid email address";
-        } else if (field === "lastName" &&  touched[field] && value === "") {
-            return "Field must be filled out";
+            return emptyFieldHelperText;
+        } else if (
+            field === "email" &&
+            touched[field] &&
+            typeof value === "string" &&
+            !validEmail(value)
+        ) {
+            return invalidEmailHelperText;
+        } else if (field === "lastName" && touched[field] && value === "") {
+            return emptyFieldHelperText;
         } else if (field === "firstName" && touched[field] && value === "") {
-            return "Field must be filled out";
-        }
-        else {
+            return emptyFieldHelperText;
+        } else {
             return null;
         }
     };
@@ -150,7 +162,7 @@ const UserProfile = () => {
         if (event.target.files && event.target.files[0]) {
             const isJpeg = event.target.files[0].type.slice(-4) === "jpeg";
             const isPng = event.target.files[0].type.slice(-3) === "png";
-    
+
             if (isJpeg || isPng) {
                 reader.addEventListener("load", () => {
                     setImage(reader.result);
@@ -161,14 +173,14 @@ const UserProfile = () => {
     };
 
     const disableButton =
-    formValues.firstName === "" ||
-    formValues.lastName === "" ||
-    formValues.email === "" ||
-    !validEmail(formValues.email);
-
+        formValues.firstName === "" ||
+        formValues.lastName === "" ||
+        formValues.email === "" ||
+        !validEmail(formValues.email!);
 
     return (
         <Paper elevation={1} className="userEditProfileContainer">
+            <DefaultToastContainer />
             <Avatar
                 style={{
                     height: "100px",
@@ -222,7 +234,7 @@ const UserProfile = () => {
                     md={9}
                     lg={5}
                     style={{ textAlign: "center" }}
-                > 
+                >
                     <Box
                         component="form"
                         sx={{
@@ -233,7 +245,11 @@ const UserProfile = () => {
                         }}
                     >
                         <InputLabel
-                            style={{ fontSize: 14, marginBottom: 3, marginLeft: 6 }}
+                            style={{
+                                fontSize: 14,
+                                marginBottom: 3,
+                                marginLeft: 6,
+                            }}
                             htmlFor="firstName"
                         >
                             First Name *
@@ -254,7 +270,12 @@ const UserProfile = () => {
                             FormHelperTextProps={{ style: { fontSize: 12 } }}
                         />
                         <InputLabel
-                            style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
+                            style={{
+                                fontSize: 14,
+                                marginBottom: 4,
+                                marginLeft: 6,
+                                marginTop: 8,
+                            }}
                             htmlFor="lastName"
                         >
                             Last Name *
@@ -273,10 +294,14 @@ const UserProfile = () => {
                             autoComplete="off"
                             sx={{ "& input": { fontSize: 14 } }}
                             FormHelperTextProps={{ style: { fontSize: 12 } }}
-
                         />
                         <InputLabel
-                            style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
+                            style={{
+                                fontSize: 14,
+                                marginBottom: 4,
+                                marginLeft: 6,
+                                marginTop: 8,
+                            }}
                             htmlFor="email"
                         >
                             Email Address *
@@ -297,7 +322,12 @@ const UserProfile = () => {
                             FormHelperTextProps={{ style: { fontSize: 12 } }}
                         />
                         <InputLabel
-                            style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
+                            style={{
+                                fontSize: 14,
+                                marginBottom: 4,
+                                marginLeft: 6,
+                                marginTop: 8,
+                            }}
                             htmlFor="phoneNumber"
                         >
                             Phone number
@@ -313,7 +343,12 @@ const UserProfile = () => {
                             sx={{ "& input": { fontSize: 14 } }}
                         />
                         <InputLabel
-                            style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
+                            style={{
+                                fontSize: 14,
+                                marginBottom: 4,
+                                marginLeft: 6,
+                                marginTop: 8,
+                            }}
                             htmlFor="country"
                         >
                             Country
@@ -329,7 +364,12 @@ const UserProfile = () => {
                             sx={{ "& input": { fontSize: 14 } }}
                         />
                         <InputLabel
-                            style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
+                            style={{
+                                fontSize: 14,
+                                marginBottom: 4,
+                                marginLeft: 6,
+                                marginTop: 8,
+                            }}
                             htmlFor="city"
                         >
                             City
@@ -345,9 +385,14 @@ const UserProfile = () => {
                             sx={{ "& input": { fontSize: 14 } }}
                         />
                         <InputLabel
-                            style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
+                            style={{
+                                fontSize: 14,
+                                marginBottom: 4,
+                                marginLeft: 6,
+                                marginTop: 8,
+                            }}
                             htmlFor="linkedinUsername"
-                        >   
+                        >
                             LinkedIn Username
                         </InputLabel>
                         <TextField
@@ -361,9 +406,14 @@ const UserProfile = () => {
                             sx={{ "& input": { fontSize: 14 } }}
                         />
                         <InputLabel
-                            style={{ fontSize: 14, marginBottom: 4, marginLeft: 6, marginTop: 8, }}
+                            style={{
+                                fontSize: 14,
+                                marginBottom: 4,
+                                marginLeft: 6,
+                                marginTop: 8,
+                            }}
                             htmlFor="jobPitch"
-                        >   
+                        >
                             About you
                         </InputLabel>
                         <TextField
@@ -377,17 +427,22 @@ const UserProfile = () => {
                             rows={6}
                             id="jobPitch"
                             type="text"
-                            inputProps= { { style: { fontSize: "14px" }}}
+                            inputProps={{ style: { fontSize: "14px" } }}
                         />
                     </Box>
                     <div>
                         <InputLabel
-                            style={{ fontSize: 14, marginTop: 17, }}
+                            style={{ fontSize: 14, marginTop: 17 }}
                             htmlFor="isOpenToWork"
-                        >   
+                        >
                             Are you open to finding work?
                         </InputLabel>
-                        <Checkbox id="isOpenToWork" name="isOpenToWork" checked={formValues.isOpenToWork} onChange={checkboxOnChange} />
+                        <Checkbox
+                            id="isOpenToWork"
+                            name="isOpenToWork"
+                            checked={formValues.isOpenToWork}
+                            onChange={checkboxOnChange}
+                        />
                     </div>
                     <Button
                         variant="contained"

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import HomePage from "./pages/NonLogin/HomePage/HomePage";
 import LoginPage from "./pages/NonLogin/LoginPage/LoginPage";
@@ -14,20 +14,27 @@ import Footer from "./components/Footer/Footer";
 import MainContainer from "./components/MainContainer/MainContainer";
 import ForgotPasswordPage from "./pages/NonLogin/ForgotPasswordPage/ForgotPasswordPage";
 import AllProjectsPage from "./pages/Project/AllProjectsPage";
+import DefaultToastContainer from "./components/Toast/DefaultToastContainer";
+import { selectToken } from "./redux/hooks";
 
 const App = () => {
-    const user = true;
+    const [navDrawerOpen, setNavDrawerOpen] = useState<boolean>(false);
+    const token = selectToken();
+    const location = useLocation();
 
-    const [open, setOpen] = useState(false);
+    useEffect(() => {
+        setNavDrawerOpen(false);
+    }, [location.pathname]);
 
     return (
         <div>
-            {user ? (
-                <LoginNavBar open={open} setOpen={setOpen} />
+            {token ? (
+                <LoginNavBar open={navDrawerOpen} setOpen={setNavDrawerOpen} />
             ) : (
                 <NonLoginNavBar />
             )}
-            <MainContainer open={open}>
+            <MainContainer open={navDrawerOpen}>
+                <DefaultToastContainer />
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/sign-in" element={<LoginPage />} />
@@ -44,7 +51,7 @@ const App = () => {
                     <Route path="/notifications" element={<UnknownUrl />} />
                     <Route path="*" element={<UnknownUrl />} />
                 </Routes>
-                {!user && <Footer />}
+                {!token && <Footer />}
             </MainContainer>
         </div>
     );

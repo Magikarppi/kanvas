@@ -3,7 +3,7 @@ import {
     ILoginBody,
     INewUserBody,
     IUpdatePasswordBody,
-    IUpdateUserBodyWithoutPassword,
+    IUser,
 } from "../models/userModels";
 
 const createClient = (token?: string) =>
@@ -31,10 +31,7 @@ const userRequests = {
         return response.data;
     },
 
-    updateUser: async (
-        token: string,
-        userInformation: IUpdateUserBodyWithoutPassword
-    ) => {
+    updateUser: async (token: string, userInformation: Partial<IUser>) => {
         const client = createClient(token);
         const response = await client.put(
             `${userInformation.id}`,

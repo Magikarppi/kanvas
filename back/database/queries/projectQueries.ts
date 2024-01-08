@@ -35,3 +35,4 @@ export const updateProject = `
 `;
 
 export const deleteFavoriteProject = "DELETE FROM favorite_projects WHERE id = $1";
+export const insertProjectFavoriteProjects = "INSERT INTO favorite_projects (id, project_id, user_id) VALUES ($1, $2, $3);";

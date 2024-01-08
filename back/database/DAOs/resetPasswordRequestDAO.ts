@@ -1,9 +1,9 @@
 import { executeQuery } from "../database-service";
-import { getResetPasswordRequestByToken, insertResetPasswordRequest, deleteResetPasswordRequest, updateResetPasswordRequest } from "../queries/resetPasswordQueries";
+import { getResetPasswordRequestByUserId, insertResetPasswordRequest, deleteResetPasswordRequest, updateResetPasswordRequest } from "../queries/resetPasswordQueries";
 import { IResetPasswordRequest } from "../utils/interfaces";
 
-export const getResetPasswordRequestDAO = async(token: string) => {
-    const result = await executeQuery(getResetPasswordRequestByToken, [token]);
+export const getResetPasswordRequestDAO = async(uuid: string) => {
+    const result = await executeQuery(getResetPasswordRequestByUserId, [uuid]);
     if (result) {
         return result.rows[0];
     }

@@ -1,4 +1,4 @@
-export const getResetPasswordRequestByToken  = "SELECT * FROM reset_password_requests WHERE token = $1";
+export const getResetPasswordRequestByUserId  = "SELECT * FROM reset_password_requests WHERE user_id = $1";
 
 export const insertResetPasswordRequest = "INSERT INTO reset_password_requests (token, user_id) values($1, $2)";
 

@@ -116,21 +116,23 @@ users.put(
 users.put("/reset-password/:token", async(request: Request, response: Response) => {
     const { newPassword } = request.body;
     const token = request.params.token;
-    const resetPasswordRequest: IResetPasswordRequest = await getResetPasswordRequestDAO(token);
-    if ( resetPasswordRequest ) {
-        const decoded = await jwt.verify(token, JWT_SECRET);
-        if( decoded ) {
+    try {
+        const decodedToken = jwt.verify(token, JWT_SECRET) as { value: string };
+        const email = decodedToken.value;
+        const user: IUser = await getUserByEmailDAO(email);
+        if( user ){
             const hashedPassword = await argon2.hash(newPassword);
-            await updatePasswordDAO(resetPasswordRequest.userID, hashedPassword);
-            await deleteResetPasswordRequestDAO(resetPasswordRequest.userID);
+            const uuid = user.id;
+            await updatePasswordDAO(uuid, hashedPassword);
+            await deleteResetPasswordRequestDAO(uuid);
             response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
-
         } else {
-            response.status(HTTP_RESPONSE_CODES.UNAUTHORIZED).send("Invalid token");
+            response.status(HTTP_RESPONSE_CODES.OK).send("Something went wrong..");
         }
-    } else {
-        response.status(HTTP_RESPONSE_CODES.UNAUTHORIZED).send("Invalid token");
+    } catch (error) {
+        response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Invalid Request");
     }
+   
     
 });
 

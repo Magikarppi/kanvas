@@ -304,7 +304,7 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
     }
 });
 
-router.delete("/deletefavoriteproject/:id", async (req: UserRequest, res: Response) => {
+router.delete("/favorite-projects/:id", async (req: UserRequest, res: Response) => {
     try {
         const { value: userId } = req.user as JwtPayload;
         const favoriteProjectId = req.params.id;

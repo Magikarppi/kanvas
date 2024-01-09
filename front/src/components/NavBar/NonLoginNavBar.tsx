@@ -22,9 +22,9 @@ const NonLoginNavBar = () => {
                     <div className="navbarButtonContainer">
                         <Button
                             color="inherit"
+                            sx={{ mt: 1 }}
                             startIcon={<Icons.User />}
                             onClick={handleSignInNavigation}
-                            style={{fontSize: 13 }}
                         >
                             Sign in
                         </Button>

@@ -157,14 +157,7 @@ const RegistrationForm = () => {
                 <Box component="form" sx={{ mt: 3 }}>
                     <Grid container spacing={1}>
                         <Grid item xs={12} sm={6}>
-                            <InputLabel
-                                style={{
-                                    fontSize: 14,
-                                    marginBottom: 2,
-                                    marginLeft: 6,
-                                }}
-                                htmlFor="firstName"
-                            >
+                            <InputLabel htmlFor="firstName">
                                 First Name *
                             </InputLabel>
                             <TextField
@@ -180,21 +173,10 @@ const RegistrationForm = () => {
                                 onBlur={() => handleInputBlur("firstName")}
                                 helperText={getErrorText("firstName")}
                                 autoComplete="off"
-                                sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{
-                                    style: { fontSize: 12 },
-                                }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <InputLabel
-                                style={{
-                                    fontSize: 14,
-                                    marginBottom: 2,
-                                    marginLeft: 6,
-                                }}
-                                htmlFor="firstName"
-                            >
+                            <InputLabel htmlFor="firstName">
                                 Last Name *
                             </InputLabel>
                             <TextField
@@ -210,21 +192,10 @@ const RegistrationForm = () => {
                                 onBlur={() => handleInputBlur("lastName")}
                                 helperText={getErrorText("lastName")}
                                 autoComplete="off"
-                                sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{
-                                    style: { fontSize: 12 },
-                                }}
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <InputLabel
-                                style={{
-                                    fontSize: 14,
-                                    marginBottom: 2,
-                                    marginLeft: 6,
-                                }}
-                                htmlFor="firstName"
-                            >
+                            <InputLabel htmlFor="firstName">
                                 Email Address *
                             </InputLabel>
                             <TextField
@@ -241,21 +212,10 @@ const RegistrationForm = () => {
                                 onBlur={() => handleInputBlur("email")}
                                 helperText={getErrorText("email")}
                                 autoComplete="off"
-                                sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{
-                                    style: { fontSize: 12 },
-                                }}
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <InputLabel
-                                style={{
-                                    fontSize: 14,
-                                    marginBottom: 2,
-                                    marginLeft: 6,
-                                }}
-                                htmlFor="firstName"
-                            >
+                            <InputLabel htmlFor="firstName">
                                 Password *
                             </InputLabel>
                             <TextField
@@ -271,10 +231,6 @@ const RegistrationForm = () => {
                                 size="small"
                                 onBlur={() => handleInputBlur("password")}
                                 helperText={getErrorText("password")}
-                                sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{
-                                    style: { fontSize: 12 },
-                                }}
                                 type={
                                     showPassword.password ? "text" : "password"
                                 }
@@ -301,14 +257,7 @@ const RegistrationForm = () => {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <InputLabel
-                                style={{
-                                    fontSize: 14,
-                                    marginBottom: 2,
-                                    marginLeft: 6,
-                                }}
-                                htmlFor="firstName"
-                            >
+                            <InputLabel htmlFor="firstName">
                                 Confirm password *
                             </InputLabel>
                             <TextField
@@ -326,10 +275,6 @@ const RegistrationForm = () => {
                                     handleInputBlur("confirmPassword")
                                 }
                                 helperText={getErrorText("confirmPassword")}
-                                sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{
-                                    style: { fontSize: 12 },
-                                }}
                                 type={
                                     showPassword.confirmPassword
                                         ? "text"
@@ -358,24 +303,20 @@ const RegistrationForm = () => {
                             />
                         </Grid>
                     </Grid>
-                    <Button
-                        data-cy="signup-submit"
-                        fullWidth
-                        variant="contained"
-                        color="secondary"
-                        sx={{ mt: 3, mb: 2 }}
-                        style={{ fontSize: 13 }}
-                        onClick={handleSubmit}
-                        disabled={disableButton}
-                    >
-                        Sign Up
-                    </Button>
+                    <Box textAlign="center">
+                        <Button
+                            data-cy="signup-submit"
+                            variant="contained"
+                            color="secondary"
+                            onClick={handleSubmit}
+                            disabled={disableButton}
+                        >
+                            Sign Up
+                        </Button>
+                    </Box>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link
-                                style={{ cursor: "pointer", fontSize: 13 }}
-                                onClick={() => navigate("/sign-in")}
-                            >
+                            <Link onClick={() => navigate("/sign-in")}>
                                 Already have an account? Sign in
                             </Link>
                         </Grid>

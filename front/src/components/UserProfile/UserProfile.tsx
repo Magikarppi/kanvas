@@ -179,7 +179,7 @@ const UserProfile = () => {
         !validEmail(formValues.email!);
 
     return (
-        <Paper elevation={1} className="userEditProfileContainer">
+        <Paper elevation={1} className="elevatedSection">
             <DefaultToastContainer />
             <Avatar
                 style={{
@@ -244,14 +244,7 @@ const UserProfile = () => {
                             justifyContent: "center",
                         }}
                     >
-                        <InputLabel
-                            style={{
-                                fontSize: 14,
-                                marginBottom: 3,
-                                marginLeft: 6,
-                            }}
-                            htmlFor="firstName"
-                        >
+                        <InputLabel htmlFor="firstName">
                             First Name *
                         </InputLabel>
                         <TextField
@@ -266,20 +259,8 @@ const UserProfile = () => {
                             onBlur={() => handleInputBlur("firstName")}
                             helperText={getErrorText("firstName")}
                             autoComplete="off"
-                            sx={{ "& input": { fontSize: 14 } }}
-                            FormHelperTextProps={{ style: { fontSize: 12 } }}
                         />
-                        <InputLabel
-                            style={{
-                                fontSize: 14,
-                                marginBottom: 4,
-                                marginLeft: 6,
-                                marginTop: 8,
-                            }}
-                            htmlFor="lastName"
-                        >
-                            Last Name *
-                        </InputLabel>
+                        <InputLabel htmlFor="lastName">Last Name *</InputLabel>
                         <TextField
                             error={validateInputs("lastName")}
                             required
@@ -292,20 +273,8 @@ const UserProfile = () => {
                             onBlur={() => handleInputBlur("lastName")}
                             helperText={getErrorText("lastName")}
                             autoComplete="off"
-                            sx={{ "& input": { fontSize: 14 } }}
-                            FormHelperTextProps={{ style: { fontSize: 12 } }}
                         />
-                        <InputLabel
-                            style={{
-                                fontSize: 14,
-                                marginBottom: 4,
-                                marginLeft: 6,
-                                marginTop: 8,
-                            }}
-                            htmlFor="email"
-                        >
-                            Email Address *
-                        </InputLabel>
+                        <InputLabel htmlFor="email">Email Address *</InputLabel>
                         <TextField
                             error={validateInputs("email")}
                             required
@@ -318,18 +287,8 @@ const UserProfile = () => {
                             onBlur={() => handleInputBlur("email")}
                             helperText={getErrorText("email")}
                             autoComplete="off"
-                            sx={{ "& input": { fontSize: 14 } }}
-                            FormHelperTextProps={{ style: { fontSize: 12 } }}
                         />
-                        <InputLabel
-                            style={{
-                                fontSize: 14,
-                                marginBottom: 4,
-                                marginLeft: 6,
-                                marginTop: 8,
-                            }}
-                            htmlFor="phoneNumber"
-                        >
+                        <InputLabel htmlFor="phoneNumber">
                             Phone number
                         </InputLabel>
                         <TextField
@@ -340,19 +299,8 @@ const UserProfile = () => {
                             id="phoneNumber"
                             onChange={handleInputChange}
                             autoComplete="off"
-                            sx={{ "& input": { fontSize: 14 } }}
                         />
-                        <InputLabel
-                            style={{
-                                fontSize: 14,
-                                marginBottom: 4,
-                                marginLeft: 6,
-                                marginTop: 8,
-                            }}
-                            htmlFor="country"
-                        >
-                            Country
-                        </InputLabel>
+                        <InputLabel htmlFor="country">Country</InputLabel>
                         <TextField
                             fullWidth
                             name="country"
@@ -361,19 +309,8 @@ const UserProfile = () => {
                             id="country"
                             onChange={handleInputChange}
                             autoComplete="off"
-                            sx={{ "& input": { fontSize: 14 } }}
                         />
-                        <InputLabel
-                            style={{
-                                fontSize: 14,
-                                marginBottom: 4,
-                                marginLeft: 6,
-                                marginTop: 8,
-                            }}
-                            htmlFor="city"
-                        >
-                            City
-                        </InputLabel>
+                        <InputLabel htmlFor="city">City</InputLabel>
                         <TextField
                             fullWidth
                             name="city"
@@ -382,17 +319,8 @@ const UserProfile = () => {
                             value={formValues.city || ""}
                             onChange={handleInputChange}
                             autoComplete="off"
-                            sx={{ "& input": { fontSize: 14 } }}
                         />
-                        <InputLabel
-                            style={{
-                                fontSize: 14,
-                                marginBottom: 4,
-                                marginLeft: 6,
-                                marginTop: 8,
-                            }}
-                            htmlFor="linkedinUsername"
-                        >
+                        <InputLabel htmlFor="linkedinUsername">
                             LinkedIn Username
                         </InputLabel>
                         <TextField
@@ -403,19 +331,8 @@ const UserProfile = () => {
                             id="linkedinUsername"
                             onChange={handleInputChange}
                             autoComplete="off"
-                            sx={{ "& input": { fontSize: 14 } }}
                         />
-                        <InputLabel
-                            style={{
-                                fontSize: 14,
-                                marginBottom: 4,
-                                marginLeft: 6,
-                                marginTop: 8,
-                            }}
-                            htmlFor="jobPitch"
-                        >
-                            About you
-                        </InputLabel>
+                        <InputLabel htmlFor="jobPitch">Job pitch</InputLabel>
                         <TextField
                             name="jobPitch"
                             value={formValues.jobPitch || ""}
@@ -427,14 +344,10 @@ const UserProfile = () => {
                             rows={6}
                             id="jobPitch"
                             type="text"
-                            inputProps={{ style: { fontSize: "14px" } }}
                         />
                     </Box>
                     <div>
-                        <InputLabel
-                            style={{ fontSize: 14, marginTop: 17 }}
-                            htmlFor="isOpenToWork"
-                        >
+                        <InputLabel htmlFor="isOpenToWork">
                             Are you open to finding work?
                         </InputLabel>
                         <Checkbox
@@ -447,9 +360,7 @@ const UserProfile = () => {
                     <Button
                         variant="contained"
                         color="secondary"
-                        style={{ marginTop: "20px", fontSize: 13 }}
                         onClick={handleSubmit}
-                        size="large"
                         disabled={disableButton}
                     >
                         Submit changes

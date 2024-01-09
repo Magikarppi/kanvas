@@ -29,13 +29,9 @@ const HomePage = () => {
                             Sign up for your account today
                         </Typography>
                         <Button
-                            className="homePageButtons"
                             variant="contained"
                             color="secondary"
                             onClick={() => handleNavigation("/sign-up")}
-                            style={{
-                                fontSize: "12px",
-                            }}
                         >
                             Sign up
                         </Button>
@@ -54,13 +50,9 @@ const HomePage = () => {
                             Sign in to your account to get started
                         </Typography>
                         <Button
-                            className="homePageButtons"
                             variant="contained"
                             color="primary"
                             onClick={() => handleNavigation("/sign-in")}
-                            style={{
-                                fontSize: "12px",
-                            }}
                         >
                             Sign in
                         </Button>

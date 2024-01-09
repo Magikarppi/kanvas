@@ -16,7 +16,6 @@ const NavigateHomeButton = () => {
             color="secondary"
             variant="contained"
             startIcon={<Icons.Home size="16" />}
-            style={{ marginTop: "30px" }}
             data-testid="navigationHomeButton"
         >
             Go home

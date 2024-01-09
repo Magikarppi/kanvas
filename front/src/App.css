@@ -65,12 +65,6 @@ a {
     padding-bottom: 30px;
 }
 
-.homePageButtons {
-    width: 125px;
-    height: 40px;
-    font-size: 15px;
-}
-
 .homePageFooter {
     border-top: 1px solid #000;
     margin-top: auto;
@@ -85,32 +79,13 @@ a {
     padding-top: 25px;
 }
 
-/* User profile Page */
-
-.userProfilePage {
-    min-height: 90vh;
-    padding-top: 30px;
-}
-
-.userEditProfileContainer {
+.elevatedSection {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     margin-bottom: 50px;
-}
-
-/* Forgot passwod page*/
-.forgotPasswordContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10%;
-}
-
-/* Error page */
-.unknownUrl {
-    min-height: 80vh;
+    padding-bottom: 20px;
 }
 
 .errorCard {
@@ -120,10 +95,6 @@ a {
     width: 100%;
 }
 
-.registrationPage {
-    min-height: 70vh;
-}
-
-.loginPage {
-    min-height: 70vh;
+.pageContainer {
+    min-height: 80vh;
 }

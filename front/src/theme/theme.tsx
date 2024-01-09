@@ -36,6 +36,10 @@ let theme = createTheme({
             styleOverrides: {
                 root: {
                     borderRadius: 28,
+                    fontSize: 15,
+                    marginTop: 15,
+                    marginBottom: 15,
+                    minWidth: "200px",
                 },
             },
         },
@@ -58,6 +62,48 @@ let theme = createTheme({
                 root: {
                     borderRadius: 15,
                     marginTop: 4,
+                },
+            },
+        },
+        MuiFormHelperText: {
+            styleOverrides: {
+                root: {
+                    fontSize: 12,
+                },
+            },
+        },
+        MuiTextField: {
+            styleOverrides: {
+                root: {
+                    "& input": { fontSize: 14 },
+                },
+            },
+        },
+        MuiInputLabel: {
+            styleOverrides: {
+                root: {
+                    fontSize: 14,
+                    marginBottom: 1,
+                    marginTop: 8,
+                    marginLeft: 6,
+                    marginRight: 6,
+                    fontWeight: "bold",
+                    color: "#00d4ff",
+                },
+            },
+        },
+        MuiLink: {
+            styleOverrides: {
+                root: {
+                    cursor: "pointer",
+                    fontSize: 13,
+                },
+            },
+        },
+        MuiTypography: {
+            styleOverrides: {
+                root: {
+                    fontSize: 14,
                 },
             },
         },

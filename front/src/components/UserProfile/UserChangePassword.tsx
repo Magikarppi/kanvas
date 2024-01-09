@@ -143,7 +143,7 @@ const UserChangePassword = () => {
         !validatePasswordFormat(formData.newPassword);
 
     return (
-        <Paper elevation={1} className="userEditProfileContainer">
+        <Paper elevation={1} className="elevatedSection">
             <DefaultToastContainer />
             <Typography
                 variant="h4"
@@ -169,14 +169,7 @@ const UserChangePassword = () => {
                             justifyContent: "center",
                         }}
                     >
-                        <InputLabel
-                            style={{
-                                fontSize: 14,
-                                marginBottom: 3,
-                                marginLeft: 6,
-                            }}
-                            htmlFor="firstName"
-                        >
+                        <InputLabel htmlFor="firstName">
                             Current password *
                         </InputLabel>
                         <TextField
@@ -192,8 +185,6 @@ const UserChangePassword = () => {
                             value={formData.password}
                             onChange={handleInputChange}
                             onBlur={() => handleInputBlur("password")}
-                            sx={{ "& input": { fontSize: 14 } }}
-                            FormHelperTextProps={{ style: { fontSize: 12 } }}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
@@ -219,15 +210,7 @@ const UserChangePassword = () => {
                                 ),
                             }}
                         />
-                        <InputLabel
-                            style={{
-                                fontSize: 14,
-                                marginBottom: 4,
-                                marginLeft: 6,
-                                marginTop: 8,
-                            }}
-                            htmlFor="newPassword"
-                        >
+                        <InputLabel htmlFor="newPassword">
                             New password *
                         </InputLabel>
                         <TextField
@@ -245,8 +228,6 @@ const UserChangePassword = () => {
                             value={formData.newPassword}
                             onChange={handleInputChange}
                             onBlur={() => handleInputBlur("newPassword")}
-                            sx={{ "& input": { fontSize: 14 } }}
-                            FormHelperTextProps={{ style: { fontSize: 12 } }}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
@@ -272,15 +253,7 @@ const UserChangePassword = () => {
                                 ),
                             }}
                         />
-                        <InputLabel
-                            style={{
-                                fontSize: 14,
-                                marginBottom: 4,
-                                marginLeft: 6,
-                                marginTop: 8,
-                            }}
-                            htmlFor="newPasswordConfirm"
-                        >
+                        <InputLabel htmlFor="newPasswordConfirm">
                             Confirm new password *
                         </InputLabel>
                         <TextField
@@ -300,8 +273,6 @@ const UserChangePassword = () => {
                             value={formData.newPasswordConfirm}
                             onChange={handleInputChange}
                             onBlur={() => handleInputBlur("newPasswordConfirm")}
-                            sx={{ "& input": { fontSize: 14 } }}
-                            FormHelperTextProps={{ style: { fontSize: 12 } }}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
@@ -331,13 +302,7 @@ const UserChangePassword = () => {
                     <Button
                         variant="contained"
                         color="secondary"
-                        style={{
-                            marginTop: "20px",
-                            fontSize: 13,
-                            width: "140px",
-                        }}
                         onClick={handleSubmit}
-                        size="large"
                         disabled={isSubmitDisabled}
                     >
                         Submit

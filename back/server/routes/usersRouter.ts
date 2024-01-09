@@ -154,7 +154,7 @@ users.post("/forgot-password/", async(request: Request, response: Response)  => 
         const existsResetPasswordReq = await getResetPasswordRequestDAO(emailFetch.id);
         await sendEmail(url, email);
         existsResetPasswordReq ? await updateResetPasswordRequestDAO(reqObject) 
-            : await insertResetPasswordRequestDAO({token: token, userID: emailFetch.id});
+            : await insertResetPasswordRequestDAO(reqObject);
         response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
     } else {
         response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Invalid Request");

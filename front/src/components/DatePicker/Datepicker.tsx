@@ -11,7 +11,7 @@ interface IDatePicker {
 export const DatePickerComponent = (props:IDatePicker) => {
     const input =  <TextField
         name="endDate"
-        placeholder="MM/DD/YYYY"
+        placeholder="DD/MM/YYYY"
         value={props.date}
         fullWidth
     />;

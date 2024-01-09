@@ -22,6 +22,7 @@ import { IProjectSubmitNew } from "../../models/projectModels";
 import {
     isEmpty,
     isProjectDescriptionTooLong,
+    isValidENDateFormat,
     isValidUSDateFormat,
 } from "../../utils/inputChecks";
 import { DatePickerComponent } from "../DatePicker/Datepicker";
@@ -55,12 +56,21 @@ const initialTouched = {
     isPublic: false,
 };
 
+interface IInitialForm  {
+    name: string,
+    description: string,
+    endDate: string, 
+    theme: string,
+    isPublic: TisPublic,
+}
+
+
 const initialFormValues = {
     name: "",
     description: "",
-    endDate: "" as TisPublic,
+    endDate: "",
     theme: "default",
-    isPublic: "not-public",
+    isPublic: "not-public" as TisPublic,
 };
 
 export default function AddProjectModal({
@@ -68,7 +78,7 @@ export default function AddProjectModal({
     close,
     handleAddProject,
 }: Props) {
-    const [formValues, setFormValues] = useState(initialFormValues);
+    const [formValues, setFormValues] = useState<IInitialForm>(initialFormValues);
     const [touched, setTouched] = useState(initialTouched);
     const [date, setDate] = useState<Date>(new Date());
 
@@ -102,7 +112,7 @@ export default function AddProjectModal({
         if (field === "name") {
             return touched[field] && isEmpty(value);
         } else if (field === "endDate") {
-            return touched[field] && !isValidUSDateFormat(value);
+            return touched[field] && !isValidENDateFormat(value);
         } else if (field === "description") {
             return touched[field] && isProjectDescriptionTooLong(value);
         }
@@ -115,7 +125,7 @@ export default function AddProjectModal({
         } else if (
             field === "endDate" &&
             touched[field] &&
-            !isValidUSDateFormat(value)
+            !isValidENDateFormat(value)
         ) {
             return "Use format MM/DD/YYYY";
         } else if (
@@ -149,11 +159,16 @@ export default function AddProjectModal({
     };
 
     const handleCallBackDatePicker = (date:Date) => {
+        const days = date.getDate();
+        const months = date.getMonth();
+        const years = date.getFullYear();
+        const totalFormat: string = days + "/" + (months+1) + "/" + years;
+        setFormValues({...formValues, endDate: totalFormat });
         setDate(date);
     };
 
     const disableButton =
-        !formValues.name || !isValidUSDateFormat(formValues.endDate);
+        !formValues.name || !isValidENDateFormat(formValues.endDate);
 
     return (
         <Modal

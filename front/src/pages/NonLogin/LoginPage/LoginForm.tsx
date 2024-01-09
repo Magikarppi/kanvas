@@ -150,6 +150,7 @@ const LoginForm = () => {
                                 Email Address
                             </InputLabel>
                             <TextField
+                                data-cy="email-login-input"
                                 error={validateInputs("email")}
                                 required
                                 fullWidth
@@ -180,6 +181,7 @@ const LoginForm = () => {
                                 Password *
                             </InputLabel>
                             <TextField
+                                data-cy="password-login-input"
                                 error={validateInputs("password")}
                                 required
                                 fullWidth
@@ -238,6 +240,7 @@ const LoginForm = () => {
                         </Grid>
                     </Grid>
                     <Button
+                        data-cy="login-button"
                         fullWidth
                         variant="contained"
                         color="secondary"

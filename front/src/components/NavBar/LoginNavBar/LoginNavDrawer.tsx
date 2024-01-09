@@ -74,6 +74,7 @@ const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
             <Divider />
             <LoginNavList />
             <Button
+                data-cy="sign-out-drawer"
                 variant="outlined"
                 fullWidth
                 className="loginNavSignOutButton"

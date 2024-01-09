@@ -189,6 +189,11 @@ const createTables = async () => {
             "user_id" uuid NOT NULL REFERENCES "users" ("id"),
             "team_id" uuid NOT NULL REFERENCES "teams" ("id")
         );
+
+        CREATE TABLE IF NOT EXISTS "reset_password_requests" (
+            "user_id" uuid PRIMARY KEY,
+            "token" varchar(1000) NOT NULL
+        );
         `;
 
         await executeQuery(query);

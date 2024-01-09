@@ -7,9 +7,9 @@ import UserChangePassword from "../../components/UserProfile/UserChangePassword"
 
 const UserProfilePage = () => {
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
-    
+
     return (
-        <Grid container spacing={2} className="userProfilePage">
+        <Grid container spacing={2} className="pageContainer">
             <Grid item xs={1} />
 
             <Grid item xs={10} md={3.5} lg={2} xl={1.5}>

@@ -19,7 +19,7 @@ const LoginNavList = () => {
                         <ListItemIcon>
                             <Icons.Dashboard />
                         </ListItemIcon>
-                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }} primary="Dashboard"></ListItemText>
+                        <ListItemText primary="Dashboard"></ListItemText>
                     </ListItemButton>
                 </ListItem>
             </Link>
@@ -30,7 +30,7 @@ const LoginNavList = () => {
                         <ListItemIcon>
                             <Icons.Projects />
                         </ListItemIcon>
-                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Projects" />
+                        <ListItemText primary="Projects" />
                     </ListItemButton>
                 </ListItem>
             </Link>
@@ -41,7 +41,7 @@ const LoginNavList = () => {
                         <ListItemIcon>
                             <Icons.Team />
                         </ListItemIcon>
-                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Teams" />
+                        <ListItemText primary="Teams" />
                     </ListItemButton>
                 </ListItem>
             </Link>
@@ -52,7 +52,7 @@ const LoginNavList = () => {
                         <ListItemIcon>
                             <Icons.Account />
                         </ListItemIcon>
-                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Profile" />
+                        <ListItemText primary="Profile" />
                     </ListItemButton>
                 </ListItem>
             </Link>
@@ -63,7 +63,7 @@ const LoginNavList = () => {
                         <ListItemIcon>
                             <Icons.Message />
                         </ListItemIcon>
-                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Messages" />
+                        <ListItemText primary="Messages" />
                     </ListItemButton>
                 </ListItem>
             </Link>
@@ -74,7 +74,7 @@ const LoginNavList = () => {
                         <ListItemIcon>
                             <Icons.Notifications />
                         </ListItemIcon>
-                        <ListItemText primaryTypographyProps= { { fontSize: "14px" }}  primary="Notifications" />
+                        <ListItemText primary="Notifications" />
                     </ListItemButton>
                 </ListItem>
             </Link>

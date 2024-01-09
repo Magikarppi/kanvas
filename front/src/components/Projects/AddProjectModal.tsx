@@ -169,14 +169,7 @@ export default function AddProjectModal({
                     <Box component="form" sx={{ mt: 5 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
-                                <InputLabel
-                                    style={{
-                                        fontSize: 14,
-                                        marginBottom: 3,
-                                        marginLeft: 6,
-                                    }}
-                                    htmlFor="projectName"
-                                >
+                                <InputLabel htmlFor="projectName">
                                     Name *
                                 </InputLabel>
                                 <TextField
@@ -191,14 +184,7 @@ export default function AddProjectModal({
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <InputLabel
-                                    style={{
-                                        fontSize: 14,
-                                        marginBottom: 3,
-                                        marginLeft: 6,
-                                    }}
-                                    htmlFor="description"
-                                >
+                                <InputLabel htmlFor="description">
                                     Description
                                 </InputLabel>
                                 <TextField
@@ -219,14 +205,7 @@ export default function AddProjectModal({
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <InputLabel
-                                    style={{
-                                        fontSize: 14,
-                                        marginBottom: 3,
-                                        marginLeft: 6,
-                                    }}
-                                    htmlFor="projectEndDate"
-                                >
+                                <InputLabel htmlFor="projectEndDate">
                                     End date
                                 </InputLabel>
                                 <TextField
@@ -241,16 +220,7 @@ export default function AddProjectModal({
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <InputLabel
-                                    style={{
-                                        fontSize: 14,
-                                        marginBottom: 3,
-                                        marginLeft: 6,
-                                    }}
-                                    htmlFor="theme"
-                                >
-                                    Theme
-                                </InputLabel>
+                                <InputLabel htmlFor="theme">Theme</InputLabel>
                                 <FormControl fullWidth>
                                     <Select
                                         labelId="theme-select-label"
@@ -297,16 +267,21 @@ export default function AddProjectModal({
                                 </FormControl>
                             </Grid>
                         </Grid>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            color="secondary"
-                            sx={{ mt: 3, mb: 2 }}
-                            disabled={disableButton}
-                            onClick={handleSubmit}
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
                         >
-                            Submit
-                        </Button>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                disabled={disableButton}
+                                onClick={handleSubmit}
+                            >
+                                Submit
+                            </Button>
+                        </div>
                     </Box>
                 </Container>
             </Card>

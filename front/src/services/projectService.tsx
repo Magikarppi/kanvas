@@ -46,6 +46,19 @@ const projectService = {
 
         return response.data;
     },
+    addFavoriteProject: async (token: string, projectId: string) => {
+        const client = createClient(token);
+        const response = await client.post("/addfavoriteproject", {
+            projectId: projectId,
+        });
+
+        return response.data;
+    },
+    deleteFavoriteProject: async (token: string, projectId: string) => {
+        const client = createClient(token);
+        const response = await client.delete(`/favorite-projects/${projectId}`);
+        return response;
+    },
 };
 
 export default projectService;

@@ -55,7 +55,7 @@ const sendEmail = async(link: string, email: string) => {
         text: "",
         html: "<b>You have forgotten your password. Link for resetting password: "+link+"</b>",
     });
-} 
+} ;
 
 users.put(
     "/:id",
@@ -149,7 +149,7 @@ users.post("/forgot-password/", async(request: Request, response: Response)  => 
     const emailFetch: IUser = await getUserByEmailDAO(email);
     if( emailFetch ) {
         const token = await createToken(email);
-        const reqObject: IResetPasswordRequest = {token: token, userID: emailFetch.id}
+        const reqObject: IResetPasswordRequest = {token: token, userID: emailFetch.id};
         const url: string = app_path + token;
         const existsResetPasswordReq = await getResetPasswordRequestDAO(emailFetch.id);
         await sendEmail(url, email);

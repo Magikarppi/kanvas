@@ -121,11 +121,19 @@ users.put("/reset-password/:token", async(request: Request, response: Response) 
         const email = decodedToken.value;
         const user: IUser = await getUserByEmailDAO(email);
         if( user ){
-            const hashedPassword = await argon2.hash(newPassword);
-            const uuid = user.id;
-            await updatePasswordDAO(uuid, hashedPassword);
-            await deleteResetPasswordRequestDAO(uuid);
-            response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
+            const isPasswordFormatValid = validatePasswordFormat(newPassword);
+            if(isPasswordFormatValid){
+                const hashedPassword = await argon2.hash(newPassword);
+                const uuid = user.id;
+                await updatePasswordDAO(uuid, hashedPassword);
+                await deleteResetPasswordRequestDAO(uuid);
+                response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
+            } else{
+                response
+                    .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                    .send(RESPONSE_MESSAGES.INVALID_PWORD_FORMAT);
+            }
+           
         } else {
             response.status(HTTP_RESPONSE_CODES.OK).send("Something went wrong..");
         }

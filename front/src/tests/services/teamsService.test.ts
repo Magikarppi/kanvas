@@ -1,5 +1,5 @@
-import axios, { AxiosInstance } from "axios";
 import teamsService from "../../services/teamsService";
+import { createMockAxiosInstance } from "../testUtils";
 
 jest.mock("axios");
 
@@ -20,13 +20,7 @@ describe("Teams Service", () => {
             },
         };
 
-        const mockAxiosInstance: Partial<AxiosInstance> = {
-            post: jest.fn().mockResolvedValue({ data: mockResponse }),
-        };
-
-        (axios.create as jest.Mock).mockReturnValue(
-            mockAxiosInstance as AxiosInstance
-        );
+        const mockAxiosInstance = createMockAxiosInstance(mockResponse);
 
         const response = await teamsService.addTeam(token, teamName, isPublic);
 
@@ -48,13 +42,7 @@ describe("Teams Service", () => {
             },
         };
 
-        const mockAxiosInstance: Partial<AxiosInstance> = {
-            get: jest.fn().mockResolvedValue({ data: mockResponse }),
-        };
-
-        (axios.create as jest.Mock).mockReturnValue(
-            mockAxiosInstance as AxiosInstance
-        );
+        const mockAxiosInstance = createMockAxiosInstance(mockResponse);
 
         const response = await teamsService.getTeam(token, teamId);
 
@@ -79,13 +67,7 @@ describe("Teams Service", () => {
             id: teamId,
         };
 
-        const mockAxiosInstance: Partial<AxiosInstance> = {
-            put: jest.fn().mockResolvedValue({ data: mockResponse }),
-        };
-
-        (axios.create as jest.Mock).mockReturnValue(
-            mockAxiosInstance as AxiosInstance
-        );
+        const mockAxiosInstance = createMockAxiosInstance(mockResponse);
 
         const response = await teamsService.updateTeam(token, updatedTeamData);
 

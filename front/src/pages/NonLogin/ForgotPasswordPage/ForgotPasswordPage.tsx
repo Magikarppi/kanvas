@@ -1,10 +1,17 @@
-import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    Container,
+    Grid,
+    InputLabel,
+    Paper,
+    TextField,
+    Typography,
+} from "@mui/material";
 import { useState } from "react";
 import userRequests from "../../../services/userService";
 import NavigateBackIcon from "../../../components/NavigationButtons/NavigateBackIcon";
 import { validEmail } from "../../../utils/inputChecks";
-
-
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -21,9 +28,8 @@ export default function ForgotPasswordPage() {
     const [emailError, setEmailError] = useState("");
 
     const handleSubmit = async () => {
-        
         try {
-            if(validEmail(email)){
+            if (validEmail(email)) {
                 await userRequests.newPassword(
                     "user-id-replace-with-actual-user-id",
                     email
@@ -31,9 +37,10 @@ export default function ForgotPasswordPage() {
                 setEmail("");
                 setEmailError("");
                 setTouched(false);
-            }
-            else{
-                setEmailError("The email address you entered is not valid. ensure correctness.");
+            } else {
+                setEmailError(
+                    "The email address you entered is not valid. ensure correctness."
+                );
             }
             // Set success notification
         } catch (error) {
@@ -43,61 +50,80 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <Grid container spacing={2} className="userProfilePage">
-            <Grid item lg={4}>
-                <NavigateBackIcon />
-            </Grid>
-            <Grid item lg={4}>
-                <Paper elevation={1} className="forgotPasswordContainer">
-                    <Typography variant="h5" sx={{ marginBottom: "15px" }}>
-                        Forgot password
-                    </Typography>
-                    <Grid container>
-                        <Grid item xs={3} md={3} lg={3} />
-                        <Grid item xs={6} md={6} lg={6}>
-                            <Typography
+        <div className="pageContainer">
+            <NavigateBackIcon />
+            <Grid container>
+                <Grid item md={2} />
+                <Grid item md={8}>
+                    <Paper elevation={1} className="elevatedSection">
+                        <Container maxWidth="xs">
+                            <Box
                                 sx={{
-                                    textAlign: "center",
-                                    marginBottom: "5px",
+                                    marginTop: 8,
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
                                 }}
                             >
-                                Enter your email address and we will send you a
-                                password reset link.
-                            </Typography>
-                            <TextField
-                                error={isValidInput}
-                                required
-                                value={email}
-                                fullWidth
-                                size="small"
-                                type="email"
-                                label="Email Address"
-                                id="email"
-                                onChange={(e) => setEmail(e.target.value)}
-                                name="email"
-                                helperText={getErrorText}
-                                onBlur={() => setTouched(true)}
-                                autoComplete="off"
-                                sx={{ mt: 1 }}
-                            />
-                            <Grid style={{ textAlign: "center" }}>
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    style={{ marginTop: "20px" }}
-                                    onClick={handleSubmit}
-                                    disabled={disableButton}
-                                    fullWidth
+                                <Typography
+                                    variant="h4"
+                                    sx={{ marginBottom: "15px" }}
                                 >
-                                    Submit
-                                </Button>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={3} md={3} lg={3} />
-                    </Grid>
-                </Paper>
+                                    Forgot password
+                                </Typography>
+                                <Box component="form">
+                                    <Grid container spacing={1}>
+                                        <Grid item xs={12}>
+                                            <Typography
+                                                sx={{
+                                                    textAlign: "center",
+                                                    marginBottom: "5px",
+                                                }}
+                                            >
+                                                Enter your email address and we
+                                                will send you a password reset
+                                                link.
+                                            </Typography>
+                                            <InputLabel>
+                                                Email Address *
+                                            </InputLabel>
+                                            <TextField
+                                                error={isValidInput}
+                                                required
+                                                value={email}
+                                                fullWidth
+                                                size="small"
+                                                type="email"
+                                                id="email"
+                                                onChange={(e) =>
+                                                    setEmail(e.target.value)
+                                                }
+                                                name="email"
+                                                helperText={getErrorText}
+                                                onBlur={() => setTouched(true)}
+                                                autoComplete="off"
+                                            />
+                                            <Grid
+                                                style={{ textAlign: "center" }}
+                                            >
+                                                <Button
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    onClick={handleSubmit}
+                                                    disabled={disableButton}
+                                                >
+                                                    Submit
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Box>
+                            </Box>
+                        </Container>
+                    </Paper>
+                </Grid>
+                <Grid item md={2} />
             </Grid>
-            <Grid item lg={4} />
-        </Grid>
+        </div>
     );
 }

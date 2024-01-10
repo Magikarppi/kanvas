@@ -6,7 +6,7 @@ const UnknownUrl = () => {
     return (
         <>
             <NavigateBackIcon />
-            <Grid container spacing={1} className="unknownUrl">
+            <Grid container spacing={1} className="pageContainer">
                 <Grid item xs={2} />
                 <Grid item xs={8}>
                     <Card elevation={6} className="errorCard">

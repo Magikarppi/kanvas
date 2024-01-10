@@ -11,3 +11,9 @@ export interface IProjectSubmitNew {
     theme: string;
     picture: string | null;
 }
+
+export interface IFavoriteProject {
+    id: string;
+    projectId: string;
+    userId: string;
+}

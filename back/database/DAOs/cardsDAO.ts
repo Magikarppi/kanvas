@@ -4,6 +4,7 @@ import {
     updateCard,
     deleteCard,
     getCard,
+    getProjectCards,
 } from "../queries/cardQueries";
 import { ICard } from "../utils/interfaces";
 
@@ -47,5 +48,12 @@ export const getCardDAO = async (id: string) => {
     const cards = await executeQuery(getCard, [id]);
     if (cards) {
         return cards.rows[0];
+    }
+};
+
+export const getProjectCardsDAO = async (id: string) => {
+    const cards = await executeQuery(getProjectCards, [id]);
+    if (cards) {
+        return cards.rows;
     }
 };

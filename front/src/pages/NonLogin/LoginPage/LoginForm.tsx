@@ -139,17 +139,11 @@ const LoginForm = () => {
                 <Box component="form" sx={{ mt: 3 }}>
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
-                            <InputLabel
-                                style={{
-                                    fontSize: 14,
-                                    marginBottom: 2,
-                                    marginLeft: 6,
-                                }}
-                                htmlFor="firstName"
-                            >
-                                Email Address
+                            <InputLabel htmlFor="firstName">
+                                Email Address *
                             </InputLabel>
                             <TextField
+                                data-cy="email-login-input"
                                 error={validateInputs("email")}
                                 required
                                 fullWidth
@@ -162,24 +156,14 @@ const LoginForm = () => {
                                 onBlur={() => handleInputBlur("email")}
                                 helperText={getErrorText("email")}
                                 autoComplete="off"
-                                sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{
-                                    style: { fontSize: 12 },
-                                }}
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <InputLabel
-                                style={{
-                                    fontSize: 14,
-                                    marginBottom: 2,
-                                    marginLeft: 6,
-                                }}
-                                htmlFor="firstName"
-                            >
+                            <InputLabel htmlFor="firstName">
                                 Password *
                             </InputLabel>
                             <TextField
+                                data-cy="password-login-input"
                                 error={validateInputs("password")}
                                 required
                                 fullWidth
@@ -191,10 +175,6 @@ const LoginForm = () => {
                                 autoComplete="off"
                                 onBlur={() => handleInputBlur("password")}
                                 helperText={getErrorText("password")}
-                                sx={{ "& input": { fontSize: 14 } }}
-                                FormHelperTextProps={{
-                                    style: { fontSize: 12 },
-                                }}
                                 type={
                                     showPassword.password ? "text" : "password"
                                 }
@@ -227,7 +207,6 @@ const LoginForm = () => {
                         >
                             <Grid item>
                                 <Link
-                                    style={{ cursor: "pointer", fontSize: 13 }}
                                     onClick={() =>
                                         handleNavigation("/forgot-password")
                                     }
@@ -237,23 +216,20 @@ const LoginForm = () => {
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Button
-                        fullWidth
-                        variant="contained"
-                        color="secondary"
-                        sx={{ mt: 3, mb: 2 }}
-                        style={{ fontSize: 13 }}
-                        disabled={disableButton}
-                        onClick={handleSubmit}
-                    >
-                        Sign in
-                    </Button>
+                    <Box textAlign="center">
+                        <Button
+                            data-cy="login-button"
+                            variant="contained"
+                            color="secondary"
+                            disabled={disableButton}
+                            onClick={handleSubmit}
+                        >
+                            Sign in
+                        </Button>
+                    </Box>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link
-                                style={{ cursor: "pointer", fontSize: 13 }}
-                                onClick={() => handleNavigation("/sign-up")}
-                            >
+                            <Link onClick={() => handleNavigation("/sign-up")}>
                                 Dont have an account yet? Sign Up
                             </Link>
                         </Grid>

@@ -3,7 +3,7 @@ import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-import { IUpdateUser, IUser } from "../../database/utils/interfaces";
+import { IResetPasswordRequest, IUpdateUser, IUser } from "../../database/utils/interfaces";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
@@ -18,20 +18,44 @@ import {
     updateUserDAO,
     getExistingEmailConflictDAO,
     getUserByIdDAO,
+    insertResetPasswordRequestDAO, 
+    getResetPasswordRequestDAO, 
+    deleteResetPasswordRequestDAO, 
+    updateResetPasswordRequestDAO
 } from "../../database/DAOs";
 import {
     UserRequest,
     authenticate,
     validateEmailAndNames,
 } from "../middleware/middleware";
+import nodemailer from "nodemailer";
 
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "kanbanprojectbuutti@gmail.com",
+        pass: process.env.emailPassword
+    },
+});
 const users = express.Router();
 const JWT_SECRET = process.env.SECRET as string;
+const app_path = process.env.appPath;
 
 const createToken = (userId: string) =>
     jwt.sign({ value: userId }, JWT_SECRET, {
         expiresIn: 60000 * 60 * 24,
     });
+
+const sendEmail = async(link: string, email: string) => {
+    await transporter.sendMail({
+        from: "kanbanprojectbuutti@gmail.com", 
+        to: email,
+        subject: "Forgot password for Kanban project", 
+        text: "",
+        html: "<b>You have forgotten your password. Link for resetting password: "+link+"</b>",
+    });
+} ;
 
 users.put(
     "/:id",
@@ -88,6 +112,54 @@ users.put(
         }
     }
 );
+
+users.put("/reset-password/:token", async(request: Request, response: Response) => {
+    const { newPassword } = request.body;
+    const token = request.params.token;
+    try {
+        const decodedToken = jwt.verify(token, JWT_SECRET) as { value: string };
+        const email = decodedToken.value;
+        const user: IUser = await getUserByEmailDAO(email);
+        if( user ){
+            const isPasswordFormatValid = validatePasswordFormat(newPassword);
+            if(isPasswordFormatValid){
+                const hashedPassword = await argon2.hash(newPassword);
+                const uuid = user.id;
+                await updatePasswordDAO(uuid, hashedPassword);
+                await deleteResetPasswordRequestDAO(uuid);
+                response.status(HTTP_RESPONSE_CODES.OK).send("Password updated");
+            } else{
+                response
+                    .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                    .send(RESPONSE_MESSAGES.INVALID_PWORD_FORMAT);
+            }
+           
+        } else {
+            response.status(HTTP_RESPONSE_CODES.OK).send("Something went wrong..");
+        }
+    } catch (error) {
+        response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Invalid Request");
+    }
+   
+    
+});
+
+users.post("/forgot-password/", async(request: Request, response: Response)  => {
+    const { email } = request.body;
+    const emailFetch: IUser = await getUserByEmailDAO(email);
+    if( emailFetch ) {
+        const token = await createToken(email);
+        const reqObject: IResetPasswordRequest = {token: token, userID: emailFetch.id};
+        const url: string = app_path + token;
+        const existsResetPasswordReq = await getResetPasswordRequestDAO(emailFetch.id);
+        await sendEmail(url, email);
+        existsResetPasswordReq ? await updateResetPasswordRequestDAO(reqObject) 
+            : await insertResetPasswordRequestDAO(reqObject);
+        response.status(HTTP_RESPONSE_CODES.OK).send("Sent link to email");
+    } else {
+        response.status(HTTP_RESPONSE_CODES.BAD_REQUEST).send("Invalid Request");
+    }
+});
 
 users.post(
     "/signup",

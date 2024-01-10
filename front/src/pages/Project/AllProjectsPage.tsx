@@ -9,7 +9,11 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import AddProjectModal from "../../components/Projects/AddProjectModal";
 import { useEffect, useState } from "react";
-import { IProject, IProjectSubmitNew } from "../../models/projectModels";
+import {
+    IFavoriteProject,
+    IProject,
+    IProjectSubmitNew,
+} from "../../models/projectModels";
 import projectService from "../../services/projectService";
 import { selectToken, selectUser } from "../../redux/hooks";
 import { ITeam } from "../../models/teamModels";
@@ -80,16 +84,17 @@ const createCard = (output: string) => (
     </Card>
 );
 
-// ToDo issue 167: add favorite projects array to this interface and to dashboardData state. Also, move this interface to models folder?
 interface IDashboard {
     userProjects: IProject[];
     userTeams: ITeam[];
+    favoriteProjects: IFavoriteProject[];
 }
 
 export default function AllProjectsPage() {
     const [dashboardData, setDashboardData] = useState<IDashboard>({
         userProjects: [],
         userTeams: [],
+        favoriteProjects: [],
     });
 
     const [addProjectModalOpen, setAddProjectModalOpen] =
@@ -108,6 +113,7 @@ export default function AllProjectsPage() {
                     setDashboardData({
                         userProjects: [...data.allProjects],
                         userTeams: [...data.teams],
+                        favoriteProjects: [...data.favoriteProjects],
                     });
                 })
                 .catch((err) => console.error(err));
@@ -177,6 +183,49 @@ export default function AllProjectsPage() {
                 handleAddProject={handleAddProject}
             />
             <Stack sx={{ minHeight: "90vh" }}>
+                <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
+                    <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+                        My favorite projects
+                    </Typography>
+                    <Grid
+                        container
+                        rowSpacing={1}
+                        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                    >
+                        {dashboardData.favoriteProjects.length === 0 ? (
+                            <Grid item xs={12} sm={12} md={12}>
+                                <Typography variant="h6">
+                                    No favorite projects. To add a project to
+                                    your favorites, simply click the heart icon
+                                    on a project card.
+                                </Typography>
+                            </Grid>
+                        ) : (
+                            dashboardData.userProjects.map((project) => {
+                                for (const favoriteProject of dashboardData.favoriteProjects) {
+                                    if (favoriteProject.id === project.id) {
+                                        return (
+                                            <Grid
+                                                key={project.id}
+                                                item
+                                                xs={12}
+                                                sm={6}
+                                                md={3}
+                                            >
+                                                <Link
+                                                    to={`/projects/${project.id}`}
+                                                >
+                                                    {createCard(project.name)}
+                                                </Link>
+                                            </Grid>
+                                        );
+                                    }
+                                }
+                            })
+                        )}
+                    </Grid>
+                </Grid>
+                <Divider light sx={{ width: "100%" }} />
                 <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
                     <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
                         My projects

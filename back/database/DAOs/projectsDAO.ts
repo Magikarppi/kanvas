@@ -9,6 +9,7 @@ import {
     updateProject,
     insertProjectMember,
     insertProject,
+    getProjectMembers,
     deleteFavoriteProject,
     insertProjectFavoriteProjects,
 } from "../queries/projectQueries";
@@ -147,10 +148,20 @@ export const updateProjectDAO = async (
     await executeQuery(updateProject, params);
 };
 
+export const getProjectMembersDAO = async (
+    projectId: string
+) => {
+    const result = await executeQuery(getProjectMembers, [projectId]);
+    if (result) {
+        return result.rows;
+    }
+};
+
 export const deleteFavoriteProjectDAO = async (favoriteProjectId: string) => {
     const queryParameters = [favoriteProjectId];
     await executeQuery(deleteFavoriteProject, queryParameters);
 };
+
 export const insertProjectFavoriteProjectsDAO = async (favoriteProject: IProjectMember) => {
     const queryParameters = [
         favoriteProject.id,

@@ -14,6 +14,7 @@ import {
     removeUserRoleDAO,
     getUserTeamsDAO,
     getUserByIdDAO,
+    getProjectMembersDAO,
     deleteFavoriteProjectDAO,
     insertProjectFavoriteProjectsDAO,
 } from "../../database/DAOs";
@@ -29,7 +30,8 @@ import {
     getCurrentTimestamp,
 } from "../utils/utilities";
 import { JwtPayload } from "jsonwebtoken";
-import { dummyGetProjectData } from "../../database/utils/dummyData";
+import { getProjectColumnsDAO } from "../../database/DAOs/projectColumnsDAOS";
+import { getProjectCardsDAO } from "../../database/DAOs";
 
 const router = Router();
 
@@ -167,6 +169,7 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
             return;
         }
 
+
         const formattedProject: IProject = {
             id: existingProject.id,
             name: existingProject.name,
@@ -180,13 +183,16 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
 
         if (formattedProject.isPublic === false) {
             const projectMember = await getProjectMemberDAO(userId, projectId);
+            const existingProjectColumns = await getProjectColumnsDAO(projectId);
+            const existingProjectCards = await getProjectCardsDAO(projectId);
+            const projectMembers = await getProjectMembersDAO(projectId);
 
             if (projectMember) {
                 const projectData = {
                     ...formattedProject,
-                    projectColumns: [...dummyGetProjectData.projectColumns],
-                    projectMembers: [...dummyGetProjectData.projectMembers],
-                    cards: [...dummyGetProjectData.cards],
+                    projectColumns: existingProjectColumns,
+                    projectMembers: projectMembers,
+                    cards: existingProjectCards,
                 };
                 res.status(HTTP_RESPONSE_CODES.OK).json(projectData);
             } else {
@@ -195,11 +201,14 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
                 );
             }
         } else {
+            const existingProjectColumns = await getProjectColumnsDAO(projectId);
+            const existingProjectCards = await getProjectCardsDAO(projectId);
+            const projectMembers = await getProjectMembersDAO(projectId);
             const projectData = {
                 ...formattedProject,
-                projectColumns: [...dummyGetProjectData.projectColumns],
-                projectMembers: [...dummyGetProjectData.projectMembers],
-                cards: [...dummyGetProjectData.cards],
+                projectColumns: existingProjectColumns,
+                projectMembers: projectMembers,
+                cards: existingProjectCards,
             };
             res.status(HTTP_RESPONSE_CODES.OK).send(projectData);
         }

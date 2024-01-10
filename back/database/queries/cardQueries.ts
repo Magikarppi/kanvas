@@ -17,3 +17,6 @@ export const updateCard = `UPDATE cards
 export const deleteCard = "DELETE FROM cards WHERE id = $1";
 
 export const getCard = "SELECT * FROM cards WHERE id = $1";
+
+export const getProjectCards = "SELECT cards.* FROM cards WHERE cards.project_id = $1;";
+

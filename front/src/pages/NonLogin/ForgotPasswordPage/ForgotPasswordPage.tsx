@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
     const handleSubmit = async () => {
         try {
             if (validEmail(email)) {
-                await userRequests.newPassword(
+                await userRequests.forgotPassword(
                     "user-id-replace-with-actual-user-id",
                     email
                 );

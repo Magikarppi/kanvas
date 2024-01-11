@@ -26,6 +26,7 @@ import {
     isValidUSDateFormat,
 } from "../../utils/inputChecks";
 import { DatePickerComponent } from "../DatePicker/Datepicker";
+import { NestCamWiredStandTwoTone } from "@mui/icons-material";
 
 const style = {
     position: "absolute",
@@ -168,9 +169,23 @@ export default function AddProjectModal({
         const days = date.getDate();
         const months = date.getMonth();
         const years = date.getFullYear();
-        const totalFormat: string = days + "/" + (months+1) + "/" + years;
+        const totalFormat: string = days + "/" + (months +1 ) + "/" + years;
         setFormValues({...formValues, endDate: totalFormat });
-        setDate(date);
+        
+    };
+
+    const editEUDateToUSAFormat = () => {
+        
+        if(formValues.endDate.length > 0) {
+            const value = formValues.endDate.split("/");
+            const months = value[1];
+            const years = value[2];
+            const days = value[0];
+            const totalUSAFormat: string = months + "-" + days + "-" + years;
+            return new Date(totalUSAFormat);
+        } else {
+            return new Date();    
+        }
     };
 
     const disableButton =
@@ -256,7 +271,7 @@ export default function AddProjectModal({
                                 >
                                     End date
                                 </InputLabel>
-                                <DatePickerComponent date={date} handleCallBack={handleCallBackDatePicker}/> 
+                                <DatePickerComponent date={editEUDateToUSAFormat()} handleCallBack={handleCallBackDatePicker}/> 
                             </Grid>
                             <Grid item xs={12}>
                                 <InputLabel

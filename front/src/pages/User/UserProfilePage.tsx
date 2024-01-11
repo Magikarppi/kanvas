@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { Grid } from "@mui/material";
-
-import UserProfileMenuList from "../../components/UserProfile/UserProfileMenuList";
 import UserProfile from "../../components/UserProfile/UserProfile";
-import UserChangePassword from "../../components/UserProfile/UserChangePassword";
 
 const UserProfilePage = () => {
 

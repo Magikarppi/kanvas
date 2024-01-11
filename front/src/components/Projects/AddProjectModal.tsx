@@ -78,7 +78,6 @@ export default function AddProjectModal({
 }: Props) {
     const [formValues, setFormValues] = useState<IInitialForm>(initialFormValues);
     const [touched, setTouched] = useState(initialTouched);
-    const [date, setDate] = useState<Date>(new Date());
 
     useEffect(() => {
         if (!open) {

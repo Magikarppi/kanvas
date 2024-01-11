@@ -20,7 +20,6 @@ export function isValidUSDateFormat(dateString: string): boolean {
 }
 export const isValidENDateFormat = (dateString: string):boolean => {
     const dateParts = dateString.split("/");
-    console.log(dateString);
     if (dateParts.length !== 3) {
         return false;
     }

@@ -140,10 +140,16 @@ export default function AddProjectModal({
     };
 
     const handleSubmit = async () => {
+        const formValueDate = formValues.endDate.split("/");
+        const years = formValueDate[2];
+        const days = formValueDate[0];
+        const months = formValueDate[1];
+        const total = months + "-" + days + "-" + years;
+        
         try {
             const project: IProjectSubmitNew = {
                 ...formValues,
-                endDate: new Date(formValues.endDate) || null,
+                endDate: new Date(total) || null,
                 isPublic: formValues.isPublic === "public" ? true : false,
                 picture: null,
             };

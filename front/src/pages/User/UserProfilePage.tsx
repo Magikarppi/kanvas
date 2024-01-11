@@ -1,5 +1,6 @@
 import { Grid } from "@mui/material";
 import UserProfile from "../../components/UserProfile/UserProfile";
+import UserChangePassword from "../../components/UserProfile/UserChangePassword";
 
 const UserProfilePage = () => {
 
@@ -10,10 +11,12 @@ const UserProfilePage = () => {
             </Grid>
             <Grid item xs={10} md={6.5} lg={8} xl={8.5}>
                 <UserProfile />
+                <UserChangePassword />
             </Grid>
             <Grid item xs={1} />
         </Grid>
     );
 };
+
 
 export default UserProfilePage;

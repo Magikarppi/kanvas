@@ -17,16 +17,13 @@ import {
     Typography,
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
-
 import { IProjectSubmitNew } from "../../models/projectModels";
 import {
     isEmpty,
     isProjectDescriptionTooLong,
     isValidENDateFormat,
-    isValidUSDateFormat,
 } from "../../utils/inputChecks";
 import { DatePickerComponent } from "../DatePicker/Datepicker";
-import { NestCamWiredStandTwoTone } from "@mui/icons-material";
 
 const style = {
     position: "absolute",
@@ -175,7 +172,7 @@ export default function AddProjectModal({
     };
 
     const editEUDateToUSAFormat = () => {
-        
+
         if(formValues.endDate.length > 0) {
             const value = formValues.endDate.split("/");
             const months = value[1];

@@ -36,11 +36,12 @@ const LoginNavBarSearch = () => {
                             variant="standard"
                             placeholder="Search..."
                             autoFocus
+                            autoComplete="off"
                             sx={{
                                 backgroundColor: "#0E0E0E",
                                 zIndex: 9999999,
-                                width:"230px",
-                                padding: "10px 10px 10px 20px",
+                                width:"250px",
+                                padding: "10px 5px 10px 20px",
                             }}
                             onKeyUp={(event) => {
                                 if (event.key === "Escape") {

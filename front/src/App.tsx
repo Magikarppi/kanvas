@@ -16,6 +16,7 @@ import ForgotPasswordPage from "./pages/NonLogin/ForgotPasswordPage/ForgotPasswo
 import AllProjectsPage from "./pages/Project/AllProjectsPage";
 import DefaultToastContainer from "./components/Toast/DefaultToastContainer";
 import { selectToken } from "./redux/hooks";
+import NewPasswordPage from "./pages/NonLogin/NewPasswordPage/NewPasswordPage";
 
 const App = () => {
     const [navDrawerOpen, setNavDrawerOpen] = useState<boolean>(false);
@@ -42,6 +43,10 @@ const App = () => {
                     <Route
                         path="/forgot-password"
                         element={<ForgotPasswordPage />}
+                    />
+                    <Route
+                        path="/reset-password/:token"
+                        element={<NewPasswordPage />}
                     />
                     <Route path="/projects" element={<AllProjectsPage />} />
                     <Route path="/projects/:id" element={<ProjectPage />} />

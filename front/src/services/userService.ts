@@ -58,12 +58,20 @@ const userRequests = {
         return response;
     },
 
-    newPassword: async (userId: string, email: string) => {
+    forgotPassword: async (userId: string, email: string) => {
         const client = createClient();
         const response = await client.put(`${userId}/forgot-password`, {
             email: email,
         });
         return response;
+    },
+
+    newPassword: async (token: string, newPassword: string) => {
+        const client = createClient();
+        const response = await client.put(`/reset-password/${token}`, {
+            newPassword,
+        });
+        return response.data;
     },
 };
 

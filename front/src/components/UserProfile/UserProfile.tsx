@@ -28,7 +28,6 @@ import {
     emptyFieldHelperText,
     invalidEmailHelperText,
 } from "../../utils/helperMessages";
-import UserChangePassword from "./UserChangePassword";
 
 
 const UserProfile = () => {
@@ -372,7 +371,6 @@ const UserProfile = () => {
                     </Grid>
                 </Grid>
             </Paper>
-            <UserChangePassword/>
 
         </>
     );

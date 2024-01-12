@@ -17,13 +17,13 @@ import {
     Typography,
 } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
-
 import { IProjectSubmitNew } from "../../models/projectModels";
 import {
     isEmpty,
     isProjectDescriptionTooLong,
-    isValidUSDateFormat,
+    isValidENDateFormat,
 } from "../../utils/inputChecks";
+import { DatePickerComponent } from "../DatePicker/Datepicker";
 
 const style = {
     position: "absolute",
@@ -54,12 +54,21 @@ const initialTouched = {
     isPublic: false,
 };
 
+interface IInitialForm  {
+    name: string,
+    description: string,
+    endDate: string, 
+    theme: string,
+    isPublic: TisPublic,
+}
+
+
 const initialFormValues = {
     name: "",
     description: "",
-    endDate: "" as TisPublic,
+    endDate: "",
     theme: "default",
-    isPublic: "not-public",
+    isPublic: "not-public" as TisPublic,
 };
 
 export default function AddProjectModal({
@@ -67,7 +76,7 @@ export default function AddProjectModal({
     close,
     handleAddProject,
 }: Props) {
-    const [formValues, setFormValues] = useState(initialFormValues);
+    const [formValues, setFormValues] = useState<IInitialForm>(initialFormValues);
     const [touched, setTouched] = useState(initialTouched);
 
     useEffect(() => {
@@ -100,7 +109,7 @@ export default function AddProjectModal({
         if (field === "name") {
             return touched[field] && isEmpty(value);
         } else if (field === "endDate") {
-            return touched[field] && !isValidUSDateFormat(value);
+            return touched[field] && !isValidENDateFormat(value);
         } else if (field === "description") {
             return touched[field] && isProjectDescriptionTooLong(value);
         }
@@ -113,7 +122,7 @@ export default function AddProjectModal({
         } else if (
             field === "endDate" &&
             touched[field] &&
-            !isValidUSDateFormat(value)
+            !isValidENDateFormat(value)
         ) {
             return "Use format MM/DD/YYYY";
         } else if (
@@ -128,10 +137,16 @@ export default function AddProjectModal({
     };
 
     const handleSubmit = async () => {
+        const formValueDate = formValues.endDate.split("/");
+        const years = formValueDate[2];
+        const days = formValueDate[0];
+        const months = formValueDate[1];
+        const total = months + "-" + days + "-" + years;
+        
         try {
             const project: IProjectSubmitNew = {
                 ...formValues,
-                endDate: new Date(formValues.endDate) || null,
+                endDate: new Date(total) || null,
                 isPublic: formValues.isPublic === "public" ? true : false,
                 picture: null,
             };
@@ -146,8 +161,31 @@ export default function AddProjectModal({
         }
     };
 
+    const handleCallBackDatePicker = (date:Date) => {
+        const days = date.getDate();
+        const months = date.getMonth();
+        const years = date.getFullYear();
+        const totalFormat: string = days + "/" + (months +1 ) + "/" + years;
+        setFormValues({...formValues, endDate: totalFormat });
+        
+    };
+
+    const editEUDateToUSAFormat = () => {
+
+        if(formValues.endDate.length > 0) {
+            const value = formValues.endDate.split("/");
+            const months = value[1];
+            const years = value[2];
+            const days = value[0];
+            const totalUSAFormat: string = months + "-" + days + "-" + years;
+            return new Date(totalUSAFormat);
+        } else {
+            return new Date();    
+        }
+    };
+
     const disableButton =
-        !formValues.name || !isValidUSDateFormat(formValues.endDate);
+        !formValues.name || !isValidENDateFormat(formValues.endDate);
 
     return (
         <Modal
@@ -208,16 +246,7 @@ export default function AddProjectModal({
                                 <InputLabel htmlFor="projectEndDate">
                                     End date
                                 </InputLabel>
-                                <TextField
-                                    name="endDate"
-                                    placeholder="MM/DD/YYYY"
-                                    onChange={(e) => handleInputChange(e)}
-                                    error={validateInputs("endDate")}
-                                    helperText={getErrorText("endDate")}
-                                    onBlur={() => handleInputBlur("endDate")}
-                                    value={formValues.endDate}
-                                    fullWidth
-                                />
+                                <DatePickerComponent date={editEUDateToUSAFormat()} handleCallBack={handleCallBackDatePicker}/> 
                             </Grid>
                             <Grid item xs={12}>
                                 <InputLabel htmlFor="theme">Theme</InputLabel>

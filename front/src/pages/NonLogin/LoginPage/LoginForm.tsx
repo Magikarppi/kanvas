@@ -22,18 +22,11 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { invalidEmailHelperText } from "../../../utils/helperMessages";
 
-interface UserLoginState {
-    email: string;
-    password: string;
-}
-
 const LoginForm = () => {
     const dispatch = useAppDispatch();
-    const [showPassword, setShowPassword] = useState({
-        password: false,
-    });
+    const [showPassword, setShowPassword] = useState(false);
 
-    const [formData, setFormData] = useState<UserLoginState>({
+    const [formData, setFormData] = useState<ILoginBody>({
         email: "",
         password: "",
     });
@@ -44,17 +37,6 @@ const LoginForm = () => {
     });
 
     const navigate = useNavigate();
-
-    const handleNavigation = (location: string) => {
-        navigate(location);
-    };
-
-    const handleClickShowPassword = (field: keyof typeof showPassword) => {
-        setShowPassword((prevField) => ({
-            ...prevField,
-            [field]: !prevField[field],
-        }));
-    };
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -69,7 +51,7 @@ const LoginForm = () => {
         const value = formData[field];
 
         if (field === "email") {
-            return touched[field] && !emailRegex.test(value);
+            return touched[field] && !validEmail(value);
         } else {
             return touched[field] && value === "";
         }
@@ -80,36 +62,26 @@ const LoginForm = () => {
 
         if (touched[field] && value === "") {
             return "Field must be filled out";
-        } else if (
-            field === "email" &&
-            touched[field] &&
-            !emailRegex.test(value)
-        ) {
+        } else if (field === "email" && touched[field] && !validEmail(value)) {
             return invalidEmailHelperText;
         } else {
             return null;
         }
     };
 
-    const handleSubmit = async () => {
-        const userToLogin: ILoginBody = {
-            email: formData.email,
-            password: formData.password,
-        };
-
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         try {
-            if (validEmail(userToLogin.email)) {
-                const userData = await userRequests.loginUser(userToLogin);
-                if (userData.token) {
-                    dispatch(setToken(userData.token as string));
-                }
-
-                if (userData.user) {
-                    dispatch(setUserInfo(userData.user as IUser));
-                }
-                navigate("/projects");
-                toast.success("Welcome!");
+            const userData = await userRequests.loginUser(formData);
+            if (userData.token) {
+                dispatch(setToken(userData.token as string));
             }
+
+            if (userData.user) {
+                dispatch(setUserInfo(userData.user as IUser));
+            }
+            navigate("/projects");
+            toast.success("Welcome!");
         } catch (error) {
             if (error instanceof AxiosError) {
                 toast.error(error.response?.data);
@@ -117,13 +89,8 @@ const LoginForm = () => {
         }
     };
 
-    const emailRegex =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
     const disableButton =
-        formData.password === "" ||
-        formData.email === "" ||
-        !emailRegex.test(formData.email);
+        formData.password === "" || !validEmail(formData.email);
 
     return (
         <Container maxWidth="xs">
@@ -136,10 +103,10 @@ const LoginForm = () => {
                 }}
             >
                 <Typography variant="h4">Sign in</Typography>
-                <Box component="form" sx={{ mt: 3 }}>
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
-                            <InputLabel htmlFor="firstName">
+                            <InputLabel htmlFor="email">
                                 Email Address *
                             </InputLabel>
                             <TextField
@@ -155,11 +122,11 @@ const LoginForm = () => {
                                 size="small"
                                 onBlur={() => handleInputBlur("email")}
                                 helperText={getErrorText("email")}
-                                autoComplete="off"
+                                autoComplete="on"
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <InputLabel htmlFor="firstName">
+                            <InputLabel htmlFor="password">
                                 Password *
                             </InputLabel>
                             <TextField
@@ -175,21 +142,20 @@ const LoginForm = () => {
                                 autoComplete="off"
                                 onBlur={() => handleInputBlur("password")}
                                 helperText={getErrorText("password")}
-                                type={
-                                    showPassword.password ? "text" : "password"
-                                }
+                                type={showPassword ? "text" : "password"}
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
                                             <IconButton
                                                 aria-label="toggle password visibility"
                                                 onClick={() =>
-                                                    handleClickShowPassword(
-                                                        "password"
+                                                    setShowPassword(
+                                                        (prevBoolean) =>
+                                                            !prevBoolean
                                                     )
                                                 }
                                             >
-                                                {showPassword.password ? (
+                                                {showPassword ? (
                                                     <Icons.Visibility />
                                                 ) : (
                                                     <Icons.VisibilityOff />
@@ -207,9 +173,7 @@ const LoginForm = () => {
                         >
                             <Grid item>
                                 <Link
-                                    onClick={() =>
-                                        handleNavigation("/forgot-password")
-                                    }
+                                    onClick={() => navigate("/forgot-password")}
                                 >
                                     Forgot password?
                                 </Link>
@@ -219,17 +183,17 @@ const LoginForm = () => {
                     <Box textAlign="center">
                         <Button
                             data-cy="login-button"
+                            type="submit"
                             variant="contained"
                             color="secondary"
                             disabled={disableButton}
-                            onClick={handleSubmit}
                         >
                             Sign in
                         </Button>
                     </Box>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link onClick={() => handleNavigation("/sign-up")}>
+                            <Link onClick={() => navigate("/sign-up")}>
                                 Dont have an account yet? Sign Up
                             </Link>
                         </Grid>

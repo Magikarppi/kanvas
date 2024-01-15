@@ -254,6 +254,7 @@ const UserProfile = () => {
                                 required
                                 fullWidth
                                 size="small"
+                                data-cy="firstName-input"
                                 name="firstName"
                                 value={formValues.firstName || ""}
                                 id="firstName"
@@ -269,6 +270,7 @@ const UserProfile = () => {
                                 fullWidth
                                 size="small"
                                 name="lastName"
+                                data-cy="lastName-input"
                                 value={formValues.lastName || ""}
                                 id="lastName"
                                 onChange={handleInputChange}
@@ -283,6 +285,7 @@ const UserProfile = () => {
                                 fullWidth
                                 name="email"
                                 size="small"
+                                data-cy="email-input"
                                 value={formValues.email || ""}
                                 id="email"
                                 onChange={handleInputChange}
@@ -297,6 +300,7 @@ const UserProfile = () => {
                                 fullWidth
                                 name="phoneNumber"
                                 size="small"
+                                data-cy="phone-input"
                                 value={formValues.phoneNumber || ""}
                                 id="phoneNumber"
                                 onChange={handleInputChange}
@@ -307,6 +311,7 @@ const UserProfile = () => {
                                 fullWidth
                                 name="country"
                                 size="small"
+                                data-cy="country-input"
                                 value={formValues.country || ""}
                                 id="country"
                                 onChange={handleInputChange}
@@ -318,6 +323,7 @@ const UserProfile = () => {
                                 name="city"
                                 id="city"
                                 size="small"
+                                data-cy="city-input"
                                 value={formValues.city || ""}
                                 onChange={handleInputChange}
                                 autoComplete="off"
@@ -331,6 +337,7 @@ const UserProfile = () => {
                                 size="small"
                                 value={formValues.linkedinUsername || ""}
                                 id="linkedinUsername"
+                                data-cy="linkedin-input"
                                 onChange={handleInputChange}
                                 autoComplete="off"
                             />
@@ -340,6 +347,7 @@ const UserProfile = () => {
                                 value={formValues.jobPitch || ""}
                                 fullWidth
                                 size="small"
+                                data-cy="jobPitch-input"
                                 autoComplete="off"
                                 onChange={handleInputChange}
                                 multiline
@@ -362,6 +370,7 @@ const UserProfile = () => {
                         <Button
                             variant="contained"
                             color="secondary"
+                            data-cy="update-button"
                             onClick={handleSubmit}
                             disabled={disableButton}
                         >

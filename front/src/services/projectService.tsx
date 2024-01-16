@@ -11,7 +11,7 @@ const createClient = (token: string) => {
 const projectService = {
     getUsersProjects: async (token: string, userId: string) => {
         const client = createClient(token);
-        const response = await client.get(`/userprojects/${userId}`);
+        const response = await client.get(`/dashboard/${userId}`);
 
         return response.data;
     },
@@ -48,7 +48,7 @@ const projectService = {
     },
     addFavoriteProject: async (token: string, projectId: string) => {
         const client = createClient(token);
-        const response = await client.post("/addfavoriteproject", {
+        const response = await client.post("/favorite-projects", {
             projectId: projectId,
         });
 

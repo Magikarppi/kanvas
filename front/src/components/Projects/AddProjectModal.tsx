@@ -54,14 +54,13 @@ const initialTouched = {
     isPublic: false,
 };
 
-interface IInitialForm  {
-    name: string,
-    description: string,
-    endDate: string, 
-    theme: string,
-    isPublic: TisPublic,
+interface IInitialForm {
+    name: string;
+    description: string;
+    endDate: string;
+    theme: string;
+    isPublic: TisPublic;
 }
-
 
 const initialFormValues = {
     name: "",
@@ -76,7 +75,8 @@ export default function AddProjectModal({
     close,
     handleAddProject,
 }: Props) {
-    const [formValues, setFormValues] = useState<IInitialForm>(initialFormValues);
+    const [formValues, setFormValues] =
+        useState<IInitialForm>(initialFormValues);
     const [touched, setTouched] = useState(initialTouched);
 
     useEffect(() => {
@@ -142,10 +142,12 @@ export default function AddProjectModal({
         const days = formValueDate[0];
         const months = formValueDate[1];
         const total = months + "-" + days + "-" + years;
-        
+
         try {
             const project: IProjectSubmitNew = {
-                ...formValues,
+                name: formValues.name,
+                theme: formValues.theme || "blank",
+                description: formValues.description || null,
                 endDate: new Date(total) || null,
                 isPublic: formValues.isPublic === "public" ? true : false,
                 picture: null,
@@ -161,18 +163,16 @@ export default function AddProjectModal({
         }
     };
 
-    const handleCallBackDatePicker = (date:Date) => {
+    const handleCallBackDatePicker = (date: Date) => {
         const days = date.getDate();
         const months = date.getMonth();
         const years = date.getFullYear();
-        const totalFormat: string = days + "/" + (months +1 ) + "/" + years;
-        setFormValues({...formValues, endDate: totalFormat });
-        
+        const totalFormat: string = days + "/" + (months + 1) + "/" + years;
+        setFormValues({ ...formValues, endDate: totalFormat });
     };
 
     const editEUDateToUSAFormat = () => {
-
-        if(formValues.endDate.length > 0) {
+        if (formValues.endDate.length > 0) {
             const value = formValues.endDate.split("/");
             const months = value[1];
             const years = value[2];
@@ -180,7 +180,7 @@ export default function AddProjectModal({
             const totalUSAFormat: string = months + "-" + days + "-" + years;
             return new Date(totalUSAFormat);
         } else {
-            return new Date();    
+            return new Date();
         }
     };
 
@@ -246,7 +246,10 @@ export default function AddProjectModal({
                                 <InputLabel htmlFor="projectEndDate">
                                     End date
                                 </InputLabel>
-                                <DatePickerComponent date={editEUDateToUSAFormat()} handleCallBack={handleCallBackDatePicker}/> 
+                                <DatePickerComponent
+                                    date={editEUDateToUSAFormat()}
+                                    handleCallBack={handleCallBackDatePicker}
+                                />
                             </Grid>
                             <Grid item xs={12}>
                                 <InputLabel htmlFor="theme">Theme</InputLabel>

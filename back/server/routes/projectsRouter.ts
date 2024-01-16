@@ -19,14 +19,21 @@ import {
     insertProjectFavoriteProjectsDAO,
 } from "../../database/DAOs";
 import {
+    IFavoriteProject,
+    IFavoriteProjectDB,
     IProject,
     IProjectColumn,
+    IProjectDB,
     IProjectMember,
+    ITeamDB,
     IUserRole,
 } from "../../database/utils/interfaces";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
+    formatFavoriteProject,
+    formatProject,
+    formatTeam,
     getCurrentTimestamp,
 } from "../utils/utilities";
 import { JwtPayload } from "jsonwebtoken";
@@ -101,7 +108,7 @@ router.post("/", async (req: UserRequest, res: Response) => {
             },
         ];
 
-        const addedProject = await insertProjectDAO(
+        const addedProject: IProjectDB = await insertProjectDAO(
             project,
             projectMember,
             userRole,
@@ -113,16 +120,7 @@ router.post("/", async (req: UserRequest, res: Response) => {
                 .send("Adding new project failed");
         }
 
-        const formattedProject: IProject = {
-            id: addedProject.id,
-            name: addedProject.name,
-            description: addedProject.description,
-            isPublic: addedProject.is_public,
-            creationDate: addedProject.project_creation_date,
-            endDate: addedProject.project_end_date,
-            theme: addedProject.theme,
-            picture: addedProject.picture_url,
-        };
+        const formattedProject: IProject = formatProject(addedProject);
 
         return res.status(HTTP_RESPONSE_CODES.CREATED).json(formattedProject);
     } catch (error) {
@@ -161,7 +159,7 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
     const { value: userId } = req.user as JwtPayload;
 
     try {
-        const existingProject = await getProjectDAO(projectId);
+        const existingProject: IProjectDB = await getProjectDAO(projectId);
         if (!existingProject) {
             res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
                 "Project or user not found"
@@ -169,21 +167,13 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
             return;
         }
 
-
-        const formattedProject: IProject = {
-            id: existingProject.id,
-            name: existingProject.name,
-            description: existingProject.description,
-            isPublic: existingProject.is_public,
-            creationDate: existingProject.project_creation_date,
-            endDate: existingProject.project_end_date,
-            theme: existingProject.theme,
-            picture: existingProject.picture_url,
-        };
+        const formattedProject: IProject = formatProject(existingProject);
 
         if (formattedProject.isPublic === false) {
             const projectMember = await getProjectMemberDAO(userId, projectId);
-            const existingProjectColumns = await getProjectColumnsDAO(projectId);
+            const existingProjectColumns = await getProjectColumnsDAO(
+                projectId
+            );
             const existingProjectCards = await getProjectCardsDAO(projectId);
             const projectMembers = await getProjectMembersDAO(projectId);
 
@@ -201,7 +191,9 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
                 );
             }
         } else {
-            const existingProjectColumns = await getProjectColumnsDAO(projectId);
+            const existingProjectColumns = await getProjectColumnsDAO(
+                projectId
+            );
             const existingProjectCards = await getProjectCardsDAO(projectId);
             const projectMembers = await getProjectMembersDAO(projectId);
             const projectData = {
@@ -219,26 +211,32 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
     }
 });
 
-router.get("/userprojects/:id", async (req: UserRequest, res: Response) => {
+router.get("/dashboard/:id", async (req: UserRequest, res: Response) => {
     const userId = req.params.id;
 
     try {
         const user = await getUserByIdDAO(userId);
         if (user) {
             try {
-                const userAllProjects = await getUserProjectsDAO(userId);
-                const userFavoriteProjects = await getUserFavoriteProjectsDAO(
+                const userAllProjects: IProjectDB[] | undefined =
+                    await getUserProjectsDAO(userId);
+                const userFavoriteProjects: IFavoriteProjectDB[] | undefined =
+                    await getUserFavoriteProjectsDAO(userId);
+                const userTeams: ITeamDB[] | undefined = await getUserTeamsDAO(
                     userId
                 );
-                const userTeams = await getUserTeamsDAO(userId);
-                const userProjectsData = {
-                    allProjects: userAllProjects,
-                    favoriteProjects: userFavoriteProjects,
-                    teams: userTeams,
+
+                const dashboardData = {
+                    allProjects: userAllProjects?.map(
+                        (project) => formatProject(project) || []
+                    ),
+                    favoriteProjects: userFavoriteProjects?.map(
+                        (favProject) => formatFavoriteProject(favProject) || []
+                    ),
+                    teams: userTeams?.map((team) => formatTeam(team)) || [],
                 };
-                return res
-                    .status(HTTP_RESPONSE_CODES.OK)
-                    .json(userProjectsData);
+
+                return res.status(HTTP_RESPONSE_CODES.OK).json(dashboardData);
             } catch (error) {
                 res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
                     RESPONSE_MESSAGES.SERVER_ERROR
@@ -279,7 +277,7 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
             return;
         }
 
-        const project = await getProjectDAO(projectId);
+        const project: IProjectDB = await getProjectDAO(projectId);
 
         if (!project) {
             return res
@@ -313,60 +311,71 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
     }
 });
 
-router.delete("/favorite-projects/:id", async (req: UserRequest, res: Response) => {
-    try {
-        const { value: userId } = req.user as JwtPayload;
-        const favoriteProjectId = req.params.id;
-        const userFavoriteProjects = await getUserFavoriteProjectsDAO(
-            userId
-        );
-        const userFavoriteProjectsIds = userFavoriteProjects?.map((val) => val.favorite_project_id);
-        const found = userFavoriteProjectsIds?.includes(favoriteProjectId);
-
-        if (!found) {
+router.delete(
+    "/favorite-projects/:id",
+    async (req: UserRequest, res: Response) => {
+        try {
+            const { value: userId } = req.user as JwtPayload;
+            const favoriteProjectId = req.params.id;
+            const userFavoriteProjects = await getUserFavoriteProjectsDAO(
+                userId
+            );
+            const userFavoriteProjectsIds = userFavoriteProjects?.map(
+                (val) => val.favorite_project_id
+            );
+            const found = userFavoriteProjectsIds?.includes(favoriteProjectId);
+            if (!found) {
+                return res
+                    .status(HTTP_RESPONSE_CODES.NOT_FOUND)
+                    .send("Favorite project not found");
+            } else {
+                await deleteFavoriteProjectDAO(favoriteProjectId);
+                res.status(HTTP_RESPONSE_CODES.OK).send(
+                    "Favorite project deleted"
+                );
+            }
+        } catch (error) {
+            console.error(error);
             return res
-                .status(HTTP_RESPONSE_CODES.NOT_FOUND)
-                .send("Favorite project not found");
-        } else {
-
-            await deleteFavoriteProjectDAO(favoriteProjectId);
-            res.status(HTTP_RESPONSE_CODES.OK).send("Favorite project deleted");
+                .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+                .send(RESPONSE_MESSAGES.SERVER_ERROR);
         }
-    } catch (error) {
-        console.error(error);
-        return res
-            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
-            .send(RESPONSE_MESSAGES.SERVER_ERROR);
     }
-});
+);
 
-router.post("/addfavoriteproject", async (req: UserRequest, res: Response) => {
+router.post("/favorite-projects", async (req: UserRequest, res: Response) => {
     try {
         const { projectId } = req.body;
         const { value: userId } = req.user as JwtPayload;
-        const userFavoriteProjects = await getUserFavoriteProjectsDAO(
-            userId
+        const userFavoriteProjects = await getUserFavoriteProjectsDAO(userId);
+        const userFavoriteProjectsIds = userFavoriteProjects?.map(
+            (val) => val.id
         );
-        const userFavoriteProjectsIds = userFavoriteProjects?.map((val) => val.id);
         const found = userFavoriteProjectsIds?.includes(projectId);
-        
+
         if (!found) {
             const favoriteProject: IProjectMember = {
                 id: uuid(),
                 projectId: projectId,
                 userId: userId,
-            };    
-            await insertProjectFavoriteProjectsDAO(
-                favoriteProject,
-            );
-              
-            return res.status(HTTP_RESPONSE_CODES.CREATED).json(favoriteProject);
+            };
+            await insertProjectFavoriteProjectsDAO(favoriteProject);
+            const project = await getProjectDAO(projectId);
+
+            if (project) {
+                const favoriteProjectReturnObj: IFavoriteProject = {
+                    ...formatProject(project),
+                    favoriteProjectId: favoriteProject.id,
+                };
+                return res
+                    .status(HTTP_RESPONSE_CODES.CREATED)
+                    .json(favoriteProjectReturnObj);
+            }
         } else {
             return res
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
                 .send("Project is already in favorite projects");
         }
-
     } catch (error) {
         console.error(error);
         return res

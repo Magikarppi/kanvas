@@ -1,23 +1,15 @@
-const getCyData = (selector: string) => {
-    return cy.get(`[data-cy="${selector}"]`);
-};
-
-const testUser = {
-    firstName: "Teppo",
-    lastName: "Tester",
-    email: `teppo${Math.floor(Math.random() * 10000000)}@tester.com`,
-    password: "testitesti99%",
-};
+import { userLoginSignUp } from "../cypress-consts";
+import { getCyData } from "../cypress-functions";
 
 describe("Sign up + login", () => {
     it("Shows success toast on successful signup and redirects to /sign-in", () => {
         cy.visit("sign-up");
 
-        getCyData("first-name-input").type(testUser.firstName);
-        getCyData("last-name-input").type(testUser.lastName);
-        getCyData("email-input").type(testUser.email);
-        getCyData("password-input").type(testUser.password);
-        getCyData("confirm-password-input").type(testUser.password);
+        getCyData("first-name-input").type(userLoginSignUp.firstName);
+        getCyData("last-name-input").type(userLoginSignUp.lastName);
+        getCyData("email-input").type(userLoginSignUp.email);
+        getCyData("password-input").type(userLoginSignUp.password);
+        getCyData("confirm-password-input").type(userLoginSignUp.password);
         getCyData("signup-submit").should("not.be.disabled");
         getCyData("signup-submit").click();
 
@@ -29,8 +21,8 @@ describe("Sign up + login", () => {
         cy.visit("sign-in");
 
         getCyData("login-button").should("be.disabled");
-        getCyData("email-login-input").type(testUser.email);
-        getCyData("password-login-input").type(testUser.password);
+        getCyData("email-login-input").type(userLoginSignUp.email);
+        getCyData("password-login-input").type(userLoginSignUp.password);
         getCyData("login-button").should("not.be.disabled");
         getCyData("login-button").click();
 

@@ -12,8 +12,6 @@ export interface IProjectSubmitNew {
     picture: string | null;
 }
 
-export interface IFavoriteProject {
-    id: string;
-    projectId: string;
-    userId: string;
+export interface IFavoriteProject extends IProject {
+    favoriteProjectId: string;
 }

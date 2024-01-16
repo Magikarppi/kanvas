@@ -43,6 +43,13 @@ let theme = createTheme({
                 },
             },
         },
+        MuiPaper: {
+            styleOverrides: {
+                root: {
+                    paddingLeft: 10,
+                },
+            },
+        },
         MuiAppBar: {
             styleOverrides: {
                 root: {
@@ -104,6 +111,21 @@ let theme = createTheme({
             styleOverrides: {
                 root: {
                     fontSize: 14,
+                },
+            },
+        },
+        MuiCard: {
+            styleOverrides: {
+                root: {
+                    height: "100px",
+                    pl: "10px",
+                    pr: "10px",
+                    border: "1px solid #ffff",
+                    transition: "0.6s",
+                    "&:hover": {
+                        backgroundColor: "secondary.main",
+                    },
+                    cursor: "pointer",
                 },
             },
         },

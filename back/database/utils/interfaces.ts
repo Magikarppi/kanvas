@@ -48,6 +48,13 @@ export interface ITeam {
     isPublic: boolean;
 }
 
+export interface ITeamDB {
+    id: string;
+    name: string;
+    admin: string;
+    is_public: boolean;
+}
+
 export type IProject = {
     id: string;
     name: string;
@@ -55,6 +62,17 @@ export type IProject = {
     isPublic: boolean;
     creationDate: Date;
     endDate: Date | null;
+    theme: string;
+    picture: string | null;
+};
+
+export type IProjectDB = {
+    id: string;
+    name: string;
+    description: string;
+    is_public: boolean;
+    project_creation_date: Date;
+    project_end_date: Date | null;
     theme: string;
     picture: string | null;
 };
@@ -95,4 +113,12 @@ export interface IProjectColumn {
     projectId: string;
     columnName: string;
     orderIndex: number;
+}
+
+export interface IFavoriteProject extends IProject {
+    favoriteProjectId: string;
+}
+
+export interface IFavoriteProjectDB extends IProjectDB {
+    favorite_project_id: string;
 }

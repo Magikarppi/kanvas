@@ -29,6 +29,8 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { Favorite } from "@mui/icons-material";
+import { FavoriteBorder } from "@mui/icons-material";
 
 interface IconProps {
     title?: string;
@@ -96,6 +98,20 @@ const Icons = {
     )),
     Edit: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <EditIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    Favorite: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <Favorite
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    FavoriteBorder: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <FavoriteBorder
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}

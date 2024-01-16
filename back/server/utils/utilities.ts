@@ -1,3 +1,12 @@
+import {
+    IFavoriteProject,
+    IFavoriteProjectDB,
+    IProject,
+    IProjectDB,
+    ITeam,
+    ITeamDB,
+} from "../../database/utils/interfaces";
+
 export const getCurrentTimestamp = (): Date => {
     const date = new Date();
 
@@ -21,7 +30,8 @@ export const validateEmail = (email: string): boolean => {
 
 export const validatePasswordFormat = (password: string): boolean => {
     // 8-50 characters long, at least one number and one special character listed inside square brackets
-    const passwordRegEx = /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/\\-\\=-]).{8,50}$/;
+    const passwordRegEx =
+        /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/\\-\\=-]).{8,50}$/;
     return passwordRegEx.test(password);
 };
 
@@ -52,3 +62,35 @@ export const RESPONSE_MESSAGES = {
     PROJECT_NOT_FOUND: "Project with that id was not found",
     CARD_NOT_FOUND: "Card with that id was not found",
 };
+
+export const formatProject = (projectFromDB: IProjectDB): IProject => ({
+    id: projectFromDB.id,
+    name: projectFromDB.name,
+    description: projectFromDB.description,
+    isPublic: projectFromDB.is_public,
+    creationDate: projectFromDB.project_creation_date,
+    endDate: projectFromDB.project_end_date,
+    theme: projectFromDB.theme,
+    picture: projectFromDB.picture,
+});
+
+export const formatFavoriteProject = (
+    favProjectFromDB: IFavoriteProjectDB
+): IFavoriteProject => ({
+    favoriteProjectId: favProjectFromDB.favorite_project_id,
+    id: favProjectFromDB.id,
+    name: favProjectFromDB.name,
+    description: favProjectFromDB.description,
+    isPublic: favProjectFromDB.is_public,
+    creationDate: favProjectFromDB.project_creation_date,
+    endDate: favProjectFromDB.project_end_date,
+    theme: favProjectFromDB.theme,
+    picture: favProjectFromDB.picture,
+});
+
+export const formatTeam = (teamFromDB: ITeamDB): ITeam => ({
+    admin: teamFromDB.admin,
+    id: teamFromDB.id,
+    isPublic: teamFromDB.is_public,
+    name: teamFromDB.name,
+});

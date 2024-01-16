@@ -58,9 +58,9 @@ const userRequests = {
         return response;
     },
 
-    forgotPassword: async (userId: string, email: string) => {
+    forgotPassword: async (email: string) => {
         const client = createClient();
-        const response = await client.put(`${userId}/forgot-password`, {
+        const response = await client.post("forgot-password", {
             email: email,
         });
         return response;

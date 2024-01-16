@@ -8,53 +8,42 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { useState } from "react";
+import React, { useState } from "react";
 import userRequests from "../../../services/userService";
 import NavigateBackIcon from "../../../components/NavigationButtons/NavigateBackIcon";
 import { validEmail } from "../../../utils/inputChecks";
-
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState<string>("");
     const [touched, setTouched] = useState(false);
 
-    const isValidEmail = emailRegex.test(email);
+    const isValidEmail = validEmail(email);
     const isValidInput = touched && !isValidEmail;
 
     const getErrorText = touched && !isValidEmail && "Invalid email address";
     const disableButton = email === "" || !isValidEmail;
 
-    const [emailError, setEmailError] = useState("");
-
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
+        e.preventDefault();
         try {
-            if (validEmail(email)) {
-                await userRequests.forgotPassword(
-                    "user-id-replace-with-actual-user-id",
-                    email
-                );
-                setEmail("");
-                setEmailError("");
-                setTouched(false);
-            } else {
-                setEmailError(
-                    "The email address you entered is not valid. ensure correctness."
-                );
-            }
-            // Set success notification
+            const response = await userRequests.forgotPassword(email);
+            setEmail("");
+            setTouched(false);
+            toast.success(response.data);
         } catch (error) {
-            console.error(error);
-            // Set error notification
+            if (error instanceof AxiosError) {
+                toast.error(error?.response?.data);
+            }
         }
     };
 
     return (
         <div className="pageContainer">
             <NavigateBackIcon />
-            <Grid container>
-                <Grid item md={2} />
-                <Grid item md={8}>
+            <Grid container display="flex" justifyContent="center">
+                <Grid item xs={10} md={6} xl={5}>
                     <Paper elevation={1} className="elevatedSection">
                         <Container maxWidth="xs">
                             <Box
@@ -71,7 +60,7 @@ export default function ForgotPasswordPage() {
                                 >
                                     Forgot password
                                 </Typography>
-                                <Box component="form">
+                                <Box component="form" onSubmit={handleSubmit}>
                                     <Grid container spacing={1}>
                                         <Grid item xs={12}>
                                             <Typography
@@ -84,7 +73,7 @@ export default function ForgotPasswordPage() {
                                                 will send you a password reset
                                                 link.
                                             </Typography>
-                                            <InputLabel>
+                                            <InputLabel htmlFor="email">
                                                 Email Address *
                                             </InputLabel>
                                             <TextField
@@ -107,9 +96,10 @@ export default function ForgotPasswordPage() {
                                                 style={{ textAlign: "center" }}
                                             >
                                                 <Button
+                                                    sx={{ mt: 4 }}
                                                     variant="contained"
                                                     color="secondary"
-                                                    onClick={handleSubmit}
+                                                    type="submit"
                                                     disabled={disableButton}
                                                 >
                                                     Submit
@@ -122,7 +112,6 @@ export default function ForgotPasswordPage() {
                         </Container>
                     </Paper>
                 </Grid>
-                <Grid item md={2} />
             </Grid>
         </div>
     );

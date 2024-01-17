@@ -51,7 +51,7 @@ const NewPasswordPage = () => {
             try {
                 const response = await userRequests.newPassword(
                     token,
-                    newPasswordData.newPassword
+                    newPasswordData
                 );
                 toast.success(response);
                 navigate("/sign-in");
@@ -141,7 +141,7 @@ const NewPasswordPage = () => {
                                     variant="h4"
                                     sx={{ marginBottom: "15px" }}
                                 >
-                                    Create New Password
+                                    Reset Your Password
                                 </Typography>
                                 <Box
                                     component="form"
@@ -152,7 +152,7 @@ const NewPasswordPage = () => {
                                 >
                                     <Grid container spacing={1}>
                                         <Grid item xs={12}>
-                                            <InputLabel>
+                                            <InputLabel htmlFor="newPassword">
                                                 New Password *
                                             </InputLabel>
                                             <TextField
@@ -211,7 +211,7 @@ const NewPasswordPage = () => {
                                             />
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <InputLabel>
+                                            <InputLabel htmlFor="newPasswordConfirmation">
                                                 Confirm New Password *
                                             </InputLabel>
                                             <TextField

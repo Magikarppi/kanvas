@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt, { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
 
 import {
     IResetPasswordRequest,
@@ -122,39 +122,71 @@ users.put(
 users.put(
     "/reset-password/:token",
     async (request: Request, response: Response) => {
-        const { newPassword } = request.body;
-        const token = request.params.token;
+        const { newPassword, newPasswordConfirmation } = request.body;
+
+        const isPasswordFormatValid = validatePasswordFormat(newPassword);
+        if (!isPasswordFormatValid) {
+            response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.INVALID_PWORD_FORMAT);
+            return;
+        }
+
+        const doPasswordsMatch = newPassword === newPasswordConfirmation;
+        if (!doPasswordsMatch) {
+            response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.PASSWORDS_NO_MATCH);
+            return;
+        }
+
         try {
+            const token = request.params.token;
             const decodedToken = jwt.verify(token, JWT_SECRET) as {
                 value: string;
             };
+
             const email = decodedToken.value;
             const user: IUser = await getUserByEmailDAO(email);
             if (user) {
-                const isPasswordFormatValid =
-                    validatePasswordFormat(newPassword);
-                if (isPasswordFormatValid) {
+                const userId = user.id;
+                const existingResetReq = await getResetPasswordRequestDAO(
+                    userId
+                );
+                if (existingResetReq) {
                     const hashedPassword = await argon2.hash(newPassword);
-                    const uuid = user.id;
-                    await updatePasswordDAO(uuid, hashedPassword);
-                    await deleteResetPasswordRequestDAO(uuid);
+                    await updatePasswordDAO(userId, hashedPassword);
+                    await deleteResetPasswordRequestDAO(userId);
                     response
                         .status(HTTP_RESPONSE_CODES.OK)
-                        .send("Password updated");
+                        .send(
+                            "New password created! Please log in using new password."
+                        );
                 } else {
                     response
-                        .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-                        .send(RESPONSE_MESSAGES.INVALID_PWORD_FORMAT);
+                        .status(HTTP_RESPONSE_CODES.NOT_FOUND)
+                        .send(
+                            "This password reset link has already been used. Please get a new link from Forgot Password Page."
+                        );
                 }
             } else {
                 response
-                    .status(HTTP_RESPONSE_CODES.OK)
-                    .send("Something went wrong..");
+                    .status(HTTP_RESPONSE_CODES.NOT_FOUND)
+                    .send("Cannot reset password: user not found.");
             }
         } catch (error) {
-            response
-                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-                .send("Invalid Request");
+            console.error(error);
+            if (error instanceof JsonWebTokenError) {
+                response
+                    .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                    .send(
+                        "Invalid Request. Please check that the link is correct."
+                    );
+            } else {
+                response
+                    .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+                    .send(RESPONSE_MESSAGES.SERVER_ERROR);
+            }
         }
     }
 );
@@ -173,7 +205,7 @@ users.post(
                     token: token,
                     userID: existingUser.id,
                 };
-                
+
                 const url: string = app_path + token;
                 sendEmail(url, email);
 

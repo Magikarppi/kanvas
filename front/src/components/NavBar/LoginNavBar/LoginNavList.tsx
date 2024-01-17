@@ -13,24 +13,13 @@ import { Link } from "react-router-dom";
 const LoginNavList = () => {
     return (
         <List disablePadding>
-            <Link to="/projects">
+            <Link to="/dashboard">
                 <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemIcon>
                             <Icons.Dashboard />
                         </ListItemIcon>
                         <ListItemText primary="Dashboard"></ListItemText>
-                    </ListItemButton>
-                </ListItem>
-            </Link>
-            <Divider />
-            <Link to="/projects">
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <Icons.Projects />
-                        </ListItemIcon>
-                        <ListItemText primary="Projects" />
                     </ListItemButton>
                 </ListItem>
             </Link>

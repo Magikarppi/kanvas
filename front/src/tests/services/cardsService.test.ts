@@ -39,7 +39,7 @@ describe("Cards service", () => {
         const response = await cardsService.addCard(token, newCard);
 
         expect(response).toEqual(mockResponse);
-        expect(mockAxiosInstance.post).toHaveBeenCalledWith("/", newCard);
+        expect(mockAxiosInstance.post).toHaveBeenCalledWith("/cards", newCard);
     });
 
     it("Should update a card", async () => {
@@ -49,7 +49,7 @@ describe("Cards service", () => {
 
         expect(response).toEqual(mockResponse);
         expect(mockAxiosInstance.put).toHaveBeenCalledWith(
-            `/${newCard.id}`,
+            `/cards/${newCard.id}`,
             newCard
         );
     });
@@ -60,7 +60,9 @@ describe("Cards service", () => {
         const response = await cardsService.getCard(token, newCard.id);
 
         expect(response).toEqual(mockResponse);
-        expect(mockAxiosInstance.get).toHaveBeenCalledWith(`/${newCard.id}`);
+        expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+            `/cards/${newCard.id}`
+        );
     });
 
     it("Should delete a card", async () => {
@@ -69,6 +71,8 @@ describe("Cards service", () => {
         const response = await cardsService.deleteCard(token, newCard.id);
 
         expect(response).toEqual(mockResponse);
-        expect(mockAxiosInstance.delete).toHaveBeenCalledWith(`/${newCard.id}`);
+        expect(mockAxiosInstance.delete).toHaveBeenCalledWith(
+            `/cards/${newCard.id}`
+        );
     });
 });

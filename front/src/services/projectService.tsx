@@ -1,23 +1,16 @@
-import axios from "axios";
-
 import { IProject, IProjectSubmitNew } from "../models/projectModels";
+import { createClient } from "../utils/axiosUtils";
 
-const createClient = (token: string) => {
-    return axios.create({
-        baseURL: "http://localhost:5000/projects",
-        headers: { Authorization: `Bearer ${token}` },
-    });
-};
 const projectService = {
     getUsersProjects: async (token: string, userId: string) => {
         const client = createClient(token);
-        const response = await client.get(`/dashboard/${userId}`);
+        const response = await client.get(`/projects/dashboard/${userId}`);
 
         return response.data;
     },
     getProjectById: async (token: string, projectId: string) => {
         const client = createClient(token);
-        const response = await client.get(`/${projectId}`);
+        const response = await client.get(`/projects/${projectId}`);
 
         return response.data;
     },
@@ -26,13 +19,13 @@ const projectService = {
         projectPayload: IProjectSubmitNew
     ) => {
         const client = createClient(token);
-        const response = await client.post("/", projectPayload);
+        const response = await client.post("/projects", projectPayload);
 
         return response.data;
     },
     deleteProjectById: async (token: string, projectId: string) => {
         const client = createClient(token);
-        const response = await client.delete(`/${projectId}`);
+        const response = await client.delete(`/projects/${projectId}`);
 
         return response.data;
     },
@@ -42,13 +35,16 @@ const projectService = {
         projectId: string
     ) => {
         const client = createClient(token);
-        const response = await client.put(`/${projectId}`, projectPayload);
+        const response = await client.put(
+            `/projects/${projectId}`,
+            projectPayload
+        );
 
         return response.data;
     },
     addFavoriteProject: async (token: string, projectId: string) => {
         const client = createClient(token);
-        const response = await client.post("/favorite-projects", {
+        const response = await client.post("/projects/favorite-projects", {
             projectId: projectId,
         });
 
@@ -56,7 +52,9 @@ const projectService = {
     },
     deleteFavoriteProject: async (token: string, projectId: string) => {
         const client = createClient(token);
-        const response = await client.delete(`/favorite-projects/${projectId}`);
+        const response = await client.delete(
+            `/projects/favorite-projects/${projectId}`
+        );
         return response;
     },
 };

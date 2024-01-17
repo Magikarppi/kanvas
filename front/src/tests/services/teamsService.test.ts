@@ -25,7 +25,7 @@ describe("Teams Service", () => {
         const response = await teamsService.addTeam(token, teamName, isPublic);
 
         expect(response).toEqual(mockResponse);
-        expect(mockAxiosInstance.post).toHaveBeenCalledWith("/newteam", {
+        expect(mockAxiosInstance.post).toHaveBeenCalledWith("/teams/newteam", {
             name: teamName,
             isPublic,
         });
@@ -47,7 +47,7 @@ describe("Teams Service", () => {
         const response = await teamsService.getTeam(token, teamId);
 
         expect(response).toEqual(mockResponse);
-        expect(mockAxiosInstance.get).toHaveBeenCalledWith(`/${teamId}`);
+        expect(mockAxiosInstance.get).toHaveBeenCalledWith(`/teams/${teamId}`);
     });
 
     it("should update a team", async () => {
@@ -73,7 +73,7 @@ describe("Teams Service", () => {
 
         expect(response).toEqual(mockResponse);
         expect(mockAxiosInstance.put).toHaveBeenCalledWith(
-            `/update/${teamId}`,
+            `/teams/update/${teamId}`,
             updatedTeamData
         );
     });

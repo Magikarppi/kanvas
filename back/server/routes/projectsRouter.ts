@@ -17,6 +17,7 @@ import {
     getProjectMembersDAO,
     deleteFavoriteProjectDAO,
     insertProjectFavoriteProjectsDAO,
+    getPublicProjectsDAO,
 } from "../../database/DAOs";
 import {
     IFavoriteProject,
@@ -225,15 +226,23 @@ router.get("/dashboard/:id", async (req: UserRequest, res: Response) => {
                 const userTeams: ITeamDB[] | undefined = await getUserTeamsDAO(
                     userId
                 );
+                const publicProjects: IProjectDB[] | undefined =
+                    await getPublicProjectsDAO(true);
 
                 const dashboardData = {
-                    allProjects: userAllProjects?.map(
-                        (project) => formatProject(project) || []
-                    ),
-                    favoriteProjects: userFavoriteProjects?.map(
-                        (favProject) => formatFavoriteProject(favProject) || []
-                    ),
+                    allProjects:
+                        userAllProjects?.map((project) =>
+                            formatProject(project)
+                        ) || [],
+                    favoriteProjects:
+                        userFavoriteProjects?.map((favProject) =>
+                            formatFavoriteProject(favProject)
+                        ) || [],
                     teams: userTeams?.map((team) => formatTeam(team)) || [],
+                    publicProjects:
+                        publicProjects?.map((publicProject) =>
+                            formatProject(publicProject)
+                        ) || [],
                 };
 
                 return res.status(HTTP_RESPONSE_CODES.OK).json(dashboardData);

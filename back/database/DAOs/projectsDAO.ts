@@ -12,6 +12,7 @@ import {
     getProjectMembers,
     deleteFavoriteProject,
     insertProjectFavoriteProjects,
+    getPublicProjects,
 } from "../queries/projectQueries";
 import { insertProjectAdmin } from "../queries/rolesQueries";
 import {
@@ -78,7 +79,7 @@ export const insertProjectDAO = async (
         insertProjectOperation,
         insertProjectMemberOperation,
         insertProjectAdminOperation,
-        insertPlaceholderColumnsOperation,
+        insertPlaceholderColumnsOperation
     );
 
     if (results) {
@@ -148,10 +149,16 @@ export const updateProjectDAO = async (
     await executeQuery(updateProject, params);
 };
 
-export const getProjectMembersDAO = async (
-    projectId: string
-) => {
+export const getProjectMembersDAO = async (projectId: string) => {
     const result = await executeQuery(getProjectMembers, [projectId]);
+    if (result) {
+        return result.rows;
+    }
+};
+
+export const getPublicProjectsDAO = async (isPublic: boolean) => {
+    const queryParameters = [isPublic];
+    const result = await executeQuery(getPublicProjects, queryParameters);
     if (result) {
         return result.rows;
     }
@@ -162,7 +169,9 @@ export const deleteFavoriteProjectDAO = async (favoriteProjectId: string) => {
     await executeQuery(deleteFavoriteProject, queryParameters);
 };
 
-export const insertProjectFavoriteProjectsDAO = async (favoriteProject: IProjectMember) => {
+export const insertProjectFavoriteProjectsDAO = async (
+    favoriteProject: IProjectMember
+) => {
     const queryParameters = [
         favoriteProject.id,
         favoriteProject.projectId,

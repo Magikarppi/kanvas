@@ -36,5 +36,7 @@ export const updateProject = `
         WHERE id = $8
 `;
 
+export const getPublicProjects = "SELECT * FROM projects WHERE is_public = $1;";
+
 export const deleteFavoriteProject = "DELETE FROM favorite_projects WHERE id = $1";
 export const insertProjectFavoriteProjects = "INSERT INTO favorite_projects (id, project_id, user_id) VALUES ($1, $2, $3);";

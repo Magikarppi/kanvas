@@ -64,10 +64,13 @@ const userRequests = {
         return response;
     },
 
-    newPassword: async (token: string, newPassword: string) => {
+    newPassword: async (
+        token: string,
+        newPasswordBody: Pick<IUpdatePasswordBody, "newPassword" | "newPasswordConfirmation">
+    ) => {
         const client = createClient();
         const response = await client.put(`/users/reset-password/${token}`, {
-            newPassword,
+            ... newPasswordBody,
         });
         return response.data;
     },

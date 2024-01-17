@@ -33,7 +33,7 @@ describe("Favorite projects POST, DELETE", () => {
 
         expect(result).toEqual(mockResponse);
         expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-            "/addfavoriteproject",
+            "/projects/favorite-projects",
             {
                 projectId: projectId,
             }
@@ -58,7 +58,7 @@ describe("Favorite projects POST, DELETE", () => {
 
         expect(result).toEqual(mockResponse);
         expect(mockAxiosInstance.delete).toHaveBeenCalledWith(
-            `/favorite-projects/${projectId}`
+            `/projects/favorite-projects/${projectId}`
         );
     });
 });

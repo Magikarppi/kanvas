@@ -1,40 +1,38 @@
-import axios from "axios";
 import {
     ILoginBody,
     INewUserBody,
     IUpdatePasswordBody,
     IUser,
 } from "../models/userModels";
-
-const createClient = (token?: string) =>
-    axios.create({
-        baseURL: "http://localhost:5000/users/",
-        headers: { Authorization: `Bearer ${token}` },
-    });
+import { createClient } from "../utils/axiosUtils";
 
 const userRequests = {
     registerUser: async (registerInformation: INewUserBody) => {
         const client = createClient();
-        const response = await client.post("signup", registerInformation);
+        const response = await client.post(
+            "/users/signup",
+            registerInformation
+        );
         return response;
     },
 
     loginUser: async (loginInfo: ILoginBody) => {
         const client = createClient();
-        const response = await client.post("login", loginInfo);
+        console.log("client", client);
+        const response = await client.post("/users/login", loginInfo);
         return response.data;
     },
 
     getSingleUser: async (token: string, userId: string) => {
         const client = createClient(token);
-        const response = await client.get(`${userId}`);
+        const response = await client.get(`/users/${userId}`);
         return response.data;
     },
 
     updateUser: async (token: string, userInformation: Partial<IUser>) => {
         const client = createClient(token);
         const response = await client.put(
-            `${userInformation.id}`,
+            `/users/${userInformation.id}`,
             userInformation
         );
         return response;
@@ -46,7 +44,7 @@ const userRequests = {
     ) => {
         const client = createClient(token);
         const response = await client.put(
-            `${changePasswordBody.id}/password`,
+            `/users/${changePasswordBody.id}/password`,
             changePasswordBody
         );
         return response;
@@ -54,13 +52,13 @@ const userRequests = {
 
     deleteSingleUser: async (token: string, userId: string) => {
         const client = createClient(token);
-        const response = await client.delete(`${userId}`);
+        const response = await client.delete(`/users/${userId}`);
         return response;
     },
 
     forgotPassword: async (email: string) => {
         const client = createClient();
-        const response = await client.post("forgot-password", {
+        const response = await client.post("/users/forgot-password", {
             email: email,
         });
         return response;
@@ -68,7 +66,7 @@ const userRequests = {
 
     newPassword: async (token: string, newPassword: string) => {
         const client = createClient();
-        const response = await client.put(`/reset-password/${token}`, {
+        const response = await client.put(`/users/reset-password/${token}`, {
             newPassword,
         });
         return response.data;

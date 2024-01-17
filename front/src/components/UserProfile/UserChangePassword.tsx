@@ -1,5 +1,4 @@
 import { useState, MouseEvent, ChangeEvent } from "react";
-
 import {
     Button,
     Grid,
@@ -13,11 +12,9 @@ import {
 } from "@mui/material";
 import Icons from "../Icons/Icons";
 import userRequests from "../../services/userService";
-import { IUpdatePasswordBody } from "../../models/userModels";
+import { IUpdatePasswordBody, IUser } from "../../models/userModels";
 import { validatePasswordFormat } from "../../utils/inputChecks";
 import { toast } from "react-toastify";
-import { selectToken, selectUser } from "../../redux/hooks";
-import DefaultToastContainer from "../Toast/DefaultToastContainer";
 import {
     passwordsNoMatchHelperText,
     validPasswordHelperText,
@@ -29,10 +26,13 @@ interface IChangePasswordState {
     newPasswordConfirm: string;
 }
 
-const UserChangePassword = () => {
-    const user = selectUser();
-    const token = selectToken();
-
+const UserChangePassword = ({
+    token,
+    user,
+}: {
+    token: string | null | undefined;
+    user: IUser | null | undefined;
+}) => {
     const [formData, setFormData] = useState<IChangePasswordState>({
         password: "",
         newPassword: "",
@@ -144,7 +144,6 @@ const UserChangePassword = () => {
 
     return (
         <Paper elevation={1} className="elevatedSection">
-            <DefaultToastContainer />
             <Typography
                 variant="h4"
                 style={{ marginTop: "40px", marginBottom: "30px" }}
@@ -169,7 +168,7 @@ const UserChangePassword = () => {
                             justifyContent: "center",
                         }}
                     >
-                        <InputLabel htmlFor="firstName">
+                        <InputLabel htmlFor="password">
                             Current password *
                         </InputLabel>
                         <TextField
@@ -179,7 +178,7 @@ const UserChangePassword = () => {
                             size="small"
                             name="password"
                             type={showPasswords.password ? "text" : "password"}
-                            id="outlined-required-originalPassword"
+                            id="password"
                             error={validateInput("password")}
                             helperText={getErrorText("password")}
                             value={formData.password}
@@ -222,7 +221,7 @@ const UserChangePassword = () => {
                             type={
                                 showPasswords.newPassword ? "text" : "password"
                             }
-                            id="outlined-required-newPassword1"
+                            id="newPassword"
                             error={validateInput("newPassword")}
                             helperText={getErrorText("newPassword")}
                             value={formData.newPassword}
@@ -267,7 +266,7 @@ const UserChangePassword = () => {
                                     ? "text"
                                     : "password"
                             }
-                            id="outlined-required-newPassword2"
+                            id="newPasswordConfirm"
                             error={validateInput("newPasswordConfirm")}
                             helperText={getErrorText("newPasswordConfirm")}
                             value={formData.newPasswordConfirm}

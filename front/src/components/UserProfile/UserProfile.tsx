@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useEffect, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import {
     Avatar,
     Button,
@@ -18,50 +18,37 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
 import { IUser } from "../../models/userModels";
-import DefaultToastContainer from "../Toast/DefaultToastContainer";
 import userRequests from "../../services/userService";
 import { validEmail } from "../../utils/inputChecks";
 import Icons from "../Icons/Icons";
-import { useAppDispatch, selectToken, selectUser } from "../../redux/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import { setUserInfo } from "../../redux/userReducer";
 import {
     emptyFieldHelperText,
     invalidEmailHelperText,
 } from "../../utils/helperMessages";
 
-
-const UserProfile = () => {
-    const user = selectUser();
-    const token = selectToken();
+const UserProfile = ({
+    token,
+    user,
+}: {
+    token: string | null | undefined;
+    user: IUser | null | undefined;
+}) => {
     const dispatch = useAppDispatch();
 
     const [formValues, setFormValues] = useState<Partial<IUser>>({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        country: "",
-        city: "",
-        picture: "",
-        isOpenToWork: false,
-        linkedinUsername: "",
-        jobPitch: "",
+        firstName: user?.firstName || "",
+        lastName: user?.lastName || "",
+        email: user?.email || "",
+        phoneNumber: user?.phoneNumber || "",
+        country: user?.country || null,
+        city: user?.city || "",
+        picture: user?.picture || "",
+        isOpenToWork: user?.isOpenToWork || false,
+        linkedinUsername: user?.linkedinUsername || "",
+        jobPitch: user?.jobPitch || "",
     });
-
-    useEffect(() => {
-        setFormValues({
-            firstName: user?.firstName || "",
-            lastName: user?.lastName || "",
-            email: user?.email || "",
-            phoneNumber: user?.phoneNumber || "",
-            country: user?.country || null,
-            city: user?.city || "",
-            picture: user?.picture || "",
-            isOpenToWork: user?.isOpenToWork || false,
-            linkedinUsername: user?.linkedinUsername || "",
-            jobPitch: user?.jobPitch || "",
-        });
-    }, [user]);
 
     const [touched, setTouched] = useState({
         firstName: false,
@@ -182,7 +169,6 @@ const UserProfile = () => {
     return (
         <>
             <Paper elevation={1} className="elevatedSection">
-                <DefaultToastContainer />
                 <Avatar
                     style={{
                         height: "100px",
@@ -263,7 +249,9 @@ const UserProfile = () => {
                                 helperText={getErrorText("firstName")}
                                 autoComplete="off"
                             />
-                            <InputLabel htmlFor="lastName">Last Name *</InputLabel>
+                            <InputLabel htmlFor="lastName">
+                                Last Name *
+                            </InputLabel>
                             <TextField
                                 error={validateInputs("lastName")}
                                 required
@@ -278,7 +266,9 @@ const UserProfile = () => {
                                 helperText={getErrorText("lastName")}
                                 autoComplete="off"
                             />
-                            <InputLabel htmlFor="email">Email Address *</InputLabel>
+                            <InputLabel htmlFor="email">
+                                Email Address *
+                            </InputLabel>
                             <TextField
                                 error={validateInputs("email")}
                                 required
@@ -341,7 +331,9 @@ const UserProfile = () => {
                                 onChange={handleInputChange}
                                 autoComplete="off"
                             />
-                            <InputLabel htmlFor="jobPitch">Job pitch</InputLabel>
+                            <InputLabel htmlFor="jobPitch">
+                                Job pitch
+                            </InputLabel>
                             <TextField
                                 name="jobPitch"
                                 value={formValues.jobPitch || ""}
@@ -354,6 +346,9 @@ const UserProfile = () => {
                                 rows={6}
                                 id="jobPitch"
                                 type="text"
+                                InputProps={{
+                                    style: { fontSize: 14 },
+                                }}
                             />
                         </Box>
                         <div>
@@ -380,10 +375,8 @@ const UserProfile = () => {
                     </Grid>
                 </Grid>
             </Paper>
-
         </>
     );
-
 };
 
 export default UserProfile;

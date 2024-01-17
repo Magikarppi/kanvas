@@ -13,7 +13,7 @@ import Footer from "./components/Footer/Footer";
 
 import MainContainer from "./components/MainContainer/MainContainer";
 import ForgotPasswordPage from "./pages/NonLogin/ForgotPasswordPage/ForgotPasswordPage";
-import AllProjectsPage from "./pages/Project/AllProjectsPage";
+import DashboardPage from "./pages/Dashboard/DashboardPage";
 import DefaultToastContainer from "./components/Toast/DefaultToastContainer";
 import { selectToken } from "./redux/hooks";
 import NewPasswordPage from "./pages/NonLogin/NewPasswordPage/NewPasswordPage";
@@ -48,7 +48,7 @@ const App = () => {
                         path="/reset-password/:token"
                         element={<NewPasswordPage />}
                     />
-                    <Route path="/projects" element={<AllProjectsPage />} />
+                    <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/projects/:id" element={<ProjectPage />} />
                     <Route path="/profile" element={<UserProfilePage />} />
                     <Route path="/teams" element={<UnknownUrl />} />

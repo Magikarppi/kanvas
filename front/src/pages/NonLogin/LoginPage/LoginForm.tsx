@@ -80,7 +80,7 @@ const LoginForm = () => {
             if (userData.user) {
                 dispatch(setUserInfo(userData.user as IUser));
             }
-            navigate("/projects");
+            navigate("/dashboard");
             toast.success("Welcome!");
         } catch (error) {
             if (error instanceof AxiosError) {

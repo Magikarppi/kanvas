@@ -85,7 +85,7 @@ describe("When user update all values successfully", () => {
 
 describe("Visit another pages", () => {
     it("Inputs not be empty", () => {
-        cy.visit("projects");
+        cy.visit("dashboard");
         cy.wait(1500);
 
         cy.visit("profile");

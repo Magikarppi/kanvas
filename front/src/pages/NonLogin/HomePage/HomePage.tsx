@@ -1,14 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Grid, Typography } from "@mui/material";
+import { selectToken } from "../../../redux/hooks";
+import { useEffect } from "react";
 
 const HomePage = () => {
+    const token = selectToken();
     const navigate = useNavigate();
 
-    const handleNavigation = (location: string) => {
-        navigate(location);
-    };
+    useEffect(() => {
+        if (token) {
+            navigate("/dashboard");
+        }
+    }, [token]);
 
-    return (
+    return token ? null : (
         <div>
             <Grid
                 container
@@ -31,7 +36,7 @@ const HomePage = () => {
                         <Button
                             variant="contained"
                             color="secondary"
-                            onClick={() => handleNavigation("/sign-up")}
+                            onClick={() => navigate("/sign-up")}
                         >
                             Sign up
                         </Button>
@@ -52,7 +57,7 @@ const HomePage = () => {
                         <Button
                             variant="contained"
                             color="primary"
-                            onClick={() => handleNavigation("/sign-in")}
+                            onClick={() => navigate("/sign-in")}
                         >
                             Sign in
                         </Button>

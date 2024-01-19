@@ -13,6 +13,7 @@ import {
     IconButton,
     CardActionArea,
     CardMedia,
+    FormControlLabel,
 } from "@mui/material";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
@@ -167,215 +168,240 @@ const UserProfile = ({
         !validEmail(formValues.email!);
 
     return (
-        <>
-            <Paper elevation={1} className="elevatedSection">
-                <Avatar
-                    style={{
-                        height: "100px",
-                        width: "100px",
-                        margin: "5px 20px 0 0",
-                        textAlign: "center",
-                        marginTop: "40px",
-                        marginBottom: "25px",
-                    }}
-                    onMouseEnter={() => setHoveringImage(true)}
-                    onMouseLeave={() => setHoveringImage(false)}
-                >
-                    {hoveringImage ? (
-                        <Tooltip title="Edit image" arrow>
-                            <IconButton style={{ top: "5px" }}>
-                                <Icons.Add />
-                                <input
-                                    type="file"
-                                    onChange={handleSetImage}
-                                    style={{
-                                        position: "absolute",
-                                        opacity: 0,
-                                        cursor: "pointer",
-                                    }}
-                                />
-                            </IconButton>
-                        </Tooltip>
-                    ) : (
-                        <CardActionArea>
-                            {typeof image === "string" && image.length > 0 ? (
-                                <CardMedia
-                                    style={{ height: "100px" }}
-                                    image={image}
-                                    component="img"
-                                />
-                            ) : (
-                                <Box />
-                            )}
-                        </CardActionArea>
-                    )}
-                </Avatar>
-                <Typography variant="h4" style={{ marginBottom: "30px" }}>
-                    Users profile
-                </Typography>
-
-                <Grid container style={{ marginBottom: "40px" }}>
-                    <Grid item xs={1} md={1.5} lg={3.5} />
-                    <Grid
-                        item
-                        xs={10}
-                        md={9}
-                        lg={5}
-                        style={{ textAlign: "center" }}
+        <Paper elevation={2} className="elevatedSection">
+            <Avatar
+                style={{
+                    height: "100px",
+                    width: "100px",
+                    marginTop: "40px",
+                    marginBottom: "25px",
+                }}
+                onMouseEnter={() => setHoveringImage(true)}
+                onMouseLeave={() => setHoveringImage(false)}
+            >
+                {hoveringImage ? (
+                    <Tooltip
+                        title={
+                            <Typography sx={{ fontSize: 14 }}>
+                                Edit image
+                            </Typography>
+                        }
+                        arrow
                     >
-                        <Box
-                            component="form"
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "flex-start",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <InputLabel htmlFor="firstName">
-                                First Name *
-                            </InputLabel>
-                            <TextField
-                                error={validateInputs("firstName")}
-                                required
-                                fullWidth
-                                size="small"
-                                data-cy="firstName-input"
-                                name="firstName"
-                                value={formValues.firstName || ""}
-                                id="firstName"
-                                onChange={handleInputChange}
-                                onBlur={() => handleInputBlur("firstName")}
-                                helperText={getErrorText("firstName")}
-                                autoComplete="off"
-                            />
-                            <InputLabel htmlFor="lastName">
-                                Last Name *
-                            </InputLabel>
-                            <TextField
-                                error={validateInputs("lastName")}
-                                required
-                                fullWidth
-                                size="small"
-                                name="lastName"
-                                data-cy="lastName-input"
-                                value={formValues.lastName || ""}
-                                id="lastName"
-                                onChange={handleInputChange}
-                                onBlur={() => handleInputBlur("lastName")}
-                                helperText={getErrorText("lastName")}
-                                autoComplete="off"
-                            />
-                            <InputLabel htmlFor="email">
-                                Email Address *
-                            </InputLabel>
-                            <TextField
-                                error={validateInputs("email")}
-                                required
-                                fullWidth
-                                name="email"
-                                size="small"
-                                data-cy="email-input"
-                                value={formValues.email || ""}
-                                id="email"
-                                onChange={handleInputChange}
-                                onBlur={() => handleInputBlur("email")}
-                                helperText={getErrorText("email")}
-                                autoComplete="off"
-                            />
-                            <InputLabel htmlFor="phoneNumber">
-                                Phone number
-                            </InputLabel>
-                            <TextField
-                                fullWidth
-                                name="phoneNumber"
-                                size="small"
-                                data-cy="phone-input"
-                                value={formValues.phoneNumber || ""}
-                                id="phoneNumber"
-                                onChange={handleInputChange}
-                                autoComplete="off"
-                            />
-                            <InputLabel htmlFor="country">Country</InputLabel>
-                            <TextField
-                                fullWidth
-                                name="country"
-                                size="small"
-                                data-cy="country-input"
-                                value={formValues.country || ""}
-                                id="country"
-                                onChange={handleInputChange}
-                                autoComplete="off"
-                            />
-                            <InputLabel htmlFor="city">City</InputLabel>
-                            <TextField
-                                fullWidth
-                                name="city"
-                                id="city"
-                                size="small"
-                                data-cy="city-input"
-                                value={formValues.city || ""}
-                                onChange={handleInputChange}
-                                autoComplete="off"
-                            />
-                            <InputLabel htmlFor="linkedinUsername">
-                                LinkedIn Username
-                            </InputLabel>
-                            <TextField
-                                fullWidth
-                                name="linkedinUsername"
-                                size="small"
-                                value={formValues.linkedinUsername || ""}
-                                id="linkedinUsername"
-                                data-cy="linkedin-input"
-                                onChange={handleInputChange}
-                                autoComplete="off"
-                            />
-                            <InputLabel htmlFor="jobPitch">
-                                Job pitch
-                            </InputLabel>
-                            <TextField
-                                name="jobPitch"
-                                value={formValues.jobPitch || ""}
-                                fullWidth
-                                size="small"
-                                data-cy="jobPitch-input"
-                                autoComplete="off"
-                                onChange={handleInputChange}
-                                multiline
-                                rows={6}
-                                id="jobPitch"
-                                type="text"
-                                InputProps={{
-                                    style: { fontSize: 14 },
+                        <IconButton>
+                            <Icons.Add />
+                            <input
+                                type="file"
+                                onChange={handleSetImage}
+                                style={{
+                                    position: "absolute",
+                                    opacity: 0,
+                                    cursor: "pointer",
                                 }}
                             />
-                        </Box>
-                        <div>
-                            <InputLabel htmlFor="isOpenToWork">
-                                Are you open to finding work?
-                            </InputLabel>
-                            <Checkbox
-                                id="isOpenToWork"
-                                name="isOpenToWork"
-                                checked={formValues.isOpenToWork}
-                                onChange={checkboxOnChange}
+                        </IconButton>
+                    </Tooltip>
+                ) : (
+                    <CardActionArea>
+                        {typeof image === "string" && image.length > 0 ? (
+                            <CardMedia
+                                style={{ height: "100px" }}
+                                image={image}
+                                component="img"
                             />
-                        </div>
+                        ) : (
+                            <Box />
+                        )}
+                    </CardActionArea>
+                )}
+            </Avatar>
+            <Box
+                component="form"
+                onSubmit={handleSubmit}
+                sx={{
+                    width: "85%",
+                }}
+            >
+                <Typography
+                    variant="h4"
+                    style={{ marginBottom: "30px", textAlign: "center" }}
+                >
+                    User's profile
+                </Typography>
+                <Grid
+                    container
+                    spacing={2}
+                    style={{ marginBottom: "20px" }}
+                    justifyContent="center"
+                >
+                    <Grid item xs={10} md={6} lg={6} xl={5}>
+                        <InputLabel htmlFor="firstName">
+                            First Name *
+                        </InputLabel>
+                        <TextField
+                            error={validateInputs("firstName")}
+                            required
+                            fullWidth
+                            size="small"
+                            data-cy="firstName-input"
+                            name="firstName"
+                            value={formValues.firstName}
+                            id="firstName"
+                            onChange={handleInputChange}
+                            onBlur={() => handleInputBlur("firstName")}
+                            helperText={getErrorText("firstName")}
+                            autoComplete="off"
+                        />
+                    </Grid>
+                    <Grid item xs={10} md={6} lg={6} xl={5}>
+                        <InputLabel htmlFor="lastName">Last Name *</InputLabel>
+                        <TextField
+                            error={validateInputs("lastName")}
+                            required
+                            fullWidth
+                            size="small"
+                            name="lastName"
+                            data-cy="lastName-input"
+                            value={formValues.lastName}
+                            id="lastName"
+                            onChange={handleInputChange}
+                            onBlur={() => handleInputBlur("lastName")}
+                            helperText={getErrorText("lastName")}
+                            autoComplete="off"
+                        />
+                    </Grid>
+                    <Grid item xs={10} md={6} lg={6} xl={5}>
+                        <InputLabel htmlFor="email">Email Address *</InputLabel>
+                        <TextField
+                            error={validateInputs("email")}
+                            required
+                            fullWidth
+                            name="email"
+                            size="small"
+                            data-cy="email-input"
+                            value={formValues.email}
+                            id="email"
+                            onChange={handleInputChange}
+                            onBlur={() => handleInputBlur("email")}
+                            helperText={getErrorText("email")}
+                            autoComplete="off"
+                        />
+                    </Grid>
+                    <Grid item xs={10} md={6} lg={6} xl={5}>
+                        <InputLabel htmlFor="phoneNumber">
+                            Phone number
+                        </InputLabel>
+                        <TextField
+                            fullWidth
+                            name="phoneNumber"
+                            size="small"
+                            data-cy="phone-input"
+                            value={formValues.phoneNumber}
+                            id="phoneNumber"
+                            onChange={handleInputChange}
+                            autoComplete="off"
+                        />
+                    </Grid>
+                    <Grid item xs={10} md={6} lg={6} xl={5}>
+                        <InputLabel htmlFor="country">Country</InputLabel>
+                        <TextField
+                            fullWidth
+                            name="country"
+                            size="small"
+                            data-cy="country-input"
+                            value={formValues.country}
+                            id="country"
+                            onChange={handleInputChange}
+                            autoComplete="off"
+                        />
+                    </Grid>
+                    <Grid item xs={10} md={6} lg={6} xl={5}>
+                        <InputLabel htmlFor="city">City</InputLabel>
+                        <TextField
+                            fullWidth
+                            name="city"
+                            id="city"
+                            size="small"
+                            data-cy="city-input"
+                            value={formValues.city}
+                            onChange={handleInputChange}
+                            autoComplete="off"
+                        />
+                    </Grid>
+                    <Grid item xs={10} md={12} lg={12} xl={10}>
+                        <InputLabel htmlFor="linkedinUsername">
+                            LinkedIn Username
+                        </InputLabel>
+                        <TextField
+                            fullWidth
+                            name="linkedinUsername"
+                            size="small"
+                            value={formValues.linkedinUsername}
+                            id="linkedinUsername"
+                            data-cy="linkedin-input"
+                            onChange={handleInputChange}
+                            autoComplete="off"
+                        />
+                    </Grid>
+                    <Grid item xs={10} md={12} lg={12} xl={10}>
+                        <InputLabel htmlFor="jobPitch">Job pitch</InputLabel>
+                        <TextField
+                            name="jobPitch"
+                            value={formValues.jobPitch}
+                            fullWidth
+                            size="small"
+                            data-cy="jobPitch-input"
+                            autoComplete="off"
+                            onChange={handleInputChange}
+                            multiline
+                            rows={6}
+                            id="jobPitch"
+                            type="text"
+                            InputProps={{
+                                style: { fontSize: 14 },
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={10} md={12} lg={12} xl={10}>
+                        <InputLabel htmlFor="isOpenToWork">
+                            Open for work
+                        </InputLabel>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    id="isOpenToWork"
+                                    name="isOpenToWork"
+                                    checked={formValues.isOpenToWork}
+                                    onChange={checkboxOnChange}
+                                    sx={{ marginLeft: "auto" }}
+                                />
+                            }
+                            label="I am open for finding work"
+                            labelPlacement="start"
+                            sx={{ width: "100%", marginLeft: 0 }}
+                        />
+                    </Grid>
+                    <Grid
+                        item
+                        display="flex"
+                        xs={10}
+                        flexDirection="row"
+                        justifyContent="center"
+                    >
                         <Button
                             variant="contained"
                             color="secondary"
                             data-cy="update-button"
-                            onClick={handleSubmit}
                             disabled={disableButton}
+                            type="submit"
+                            sx={{ mt: 5 }}
                         >
-                            Submit changes
+                            Update profile
                         </Button>
-                        <Grid item xs={1} md={1.5} lg={3.5} />
                     </Grid>
                 </Grid>
-            </Paper>
-        </>
+            </Box>
+        </Paper>
     );
 };
 

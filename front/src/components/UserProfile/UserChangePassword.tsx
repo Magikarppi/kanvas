@@ -1,4 +1,4 @@
-import { useState, MouseEvent, ChangeEvent } from "react";
+import React, { useState, MouseEvent, ChangeEvent, FormEvent } from "react";
 import {
     Button,
     Grid,
@@ -55,7 +55,8 @@ const UserChangePassword = ({
         e.preventDefault();
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
         try {
             const changePasswordBody: IUpdatePasswordBody = {
                 id: user?.id || "",
@@ -143,24 +144,23 @@ const UserChangePassword = ({
         !validatePasswordFormat(formData.newPassword);
 
     return (
-        <Paper elevation={1} className="elevatedSection">
+        <Paper elevation={2} className="elevatedSection">
             <Typography
                 variant="h4"
                 style={{ marginTop: "40px", marginBottom: "30px" }}
             >
                 Change your password
             </Typography>
-            <Grid container style={{ marginBottom: "40px" }}>
-                <Grid item xs={1} md={1.5} lg={3.5} />
-                <Grid
-                    item
-                    xs={10}
-                    md={9}
-                    lg={5}
-                    style={{ textAlign: "center" }}
-                >
+            <Grid
+                container
+                style={{ marginBottom: "20px" }}
+                display="flex"
+                justifyContent="center"
+            >
+                <Grid item xs={10} md={8}>
                     <Box
                         component="form"
+                        onSubmit={handleSubmit}
                         sx={{
                             display: "flex",
                             flexDirection: "column",
@@ -209,7 +209,7 @@ const UserChangePassword = ({
                                 ),
                             }}
                         />
-                        <InputLabel htmlFor="newPassword">
+                        <InputLabel htmlFor="newPassword" sx={{ mt: 2 }}>
                             New password *
                         </InputLabel>
                         <TextField
@@ -252,7 +252,7 @@ const UserChangePassword = ({
                                 ),
                             }}
                         />
-                        <InputLabel htmlFor="newPasswordConfirm">
+                        <InputLabel htmlFor="newPasswordConfirm" sx={{ mt: 2 }}>
                             Confirm new password *
                         </InputLabel>
                         <TextField
@@ -297,15 +297,16 @@ const UserChangePassword = ({
                                 ),
                             }}
                         />
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="secondary"
+                            disabled={isSubmitDisabled}
+                            sx={{ mt: 5, alignSelf: "center" }}
+                        >
+                            Change Password
+                        </Button>
                     </Box>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleSubmit}
-                        disabled={isSubmitDisabled}
-                    >
-                        Submit
-                    </Button>
                 </Grid>
             </Grid>
         </Paper>

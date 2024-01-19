@@ -23,49 +23,6 @@ import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
-const dummyPublicProjects: IProject[] = [
-    {
-        id: "gj9adg-gjsa9ja0gs-jgsagjj9a-gasas9g9g-gagasagas0gl",
-        name: "Langguage moddel",
-        description: "Project F description goes here.",
-        isPublic: true,
-        creationDate: new Date("2023-06-20"),
-        endDate: new Date("2023-12-31"),
-        theme: "red",
-        picture: null,
-    },
-    {
-        id: "gj9aag-gjsa9ja0gs-jgsagjj9a-gapas9g9g-gagasagas0gf",
-        name: "Build a stone fortress",
-        description: "Project D description goes here.",
-        isPublic: true,
-        creationDate: new Date("2023-04-10"),
-        endDate: new Date("2024-01-15"),
-        theme: "Science",
-        picture: "url_to_picture_project_d",
-    },
-    {
-        id: "gj9aqg-gjsa9ja0gs-jgsagjj9a-gasaspg9g-gagasagas0gg",
-        name: "Hack into Kim Jong's laptop",
-        description: null,
-        isPublic: false,
-        creationDate: new Date("2023-05-05"),
-        endDate: null,
-        theme: "dark",
-        picture: "url_to_picture_project_e",
-    },
-    {
-        id: "gj9aeg-gjsa9ja0gs-jgsagjj9a-gpsas9g9g-gagasagas0gl",
-        name: "Space shuttle program",
-        description: "Project F description goes here.",
-        isPublic: true,
-        creationDate: new Date("2023-06-20"),
-        endDate: new Date("2023-12-31"),
-        theme: "red",
-        picture: null,
-    },
-];
-
 const createCard = (
     input: IProject | ITeam,
     toggleFavorite: ((id: string) => void) | null,
@@ -73,7 +30,16 @@ const createCard = (
     isFavorite?: boolean
 ) => {
     return (
-        <Card elevation={2} sx={{ position: "relative" }}>
+        <Card
+            elevation={2}
+            sx={{
+                position: "relative",
+                transition: "0.6s",
+                "&:hover": {
+                    backgroundColor: "secondary.main",
+                },
+            }}
+        >
             <CardHeader
                 action={
                     !toggleFavorite ? (
@@ -118,6 +84,7 @@ interface IDashboard {
     userProjects: IProject[];
     userTeams: ITeam[];
     favoriteProjects: IFavoriteProject[];
+    publicProjects: IProject[];
 }
 
 export default function AllProjectsPage() {
@@ -125,6 +92,7 @@ export default function AllProjectsPage() {
         userProjects: [],
         userTeams: [],
         favoriteProjects: [],
+        publicProjects: [],
     });
 
     const [addProjectModalOpen, setAddProjectModalOpen] =
@@ -144,6 +112,7 @@ export default function AllProjectsPage() {
                         userProjects: [...data.allProjects],
                         userTeams: [...data.teams],
                         favoriteProjects: [...data.favoriteProjects],
+                        publicProjects: [...data.publicProjects],
                     });
                 })
                 .catch((err) => console.error(err));
@@ -163,11 +132,23 @@ export default function AllProjectsPage() {
                     project
                 );
 
-                if (addedProject) {
+                if (addedProject && !addedProject.isPublic) {
                     setDashboardData({
                         ...dashboardData,
                         userProjects: [
                             ...dashboardData.userProjects,
+                            addedProject,
+                        ],
+                    });
+                } else if (addedProject && addedProject.isPublic) {
+                    setDashboardData({
+                        ...dashboardData,
+                        userProjects: [
+                            ...dashboardData.userProjects,
+                            addedProject,
+                        ],
+                        publicProjects: [
+                            ...dashboardData.publicProjects,
                             addedProject,
                         ],
                     });
@@ -184,9 +165,10 @@ export default function AllProjectsPage() {
         <Card
             onClick={cardType === "project" ? openAddProjectModal : () => null}
             elevation={2}
+            sx={{ backgroundColor: "#2e490d" }}
         >
             <CardContent>
-                <Typography variant="h6" sx={{ color: "primary.main" }}>
+                <Typography variant="h6">
                     {cardType === "project"
                         ? "+ Create a new project"
                         : "+ Create a new team"}
@@ -283,7 +265,7 @@ export default function AllProjectsPage() {
         ));
 
     const renderPublicProjects = () =>
-        dummyPublicProjects.map((publicProject) => (
+        dashboardData?.publicProjects?.map((publicProject) => (
             <Grid key={publicProject.id} item xs={12} sm={6} md={3}>
                 {createCard(
                     publicProject,

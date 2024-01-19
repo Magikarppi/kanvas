@@ -25,7 +25,7 @@ const UserProfilePage = () => {
             display="flex"
             justifyContent="center"
         >
-            <Grid item xs={11} md={9} lg={9} xl={7}>
+            <Grid item xs={11} md={9} lg={9} xl={6}>
                 <UserProfile token={token} user={user} />
                 <UserChangePassword token={token} user={user} />
             </Grid>

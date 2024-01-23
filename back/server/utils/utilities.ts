@@ -1,8 +1,13 @@
 import {
+    ICard,
+    ICardDB,
     IFavoriteProject,
     IFavoriteProjectDB,
     IProject,
+    IProjectColumn,
+    IProjectColumnDB,
     IProjectDB,
+    IProjectMemberDB,
     ITeam,
     ITeamDB,
 } from "../../database/utils/interfaces";
@@ -87,6 +92,70 @@ export const formatFavoriteProject = (
     theme: favProjectFromDB.theme,
     picture: favProjectFromDB.picture,
 });
+
+export const formatProjectColumns = (
+    columnsFromDB: IProjectColumnDB[] | undefined
+) => {
+    if (columnsFromDB) {
+        const formattedColumns: IProjectColumn[] = columnsFromDB.map(
+            (projectColumn) => {
+                const formattedColumn = {
+                    id: projectColumn.id,
+                    projectId: projectColumn.project_id,
+                    columnName: projectColumn.column_name,
+                    orderIndex: projectColumn.order_index,
+                };
+                return formattedColumn;
+            }
+        );
+        return formattedColumns;
+    } else {
+        return [];
+    }
+};
+
+export const formatProjectCards = (cardsFromDB: ICardDB[] | undefined) => {
+    if (cardsFromDB) {
+        const formattedCards: ICard[] = cardsFromDB.map((card) => {
+            const formattedCard = {
+                id: card.id,
+                projectId: card.project_id,
+                title: card.title,
+                subTitle: card.sub_title,
+                description: card.description,
+                status: card.status,
+                creationDate: card.creation_date,
+                dueDate: card.due_date,
+                attachments: card.attachments,
+                inColumn: card.in_column,
+            };
+            return formattedCard;
+        });
+        return formattedCards;
+    } else {
+        return [];
+    }
+};
+
+export const formatProjectMembers = (
+    membersFromDB: IProjectMemberDB [] | undefined
+) => {
+    if (membersFromDB) {
+        const formattedProjectMembers = membersFromDB.map((member) => {
+            const formattedMember = {
+                id: member.id,
+                firstName: member.first_name,
+                lastName: member.last_name,
+                email: member.email,
+                picture: member.picture,
+            };
+            return formattedMember;
+        });
+        return formattedProjectMembers;
+    } else {
+        return [];
+    }
+};
 
 export const formatTeam = (teamFromDB: ITeamDB): ITeam => ({
     admin: teamFromDB.admin,

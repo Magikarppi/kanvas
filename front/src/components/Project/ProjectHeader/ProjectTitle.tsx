@@ -11,8 +11,9 @@ import {
 } from "@mui/material";
 
 import Icons from "../../Icons/Icons";
+import { IProject } from "../../../models/projectModels";
 
-const ProjectTitle = () => {
+const ProjectTitle = ({ projectInfo }: { projectInfo: IProject }) => {
     const [image, setImage] = useState<string | ArrayBuffer | null>("");
     const [hoveringImage, setHoveringImage] = useState<boolean>(true);
 
@@ -83,8 +84,8 @@ const ProjectTitle = () => {
                 xl={10.2}
                 marginTop={{ xs: "20px", sm: "5px" }}
             >
-                <Typography variant="h3">Project</Typography>
-                <Typography variant="h6">Project sub title</Typography>
+                <Typography variant="h3">{projectInfo.name}</Typography>
+                <Typography variant="h6">{projectInfo.description}</Typography>
             </Grid>
         </Grid>
     );

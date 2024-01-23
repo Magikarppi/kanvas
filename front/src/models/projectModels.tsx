@@ -1,3 +1,5 @@
+import { IUser } from "./userModels";
+
 export interface IProject extends IProjectSubmitNew {
     id: string;
     creationDate: Date;
@@ -15,3 +17,15 @@ export interface IProjectSubmitNew {
 export interface IFavoriteProject extends IProject {
     favoriteProjectId: string;
 }
+
+export interface IProjectColumn {
+    id: string;
+    projectId: string;
+    columnName: string;
+    orderIndex: number;
+}
+
+export type ProjectMember = Pick<
+    IUser,
+    "id" | "firstName" | "lastName" | "email" | "picture"
+>;

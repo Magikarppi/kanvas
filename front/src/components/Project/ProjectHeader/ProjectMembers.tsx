@@ -1,8 +1,39 @@
 import { Avatar, AvatarGroup, Tooltip, Typography } from "@mui/material";
+import { ProjectMember } from "../../../models/projectModels";
 
-const ProjectMembers = () => {
+const ProjectMembers = ({
+    projectMembers,
+}: {
+    projectMembers: ProjectMember[];
+}) => {
+    const stringToColor = (string: string) => {
+        let hash = 0;
+
+        for (let i = 0; i < string.length; i++) {
+            hash = string.charCodeAt(i) + ((hash << 5) - hash);
+        }
+
+        let color = "#";
+
+        for (let i = 0; i < 3; i++) {
+            const value = (hash >> (i * 8)) & 0xff;
+            color += `00${value.toString(16)}`.slice(-2);
+        }
+        return color;
+    };
+
+    const stringAvatar = (name: string) => {
+        return {
+            sx: {
+                bgcolor: stringToColor(name),
+                color: "white",
+            },
+            children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+        };
+    };
+
     return (
-        <div>
+        <>
             <Typography variant="h6" align="right">
                 Project members:
             </Typography>
@@ -10,36 +41,38 @@ const ProjectMembers = () => {
             <AvatarGroup
                 sx={{
                     "& .MuiAvatar-root": {
-                        width: 30,
-                        height: 30,
+                        width: 35,
+                        height: 35,
                     },
                     marginTop: "10px",
                 }}
-                total={24}
+                total={projectMembers.length}
+                max={8}
             >
-                <Tooltip title="Danny D" arrow>
-                    <Avatar
-                        alt="Remy Sharp"
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdNg8cvJV8ligXGQRhfkVn6-8JmCRo4rwccQ&usqp=CAU"
-                    />
-                </Tooltip>
-                <Tooltip title="Dani B" arrow>
-                    <Avatar
-                        alt="Travis Howard"
-                        src="https://media.cnn.com/api/v1/images/stellar/prod/230117174717-sister-andre-lucile-randon-file-021021.jpg?c=original"
-                    />
-                </Tooltip>
-                <Tooltip title="Agnes W" arrow>
-                    <Avatar alt="Agnes Walker" src="" />
-                </Tooltip>
-                <Tooltip title="Trevor H" arrow>
-                    <Avatar
-                        alt="Trevor Henderson"
-                        src="/static/images/avatar/5.jpg"
-                    />
-                </Tooltip>
+                {projectMembers.map((member) => {
+                    const fullName = `${member.firstName} ${member.lastName}`;
+                    return (
+                        <Tooltip
+                            key={member.id}
+                            title={
+                                <Typography sx={{ fontSize: 13 }}>
+                                    {fullName}
+                                </Typography>
+                            }
+                            arrow
+                        >
+                            <Avatar
+                                {...stringAvatar(fullName)}
+                                alt={fullName}
+                                src={member.picture as string}
+                            >
+                                {`${member.firstName[0]}${member.lastName[0]}`}
+                            </Avatar>
+                        </Tooltip>
+                    );
+                })}
             </AvatarGroup>
-        </div>
+        </>
     );
 };
 

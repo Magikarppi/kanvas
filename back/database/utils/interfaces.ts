@@ -90,6 +90,19 @@ export interface ICard {
     inColumn: string;
 }
 
+export interface ICardDB {
+    id: string;
+    project_id: string;
+    title: string;
+    sub_title: string;
+    description: string;
+    status: string | null;
+    creation_date: Date;
+    due_date: Date | null;
+    attachments: string | null;
+    in_column: string;
+}
+
 export interface IUsersTeam {
     id: string;
     userId: string;
@@ -100,6 +113,19 @@ export interface IProjectMember {
     id: string;
     userId: string;
     projectId: string;
+}
+
+export type ProjectMember = Pick<
+    IUser,
+    "id" | "firstName" | "lastName" | "email" | "picture"
+>;
+
+export interface IProjectMemberDB {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    picture: string;
 }
 
 export interface IUserRole {
@@ -113,6 +139,13 @@ export interface IProjectColumn {
     projectId: string;
     columnName: string;
     orderIndex: number;
+}
+
+export interface IProjectColumnDB {
+    id: string;
+    project_id: string;
+    column_name: string;
+    order_index: number;
 }
 
 export interface IFavoriteProject extends IProject {

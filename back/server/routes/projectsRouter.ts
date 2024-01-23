@@ -20,20 +20,26 @@ import {
     getPublicProjectsDAO,
 } from "../../database/DAOs";
 import {
+    ICard,
     IFavoriteProject,
     IFavoriteProjectDB,
     IProject,
     IProjectColumn,
+    IProjectColumnDB,
     IProjectDB,
     IProjectMember,
     ITeamDB,
     IUserRole,
+    ProjectMember,
 } from "../../database/utils/interfaces";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
     formatFavoriteProject,
     formatProject,
+    formatProjectCards,
+    formatProjectColumns,
+    formatProjectMembers,
     formatTeam,
     getCurrentTimestamp,
 } from "../utils/utilities";
@@ -172,18 +178,26 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
 
         if (formattedProject.isPublic === false) {
             const projectMember = await getProjectMemberDAO(userId, projectId);
-            const existingProjectColumns = await getProjectColumnsDAO(
+
+
+            const existingProjectColumns: IProjectColumnDB[] | undefined = await getProjectColumnsDAO(
                 projectId
             );
+            const formattedColumns: IProjectColumn[] = formatProjectColumns(existingProjectColumns) || [];
+
             const existingProjectCards = await getProjectCardsDAO(projectId);
+            const formattedCards: ICard[] = formatProjectCards(existingProjectCards) || [];
+
             const projectMembers = await getProjectMembersDAO(projectId);
+            const formattedMembers: ProjectMember[] =
+                formatProjectMembers(projectMembers) || [];
 
             if (projectMember) {
                 const projectData = {
-                    ...formattedProject,
-                    projectColumns: existingProjectColumns,
-                    projectMembers: projectMembers,
-                    cards: existingProjectCards,
+                    project: formattedProject,
+                    projectColumns: formattedColumns,
+                    projectMembers: formattedMembers,
+                    cards: formattedCards,
                 };
                 res.status(HTTP_RESPONSE_CODES.OK).json(projectData);
             } else {
@@ -195,13 +209,21 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
             const existingProjectColumns = await getProjectColumnsDAO(
                 projectId
             );
+            const formattedColumns: IProjectColumn[] =
+                 formatProjectColumns(existingProjectColumns) || [];    
+
             const existingProjectCards = await getProjectCardsDAO(projectId);
+            const formattedCards: ICard[] =
+                formatProjectCards(existingProjectCards) || [];
+            
             const projectMembers = await getProjectMembersDAO(projectId);
+            const formattedMembers: ProjectMember[] = formatProjectMembers(projectMembers) || [];
+
             const projectData = {
-                ...formattedProject,
-                projectColumns: existingProjectColumns,
-                projectMembers: projectMembers,
-                cards: existingProjectCards,
+                project: formattedProject,
+                projectColumns: formattedColumns,
+                projectMembers: formattedMembers,
+                cards: formattedCards,
             };
             res.status(HTTP_RESPONSE_CODES.OK).send(projectData);
         }

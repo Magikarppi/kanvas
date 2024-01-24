@@ -18,6 +18,8 @@ import {
     deleteFavoriteProjectDAO,
     insertProjectFavoriteProjectsDAO,
     getPublicProjectsDAO,
+    getProjectCardsDAO,
+    getProjectColumnsDAO,
 } from "../../database/DAOs";
 import {
     ICard,
@@ -44,8 +46,6 @@ import {
     getCurrentTimestamp,
 } from "../utils/utilities";
 import { JwtPayload } from "jsonwebtoken";
-import { getProjectColumnsDAO } from "../../database/DAOs/projectColumnsDAOS";
-import { getProjectCardsDAO } from "../../database/DAOs";
 
 const router = Router();
 

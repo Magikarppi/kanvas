@@ -163,3 +163,12 @@ export const formatTeam = (teamFromDB: ITeamDB): ITeam => ({
     isPublic: teamFromDB.is_public,
     name: teamFromDB.name,
 });
+
+export const formatProjectColumn = (
+    projectColumnFromDB: IProjectColumnDB
+): IProjectColumn => ({
+    columnName: projectColumnFromDB.column_name,
+    id: projectColumnFromDB.id,
+    orderIndex: projectColumnFromDB.order_index,
+    projectId: projectColumnFromDB.project_id,
+});

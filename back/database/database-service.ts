@@ -36,15 +36,18 @@ export const executeQuery = async (
     }
 };
 
-export const executeMultipleQueries = async (... args: IParametrizedQuery[]) => {
+export const executeMultipleQueries = async (...args: IParametrizedQuery[]) => {
     const client = await pool.connect();
 
     try {
         const results = [];
-        
+
         await client.query("BEGIN");
         for (const operation of args) {
-            const result = await client.query(operation.query, operation.parameters);
+            const result = await client.query(
+                operation.query,
+                operation.parameters
+            );
             if (result) {
                 results.push(result);
             }

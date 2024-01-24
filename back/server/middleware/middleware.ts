@@ -6,6 +6,7 @@ import {
     RESPONSE_MESSAGES,
     validateEmail,
 } from "../utils/utilities";
+import { getProjectMemberDAO } from "../../database/DAOs";
 
 dotenv.config();
 
@@ -109,4 +110,45 @@ export const validateEmailAndNames = (
         return;
     }
     next();
+};
+
+export const validateColumnRequest = async (
+    request: UserRequest,
+    response: Response,
+    next: NextFunction
+) => {
+    try {
+        const { value: userId } = request.user as JwtPayload;
+        const { projectId, columnName, orderIndex } = request.body;
+
+        if (
+            !projectId ||
+            !columnName ||
+            orderIndex === undefined ||
+            orderIndex === null
+        ) {
+            return response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
+        }
+
+        if ((columnName as string).length > 50) {
+            return response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send("Max length for columnName is 50 characters");
+        }
+
+        const isMemberOfProject = await getProjectMemberDAO(userId, projectId);
+
+        if (!isMemberOfProject) {
+            return response
+                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                .send(RESPONSE_MESSAGES.FORBIDDEN);
+        }
+        next();
+    } catch (error) {
+        return response
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
+    }
 };

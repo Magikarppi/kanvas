@@ -75,7 +75,10 @@ export const updateUserDAO = async (id: string, user: IUpdateUser) => {
         user.jobPitch,
         id,
     ];
-    await executeQuery(updateUser, paramsArray);
+    const result = await executeQuery(updateUser, paramsArray);
+    if (result) {
+        return result.rows[0];
+    }
 };
 
 export const updatePasswordDAO = async (id: string, password: string) => {

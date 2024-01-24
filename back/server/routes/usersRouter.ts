@@ -107,8 +107,25 @@ users.put(
                     linkedinUsername: request.body.linkedinUsername,
                     jobPitch: request.body.jobPitch,
                 };
-                await updateUserDAO(id, user);
-                response.status(HTTP_RESPONSE_CODES.OK).send();
+                const updatedUser = await updateUserDAO(id, user);
+
+                const formattedUser: IUser = {
+                    id: updatedUser.id,
+                    firstName: updatedUser.first_name,
+                    lastName: updatedUser.last_name,
+                    email: updatedUser.email,
+                    phoneNumber: updatedUser.phone_number,
+                    country: updatedUser.country,
+                    city: updatedUser.city,
+                    picture: updatedUser.picture,
+                    isOnline: updatedUser.last_online,
+                    lastOnline: updatedUser.last_online,
+                    accountCreationDate: updatedUser.account_creation_date,
+                    isOpenToWork: updatedUser.is_open_to_work,
+                    linkedinUsername: updatedUser.linkedin_username,
+                    jobPitch: updatedUser.job_pitch,
+                };
+                response.status(HTTP_RESPONSE_CODES.OK).send(formattedUser);
             }
         } catch (error) {
             console.error(error);

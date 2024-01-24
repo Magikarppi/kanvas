@@ -61,27 +61,34 @@ const UserProfile = ({
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        const updatedUser: IUser = {
+        const updatedUser: Omit<
+            IUser,
+            "accountCreationDate" | "isOnline" | "lastOnline"
+        > = {
+            id: user!.id,
             firstName: formValues.firstName!,
             lastName: formValues.lastName!,
             email: formValues.email!,
             phoneNumber: formValues.phoneNumber || null,
             country: formValues.country || null,
             city: formValues.city || null,
-            linkedinUsername: formValues.linkedinUsername || null,
-            isOpenToWork: formValues.isOpenToWork!,
-            jobPitch: formValues.jobPitch || null,
             picture: "Tähän tulee kuvan url" || null,
-            id: user!.id,
-            accountCreationDate: user!.accountCreationDate,
-            isOnline: user!.isOnline,
-            lastOnline: user!.lastOnline,
+            isOpenToWork: formValues.isOpenToWork!,
+            linkedinUsername: formValues.linkedinUsername || null,
+            jobPitch: formValues.jobPitch || null,
         };
 
         try {
             if (token && user) {
-                await userRequests.updateUser(token, updatedUser);
-                dispatch(setUserInfo(updatedUser));
+                const newUserInfo: IUser = await userRequests.updateUser(
+                    token,
+                    updatedUser
+                );
+                setFormValues({
+                    ...newUserInfo,
+                    phoneNumber: newUserInfo.phoneNumber || "",
+                });
+                dispatch(setUserInfo(newUserInfo));
                 toast.success("Profile successfully updated");
             }
         } catch (error) {
@@ -373,12 +380,13 @@ const UserProfile = ({
                                     name="isOpenToWork"
                                     checked={formValues.isOpenToWork}
                                     onChange={checkboxOnChange}
-                                    sx={{ marginLeft: "auto" }}
+                                    sx={{
+                                        "& .MuiSvgIcon-root": { fontSize: 22 },
+                                    }}
                                 />
                             }
                             label="I am open for finding work"
-                            labelPlacement="start"
-                            sx={{ width: "100%", marginLeft: 0 }}
+                            labelPlacement="end"
                         />
                     </Grid>
                     <Grid

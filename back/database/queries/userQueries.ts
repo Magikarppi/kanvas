@@ -36,7 +36,7 @@ export const updateUser = `
       is_open_to_work = $10,
       linkedin_username = $11,
       job_pitch = $12
-    WHERE id = $13`;
+    WHERE id = $13 RETURNING *;`;
 
 export const updatePassword =
     "UPDATE users SET password_hash = $2 WHERE id = $1";

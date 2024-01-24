@@ -16,13 +16,13 @@ describe("Teams Service", () => {
                 name: teamName,
                 isPublic,
                 id: teamId,
-                admin: userId,
+                admin: userId,             
             },
         };
 
         const mockAxiosInstance = createMockAxiosInstance(mockResponse);
 
-        const response = await teamsService.addTeam(token, teamName, isPublic);
+        const response = await teamsService.addTeam(token, teamName, isPublic, []);
 
         expect(response).toEqual(mockResponse);
         expect(mockAxiosInstance.post).toHaveBeenCalledWith("/teams/newteam", {

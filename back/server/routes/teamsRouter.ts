@@ -11,9 +11,26 @@ import {
 import { HTTP_RESPONSE_CODES, RESPONSE_MESSAGES } from "../utils/utilities";
 import { UserRequest } from "../middleware/middleware";
 import { ITeam, IUsersTeam } from "../../database/utils/interfaces";
+import nodemailer from "nodemailer";
+
 
 const teams = express.Router();
-
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "kanbanprojectbuutti@gmail.com",
+        pass: process.env.emailPassword
+    },
+});
+const sendEmail = async(email: string, teamName: string) => {
+    await transporter.sendMail({
+        from: "kanbanprojectbuutti@gmail.com", 
+        to: email,
+        subject: "You have been invited to team Kanban project team!", 
+        text: "",
+        html: "<b>You have been invited to team " + teamName + "</b>",
+    });
+} ;
 teams.get("/:id", async (req: Request, res: Response) => {
     const id = req.params.id;
     try {
@@ -35,9 +52,8 @@ teams.get("/:id", async (req: Request, res: Response) => {
 
 teams.post("/newteam", async (req: UserRequest, res: Response) => {
     try {
-        const { name, isPublic } = req.body;
+        const { name, isPublic, emails } = req.body;
         const { value: userId } = req.user as JwtPayload;
-
         const team: ITeam = {
             id: uuid(),
             name,
@@ -53,9 +69,14 @@ teams.post("/newteam", async (req: UserRequest, res: Response) => {
         };
 
         await insertTeamDAO(team, userTeam);
+        for(let i = 0; i < emails.length; i++) {
+            await sendEmail(emails[i], name);
+        }
         res.json({
-            team: team,
-            addedTeam: userTeam,
+            admin: userId,
+            id: team.id,
+            isPublic: team.isPublic,
+            name: team.name,
         });
     } catch (error) {
         return res

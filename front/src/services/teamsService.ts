@@ -2,11 +2,12 @@ import { ITeam } from "../models/teamModels";
 import { createClient } from "../utils/axiosUtils";
 
 const teamsService = {
-    addTeam: async (token: string, teamName: string, isPublic: boolean) => {
+    addTeam: async (token: string, teamName: string, isPublic: boolean, emails: string[]) => {
         const client = createClient(token);
         const response = await client.post("/teams/newteam", {
             name: teamName,
             isPublic,
+            emails: emails,
         });
 
         return response.data;

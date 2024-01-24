@@ -4,3 +4,6 @@ export * from "./rolesDAO";
 export * from "./teamsDAO";
 export * from "./userDAO";
 export * from "./resetPasswordRequestDAO";
+export * from "./projectColumnsDAO";
+export * from "./projectMembersDAO";
+export * from "./favoriteProjectsDAO";

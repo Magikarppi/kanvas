@@ -1,17 +1,12 @@
 import { executeMultipleQueries, executeQuery } from "../database-service";
 import { insertPlaceholderColumns } from "../queries/projectColumnsQueries";
+import { insertProjectMember } from "../queries/projectMemberQueries";
 import {
     getProject,
-    getProjectMember,
     getUserProjects,
-    getUserFavoriteProjects,
     deleteProject,
     updateProject,
-    insertProjectMember,
     insertProject,
-    getProjectMembers,
-    deleteFavoriteProject,
-    insertProjectFavoriteProjects,
     getPublicProjects,
 } from "../queries/projectQueries";
 import { insertProjectAdmin } from "../queries/rolesQueries";
@@ -92,25 +87,6 @@ export const deleteProjectDAO = async (projectId: string) => {
     await executeQuery(deleteProject, queryParameters);
 };
 
-export const insertProjectMemberDAO = async (projectMember: IProjectMember) => {
-    const queryParameters = [
-        projectMember.id,
-        projectMember.userId,
-        projectMember.projectId,
-    ];
-    await executeQuery(insertProjectMember, queryParameters);
-};
-
-export const getProjectMemberDAO = async (
-    userId: string,
-    projectId: string
-) => {
-    const result = await executeQuery(getProjectMember, [userId, projectId]);
-    if (result) {
-        return result.rows[0];
-    }
-};
-
 export const getProjectDAO = async (projectId: string) => {
     const result = await executeQuery(getProject, [projectId]);
     if (result) {
@@ -120,13 +96,6 @@ export const getProjectDAO = async (projectId: string) => {
 
 export const getUserProjectsDAO = async (userId: string) => {
     const result = await executeQuery(getUserProjects, [userId]);
-    if (result) {
-        return result.rows;
-    }
-};
-
-export const getUserFavoriteProjectsDAO = async (userId: string) => {
-    const result = await executeQuery(getUserFavoriteProjects, [userId]);
     if (result) {
         return result.rows;
     }
@@ -149,33 +118,10 @@ export const updateProjectDAO = async (
     await executeQuery(updateProject, params);
 };
 
-export const getProjectMembersDAO = async (projectId: string) => {
-    const result = await executeQuery(getProjectMembers, [projectId]);
-    if (result) {
-        return result.rows;
-    }
-};
-
 export const getPublicProjectsDAO = async (isPublic: boolean) => {
     const queryParameters = [isPublic];
     const result = await executeQuery(getPublicProjects, queryParameters);
     if (result) {
         return result.rows;
     }
-};
-
-export const deleteFavoriteProjectDAO = async (favoriteProjectId: string) => {
-    const queryParameters = [favoriteProjectId];
-    await executeQuery(deleteFavoriteProject, queryParameters);
-};
-
-export const insertProjectFavoriteProjectsDAO = async (
-    favoriteProject: IProjectMember
-) => {
-    const queryParameters = [
-        favoriteProject.id,
-        favoriteProject.projectId,
-        favoriteProject.userId,
-    ];
-    await executeQuery(insertProjectFavoriteProjects, queryParameters);
 };

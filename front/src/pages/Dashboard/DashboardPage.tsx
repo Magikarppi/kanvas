@@ -22,6 +22,9 @@ import { ITeam } from "../../models/teamModels";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { INewTeamInitalFormValues } from "../../components/Teams/AddTeamModal";
+import teamsService from "../../services/teamsService";
+import AddTeamModal from "../../components/Teams/AddTeamModal";
 
 const createCard = (
     input: IProject | ITeam,
@@ -97,6 +100,8 @@ export default function AllProjectsPage() {
 
     const [addProjectModalOpen, setAddProjectModalOpen] =
         useState<boolean>(false);
+    const [addTeamModalOpen, setAddTeamModalOpen] = useState<boolean>(false);
+
 
     const token = selectToken();
     const user = selectUser();
@@ -123,6 +128,9 @@ export default function AllProjectsPage() {
 
     const openAddProjectModal = () => setAddProjectModalOpen(true);
     const closeAddProjectModal = () => setAddProjectModalOpen(false);
+
+    const openAddTeamModal = () => setAddTeamModalOpen(true);
+    const closeAddTeamModal = () => setAddTeamModalOpen(false);
 
     const handleAddProject = async (project: IProjectSubmitNew) => {
         if (token) {
@@ -161,9 +169,36 @@ export default function AllProjectsPage() {
         }
     };
 
+    const handleAddTeam = async(team: INewTeamInitalFormValues) => {
+        const {publicValue, teamName, emails} = team;
+        if (token) {
+            try {
+                const addedTeam = await teamsService.addTeam(
+                    token,
+                    teamName, 
+                    publicValue,
+                    emails
+                );
+
+                if (addedTeam) {
+                    setDashboardData({
+                        ...dashboardData,
+                        userTeams: [
+                            ...dashboardData.userTeams,
+                            addedTeam,
+                        ],
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+                // Todo: Set error message
+            }
+        }
+    };
+
     const AddNewCreateCard = (cardType: string) => (
         <Card
-            onClick={cardType === "project" ? openAddProjectModal : () => null}
+            onClick={cardType === "project" ? openAddProjectModal : openAddTeamModal}
             elevation={2}
             sx={{ backgroundColor: "#2e490d" }}
         >
@@ -282,6 +317,11 @@ export default function AllProjectsPage() {
                 open={addProjectModalOpen}
                 close={closeAddProjectModal}
                 handleAddProject={handleAddProject}
+            />
+            <AddTeamModal 
+                open={addTeamModalOpen}
+                close={closeAddTeamModal} 
+                handleAddTeam={handleAddTeam}
             />
             <Stack sx={{ minHeight: "90vh" }}>
                 <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>

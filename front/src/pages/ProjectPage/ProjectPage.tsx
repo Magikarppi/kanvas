@@ -79,7 +79,7 @@ const ProjectPage = () => {
             <Divider style={{ marginTop: "20px" }} />
             <ProjectToolbar />
             <Divider style={{ marginBottom: "20px" }} />
-            <DragNDropProvider data={data.columns}>
+            <DragNDropProvider token={token} projectId={id as string} data={data.columns}>
                 <Board />
             </DragNDropProvider>
         </div>

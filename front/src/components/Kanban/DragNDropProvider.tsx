@@ -9,6 +9,10 @@ import {
     TColDropshadow,
     TDragDropContextProps,
 } from "../../models/kanbanModels";
+import columnsService from "../../services/columnsService";
+import { IProjectColumn } from "../../models/projectModels";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 const DragNDropContext = createContext<TDragDropContextProps | undefined>(
     undefined
@@ -52,7 +56,9 @@ const getStyle = (
 const DragNDropProvider: FC<{
     children: ReactNode;
     data: TColumn[];
-}> = ({ children, data }) => {
+    projectId: string;
+    token: string;
+}> = ({ children, data, projectId, token }) => {
     const [columns, setColumns] = useState<TColumn[]>(data);
     const [colDropshadowProps, setColDropshadowProps] =
         useState<TColDropshadow>({
@@ -247,18 +253,37 @@ const DragNDropProvider: FC<{
         });
     };
 
-    const handleNewColumn = (newName: string) => {
-        setColumns((prev) => {
-            const updated = [...prev];
-            return [
-                ...updated,
-                {
-                    id: Math.random().toString(),
-                    title: newName,
-                    tasks: [],
-                },
-            ];
-        });
+    const handleNewColumn = async (newName: string) => {
+        const newColumn: Omit<IProjectColumn, "id"> = {
+            columnName: newName,
+            projectId: projectId,
+            orderIndex: columns.length,
+        };
+
+        try {
+            const addedColumn = await columnsService.addColumn(
+                token,
+                newColumn
+            );
+
+            // ToDO: figure out what to do with the tasks array
+            if (addedColumn) {
+                setColumns((prevColumns) => {
+                    const columnToAdd = {
+                        id: addedColumn.id,
+                        projectId: addedColumn.projectId,
+                        title: addedColumn.columnName,
+                        orderIndex: addedColumn.orderIndex,
+                        tasks: [],
+                    };
+                    return [...prevColumns, columnToAdd];
+                });
+            }
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error?.response?.data);
+            }
+        }
     };
 
     return (

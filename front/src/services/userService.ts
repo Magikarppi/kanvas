@@ -35,7 +35,7 @@ const userRequests = {
             `/users/${userInformation.id}`,
             userInformation
         );
-        return response;
+        return response.data;
     },
 
     updatePassword: async (

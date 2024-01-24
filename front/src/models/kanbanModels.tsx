@@ -9,6 +9,8 @@ type TTask = {
 type TColumn = {
     id: string;
     title: string;
+    orderIndex?: number;
+    projectId?: string;
     tasks: TTask[];
 };
 

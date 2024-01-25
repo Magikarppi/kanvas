@@ -25,9 +25,7 @@ const checkOrderIndex = (
             0,
             Math.min(
                 orderIndex,
-                projectColumns.length === 1
-                    ? projectColumns.length
-                    : projectColumns.length - 1
+                projectColumns.length === 1 ? 0 : projectColumns.length - 1
             )
         );
     }

@@ -40,21 +40,6 @@ const Container = styled.div<{
     ${({ isDragging }) => isDragging && "opacity: 0.6;"}
 `;
 
-const Title = styled.div`
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: auto;
-    color: #ffffff;
-    background-color: transparent;
-    font-weight: 400;
-    padding: 0;
-    cursor: default;
-    &:hover {
-        color: #428bca;
-    }
-`;
-
 const Row = styled.div`
     width: 100%;
     height: 50px;
@@ -77,7 +62,6 @@ export {
     RowContainer,
     TitleContainer,
     Container,
-    Title,
     Row,
     RowDropshadow,
     DropshadowContainer,

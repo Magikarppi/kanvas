@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { DraggableLocation, DropResult } from "react-beautiful-dnd";
+import { IProjectColumn } from "./projectModels";
 
 type TTask = {
     id: string;
@@ -53,6 +54,8 @@ type TDragDropContextProps = {
     colDropshadowProps: TColDropshadow;
     columns: TColumn[];
     setColumns: Dispatch<SetStateAction<TColumn[]>>;
+    token: string;
+    projectId: string;
 };
 
 export type {

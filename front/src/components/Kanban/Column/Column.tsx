@@ -14,9 +14,9 @@ import {
     DropshadowContainer,
     RowContainer,
     RowDropshadow,
-    Title,
     TitleContainer,
 } from "./Column.styled";
+import ColumnTitle from "./ColumnTitle";
 
 type Props = {
     column: TColumn;
@@ -30,10 +30,8 @@ const Column: FC<Props> = ({ column, columnIndex }) => {
         <Draggable draggableId={column.id} index={columnIndex}>
             {(provided: DraggableProvided) => (
                 <Container {...provided.draggableProps} ref={provided.innerRef}>
-                    <TitleContainer>
-                        <Title {...provided.dragHandleProps}>
-                            {column.title}
-                        </Title>
+                    <TitleContainer {...provided.dragHandleProps}>
+                        <ColumnTitle columnInfo={column} orderIndex={columnIndex} />
                     </TitleContainer>
                     <Droppable droppableId={column.id} type="task">
                         {(

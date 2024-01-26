@@ -301,6 +301,8 @@ const DragNDropProvider: FC<{
                 colDropshadowProps,
                 columns,
                 setColumns,
+                token,
+                projectId,
             }}
         >
             {children}

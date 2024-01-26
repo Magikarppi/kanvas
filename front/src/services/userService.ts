@@ -18,7 +18,6 @@ const userRequests = {
 
     loginUser: async (loginInfo: ILoginBody) => {
         const client = createClient();
-        console.log("client", client);
         const response = await client.post("/users/login", loginInfo);
         return response.data;
     },

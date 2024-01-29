@@ -11,7 +11,6 @@ import {
     deleteProjectDAO,
     updateProjectDAO,
     getProjectAdminDAO,
-    removeUserRoleDAO,
     getUserTeamsDAO,
     getUserByIdDAO,
     getProjectMembersDAO,
@@ -150,7 +149,6 @@ router.delete("/:id", async (req: UserRequest, res: Response) => {
             );
             return;
         }
-        await removeUserRoleDAO(userId, projectId); // for testing the endpoint, TODO: remove this call after we have altered database's delete behaviors
         await deleteProjectDAO(projectId);
         res.status(HTTP_RESPONSE_CODES.OK).send();
     } catch (error) {

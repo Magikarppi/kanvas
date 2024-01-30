@@ -8,9 +8,13 @@ const ProjectHeader = ({
     projectInfo,
     projectMembers,
 }: {
-    projectInfo: IProject;
+    projectInfo: IProject | undefined;
     projectMembers: ProjectMember[];
 }) => {
+    if (!projectInfo) {
+        return null;
+    }
+
     return (
         <div style={{ marginTop: "20px" }}>
             <Grid container spacing={1}>

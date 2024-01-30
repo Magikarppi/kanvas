@@ -133,7 +133,8 @@ const createTables = async () => {
             "creation_date" timestamp NOT NULL,
             "due_date" timestamp,
             "attachments" text,
-            "in_column" uuid NOT NULL REFERENCES "project_columns" ("id")
+            "in_column" uuid NOT NULL REFERENCES "project_columns" ("id"),
+            "order_index" int NOT NULL
         );
         
         CREATE TABLE IF NOT EXISTS "keywords" (

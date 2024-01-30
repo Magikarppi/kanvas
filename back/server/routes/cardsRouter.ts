@@ -44,7 +44,10 @@ cards.post("", async (req: UserRequest, res: Response) => {
             dueDate: req.body.dueDate,
             attachments: req.body.attachments,
             inColumn: req.body.inColumn,
+            orderIndex: req.body.orderIndex,
         };
+
+        console.log("card", card);
 
         await insertCardDAO(card);
         res.status(HTTP_RESPONSE_CODES.CREATED).send(card);
@@ -59,7 +62,7 @@ cards.post("", async (req: UserRequest, res: Response) => {
 cards.put("/:id", async (req: Request, res: Response) => {
     const id = req.params.id;
     const card: ICard = {
-        id: req.body.id,
+        id,
         title: req.body.title,
         subTitle: req.body.subTitle,
         description: req.body.description,
@@ -69,6 +72,7 @@ cards.put("/:id", async (req: Request, res: Response) => {
         attachments: req.body.attachments,
         inColumn: req.body.inColumn,
         projectId: req.body.projectId,
+        orderIndex: req.body.orderIndex,
     };
     try {
         await updateCardDAO(id, card);

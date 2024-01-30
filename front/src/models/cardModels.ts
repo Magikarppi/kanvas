@@ -9,4 +9,5 @@ export interface ICard {
     dueDate: Date | null;
     attachments: string | null;
     inColumn: string;
+    orderIndex: number;
 }

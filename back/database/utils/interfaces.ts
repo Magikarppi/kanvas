@@ -88,6 +88,7 @@ export interface ICard {
     dueDate: Date | null;
     attachments: string | null;
     inColumn: string;
+    orderIndex: string;
 }
 
 export interface ICardDB {
@@ -101,6 +102,7 @@ export interface ICardDB {
     due_date: Date | null;
     attachments: string | null;
     in_column: string;
+    order_index: string;
 }
 
 export interface IUsersTeam {

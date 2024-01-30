@@ -128,6 +128,7 @@ export const formatProjectCards = (cardsFromDB: ICardDB[] | undefined) => {
                 dueDate: card.due_date,
                 attachments: card.attachments,
                 inColumn: card.in_column,
+                orderIndex: card.order_index,
             };
             return formattedCard;
         });
@@ -138,7 +139,7 @@ export const formatProjectCards = (cardsFromDB: ICardDB[] | undefined) => {
 };
 
 export const formatProjectMembers = (
-    membersFromDB: IProjectMemberDB [] | undefined
+    membersFromDB: IProjectMemberDB[] | undefined
 ) => {
     if (membersFromDB) {
         const formattedProjectMembers = membersFromDB.map((member) => {

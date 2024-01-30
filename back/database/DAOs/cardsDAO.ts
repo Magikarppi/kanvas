@@ -20,6 +20,7 @@ export const insertCardDAO = async (card: ICard) => {
         card.dueDate,
         card.attachments,
         card.inColumn,
+        card.orderIndex,
     ];
     await executeQuery(insertCard, queryParameters);
 };
@@ -34,6 +35,7 @@ export const updateCardDAO = async (id: string, card: ICard) => {
         card.dueDate,
         card.attachments,
         card.inColumn,
+        card.orderIndex,
         id,
     ];
     await executeQuery(updateCard, array);

@@ -18,6 +18,7 @@ describe("Cards service", () => {
         status: null,
         subTitle: "sub titteli",
         title: "titteli",
+        orderIndex: 0,
     };
 
     const mockResponse: ICard = {
@@ -31,6 +32,7 @@ describe("Cards service", () => {
         status: null,
         subTitle: "sub titteli",
         title: "titteli",
+        orderIndex: 0,
     };
 
     it("Should add a new card", async () => {

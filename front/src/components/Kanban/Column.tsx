@@ -3,30 +3,34 @@ import { IProjectColumn } from "../../models/projectModels";
 import { ICard } from "../../models/cardModels";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import BoardCard from "./BoardCard";
+import ColumnTitle from "./ColumnTitle";
+import { Box } from "@mui/material";
 
 const Container = styled.div`
     margin: 10px;
-    border: 1px solid lightgray;
-    width: 250px;
-
+    width: 270px;
+    border-radius: 7px;
     display: flex;
     flex-direction: column;
-    background-color: black;
+    background-color: rgba(217, 217, 217, 0.1);
 `;
-const Name = styled.h3``;
 const CardList = styled.div`
     padding: 10px;
     flex-grow: 1;
     min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;
 
 interface Props {
     column: IProjectColumn;
     cards: ICard[];
     index: number;
+    updateColumns: (column: IProjectColumn) => void;
 }
 
-export default function Column({ column, cards, index }: Props) {
+export default function Column({ column, cards, index, updateColumns }: Props) {
     return (
         <Draggable draggableId={column.id} index={index}>
             {(provided) => (
@@ -35,7 +39,22 @@ export default function Column({ column, cards, index }: Props) {
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
                 >
-                    <Name>{column.columnName}</Name>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            width: "100%",
+                            border: "none",
+                            backgroundColor: "transparent",
+                            marginBottom: "10px",
+                        }}
+                    >
+                        <ColumnTitle
+                            columnInfo={column}
+                            updateColumns={updateColumns}
+                        />
+                    </Box>
                     <Droppable droppableId={column.id} type="card">
                         {(provided) => (
                             <CardList

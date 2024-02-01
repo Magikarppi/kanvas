@@ -33,22 +33,28 @@ const ProjectTitle = ({ projectInfo }: { projectInfo: IProject }) => {
     };
 
     return (
-        <Grid container>
-            <Grid item xs={12} sm={6.5} md={4} lg={2.5} xl={1.8}>
+        <>
+            <Grid item>
                 <Card
                     style={{
-                        height: "100px",
-                        width: "100px",
-                        margin: "5px 20px 0 0",
+                        height: "115px",
+                        width: "115px",
                         textAlign: "center",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: 0,
                     }}
                     onMouseEnter={() => setHoveringImage(true)}
                     onMouseLeave={() => setHoveringImage(false)}
                 >
                     {hoveringImage ? (
-                        <Tooltip title="Edit image" arrow>
-                            <IconButton style={{ top: "33.6px" }}>
-                                <Icons.Add />
+                        <Tooltip
+                            title={<Typography>Edit image</Typography>}
+                            arrow
+                        >
+                            <IconButton>
+                                <Icons.Add size="54px" />
                                 <input
                                     type="file"
                                     onChange={handleSetImage}
@@ -75,19 +81,11 @@ const ProjectTitle = ({ projectInfo }: { projectInfo: IProject }) => {
                     )}
                 </Card>
             </Grid>
-            <Grid
-                item
-                xs={12}
-                sm={6.5}
-                md={8}
-                lg={9.5}
-                xl={10.2}
-                marginTop={{ xs: "20px", sm: "5px" }}
-            >
+            <Grid item marginLeft="5%">
                 <Typography variant="h3">{projectInfo.name}</Typography>
                 <Typography variant="h6">{projectInfo.description}</Typography>
             </Grid>
-        </Grid>
+        </>
     );
 };
 

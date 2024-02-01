@@ -63,7 +63,7 @@ const ProjectToolbar = () => {
                         },
                         marginLeft: {
                             xs: 0,
-                            sm: "8.5%",
+                            sm: "10.8%",
                         },
                     }}
                 >
@@ -73,7 +73,7 @@ const ProjectToolbar = () => {
                             arrow
                             enterDelay={350}
                         >
-                            <Icons.Grid size="24px" />
+                            <Icons.Grid size="29.4px" />
                         </Tooltip>
                     </ToggleButton>
 
@@ -83,7 +83,7 @@ const ProjectToolbar = () => {
                             arrow
                             enterDelay={350}
                         >
-                            <Icons.List size="24px" />
+                            <Icons.List size="29.4px" />
                         </Tooltip>
                     </ToggleButton>
                 </ToggleButtonGroup>
@@ -113,7 +113,7 @@ const ProjectToolbar = () => {
                     isOptionEqualToValue={(option, value) => option === value}
                     sx={{
                         marginRight: {
-                            sm: 5,
+                            sm: 2.5,
                             xs: 0,
                         },
                     }}

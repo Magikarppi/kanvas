@@ -16,20 +16,41 @@ const ProjectHeader = ({
     }
 
     return (
-        <div style={{ marginTop: "20px" }}>
-            <Grid container spacing={1}>
-                <Grid item xs={0.5} />
-                <Grid item xs={11} sm={5.5}>
+        <>
+            <Grid container alignItems="center" marginTop="1%">
+                <Grid
+                    item
+                    display="flex"
+                    alignItems="center"
+                    xs={12}
+                    sm={6}
+                    sx={{
+                        paddingLeft: "5%",
+                        justifyContent: {
+                            xs: "center",
+                            sm: "flex-start",
+                        },
+                    }}
+                >
                     <ProjectTitle projectInfo={projectInfo} />
                 </Grid>
-                <Grid item xs={0.5} display={{ xs: "visible", sm: "none" }} />
-                <Grid item xs={0.5} display={{ xs: "visible", sm: "none" }} />
-                <Grid item xs={11} sm={5.5}>
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    display="flex"
+                    paddingRight="1.5%"
+                    sx={{
+                        justifyContent: {
+                            xs: "center",
+                            sm: "flex-end",
+                        },
+                    }}
+                >
                     <ProjectMembers projectMembers={projectMembers} />
                 </Grid>
-                <Grid item xs={0.5} />
             </Grid>
-        </div>
+        </>
     );
 };
 

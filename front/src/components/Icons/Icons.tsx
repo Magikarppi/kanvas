@@ -7,6 +7,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import EmailIcon from "@mui/icons-material/Email";
@@ -17,6 +18,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import KeyIcon from "@mui/icons-material/Key";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
@@ -77,6 +79,13 @@ const Icons = {
     )),
     Dashboard: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <SpaceDashboardIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    DeleteForever: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <DeleteForeverIcon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}
@@ -168,6 +177,13 @@ const Icons = {
     )),
     Message: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <EmailIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    MoreHoriz: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <MoreHorizIcon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}

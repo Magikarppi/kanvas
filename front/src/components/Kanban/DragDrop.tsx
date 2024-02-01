@@ -129,6 +129,7 @@ export default function DragDrop({
                                         (card) => card.inColumn === col.id
                                     )}
                                     index={index}
+                                    updateColumns={updateColumns}
                                 />
                             ))}
                         {provided.placeholder}

@@ -57,6 +57,12 @@ const ProjectPage = () => {
         fetchProject();
     }, [id]);
 
+    const handleNewColumn = (newColumn: IProjectColumn) => {
+        setColumns((prevColumns) => {
+            return [...prevColumns, newColumn];
+        });
+    };
+
     const handleUpdateColumns = (updatedColumn: IProjectColumn) => {
         setColumns((prevData) => {
             const prevColumns = [...prevData];
@@ -204,8 +210,11 @@ const ProjectPage = () => {
             <DragDrop
                 columns={columns}
                 cards={cards}
+                addNewColumn={handleNewColumn}
                 updateColumns={handleUpdateColumns}
                 updateCards={handleUpdateCards}
+                projectId={id as string}
+                token={token}
             />
         </div>
     );

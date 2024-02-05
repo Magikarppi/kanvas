@@ -1,4 +1,5 @@
 export * from "./cardsDAO";
+export * from "./cardCommentsDAO";
 export * from "./projectsDAO";
 export * from "./rolesDAO";
 export * from "./teamsDAO";

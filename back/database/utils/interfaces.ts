@@ -105,6 +105,22 @@ export interface ICardDB {
     order_index: string;
 }
 
+export interface ICardComment {
+    id: string;
+    cardId: string;
+    author: string;
+    commentText: string;
+    timeAdded: Date;
+}
+
+export interface ICardCommentDB {
+    id: string;
+    card_id: string;
+    author: string;
+    comment_text: string;
+    time_added: string;
+}
+
 export interface IUsersTeam {
     id: string;
     userId: string;

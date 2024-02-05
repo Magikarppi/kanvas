@@ -12,6 +12,7 @@ import {
 } from "./server/middleware/middleware";
 import cardsRouter from "./server/routes/cardsRouter";
 import columnsRouter from "./server/routes/columnsRouter";
+import commentsRouter from "./server/routes/commentsRouter";
 // import { alterTableDeleteBehavior } from "./database/database-service";
 
 const server = express();
@@ -28,6 +29,7 @@ server.use("/teams", authenticate, teamsRouter);
 server.use("/cards", authenticate, cardsRouter);
 server.use("/projects", authenticate, projectsRouter);
 server.use("/columns", authenticate, validateColumnRequest, columnsRouter);
+server.use("/comments", authenticate, commentsRouter);
 
 // createTablesAndFillWithDummyData();
 

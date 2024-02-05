@@ -1,5 +1,6 @@
 import {
     ICard,
+    ICardCommentDB,
     ICardDB,
     IFavoriteProject,
     IFavoriteProjectDB,
@@ -172,4 +173,12 @@ export const formatProjectColumn = (
     id: projectColumnFromDB.id,
     orderIndex: projectColumnFromDB.order_index,
     projectId: projectColumnFromDB.project_id,
+});
+
+export const formatCardComment = (cardComment: ICardCommentDB) => ({
+    id: cardComment.id,
+    cardId: cardComment.card_id,
+    author: cardComment.author,
+    commentText: cardComment.comment_text,
+    timeAdded: cardComment.time_added,
 });

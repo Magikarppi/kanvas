@@ -2,6 +2,7 @@ import { executeQuery } from "../database-service";
 import {
     getProjectMember,
     getProjectMembers,
+    getProjectMembersByCardId,
     insertProjectMember,
 } from "../queries/projectMemberQueries";
 import { IProjectMember } from "../utils/interfaces";
@@ -27,6 +28,13 @@ export const getProjectMemberDAO = async (
 
 export const getProjectMembersDAO = async (projectId: string) => {
     const result = await executeQuery(getProjectMembers, [projectId]);
+    if (result) {
+        return result.rows;
+    }
+};
+
+export const getProjectMembersByCardIdDAO = async (cardId: string) => {
+    const result = await executeQuery(getProjectMembersByCardId, [cardId]);
     if (result) {
         return result.rows;
     }

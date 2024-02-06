@@ -3,27 +3,25 @@ import {
     Button,
     Card,
     Container,
-    FormControl,
-    FormControlLabel,
     Grid,
     InputLabel,
-    MenuItem,
     Modal,
-    Radio,
-    RadioGroup,
-    Select,
-    SelectChangeEvent,
-    TextField,
+    Tooltip,
     Typography,
 } from "@mui/material";
-import { ChangeEvent, useEffect, useState } from "react";
 import { IProjectSubmitNew } from "../../models/projectModels";
-import {
-    isEmpty,
-    isProjectDescriptionTooLong,
-    isValidENDateFormat,
-} from "../../utils/inputChecks";
-import { DatePickerComponent } from "../DatePicker/Datepicker";
+import { useFormik } from "formik";
+import { addProjectSchema } from "../../schemas";
+import "react-datepicker/dist/react-datepicker.css";
+import ProjectNameInput from "../Inputs/ProjectNameInput";
+import ProjectDescriptionInput from "../Inputs/ProjectDescriptionInput";
+import ProjectThemeInput from "../Inputs/ProjectThemeInput";
+import ProjectEndDateInput from "../Inputs/ProjectEndDateInput";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import { useEffect } from "react";
+import CustomCheckbox from "../Inputs/CustomCheckbox";
+import Icons from "../Icons/Icons";
 
 const style = {
     position: "absolute",
@@ -31,14 +29,15 @@ const style = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "70%",
-    height: "80%",
+    height: "70%",
     border: "2px solid #5e00ff",
     boxShadow: 24,
     p: 1,
     overflowY: "auto",
+    maxWidth: "1200px",
+    maxHeight: "760px",
+    minWidth: "320px",
 };
-
-type TisPublic = "public" | "not-public";
 
 interface Props {
     open: boolean;
@@ -46,151 +45,68 @@ interface Props {
     handleAddProject: (project: IProjectSubmitNew) => Promise<void>;
 }
 
-const initialTouched = {
-    name: false,
-    endDate: false,
-    description: false,
-    theme: false,
-    isPublic: false,
-};
-
-interface IInitialForm {
-    name: string;
-    description: string;
-    endDate: string;
-    theme: string;
-    isPublic: TisPublic;
-}
-
-const initialFormValues = {
-    name: "",
-    description: "",
-    endDate: "",
-    theme: "default",
-    isPublic: "not-public" as TisPublic,
-};
-
 export default function AddProjectModal({
     open,
     close,
     handleAddProject,
 }: Props) {
-    const [formValues, setFormValues] =
-        useState<IInitialForm>(initialFormValues);
-    const [touched, setTouched] = useState(initialTouched);
-
     useEffect(() => {
         if (!open) {
-            resetInputs();
+            resetForm();
         }
     }, [open]);
 
-    const resetInputs = () => {
-        setFormValues(initialFormValues);
-        setTouched(initialTouched);
-    };
+    const {
+        values,
+        errors,
+        handleBlur,
+        handleChange,
+        setFieldValue,
+        touched,
+        handleSubmit,
+        isValid,
+        resetForm,
+    } = useFormik({
+        initialValues: {
+            name: "",
+            description: "",
+            endDate: new Date(),
+            theme: "blank",
+            isPublic: false,
+        },
+        validationSchema: addProjectSchema,
+        async onSubmit(values, formikHelpers) {
+            try {
+                const project: IProjectSubmitNew = {
+                    name: values.name,
+                    theme: values.theme || "blank",
+                    description: values.description || null,
+                    endDate: values.endDate || null,
+                    isPublic: values.isPublic,
+                    picture: null,
+                };
 
-    const handleInputChange = (
-        e:
-            | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-            | SelectChangeEvent<string>
-    ) => {
-        const { name, value } = e.target;
-        setFormValues((prevData) => ({ ...prevData, [name]: value }));
-    };
+                await handleAddProject(project);
 
-    const handleInputBlur = (field: keyof typeof formValues) => {
-        setTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
-    };
-
-    const validateInputs = (field: keyof typeof formValues) => {
-        const value = formValues[field];
-
-        if (field === "name") {
-            return touched[field] && isEmpty(value);
-        } else if (field === "endDate") {
-            return touched[field] && !isValidENDateFormat(value);
-        } else if (field === "description") {
-            return touched[field] && isProjectDescriptionTooLong(value);
-        }
-    };
-
-    const getErrorText = (field: keyof typeof formValues) => {
-        const value = formValues[field];
-        if (touched[field] && field === "name" && isEmpty(value)) {
-            return "Field must be filled out";
-        } else if (
-            field === "endDate" &&
-            touched[field] &&
-            !isValidENDateFormat(value)
-        ) {
-            return "Use format MM/DD/YYYY";
-        } else if (
-            field === "description" &&
-            touched[field] &&
-            isProjectDescriptionTooLong(value)
-        ) {
-            return "Max length is 500 characters";
-        } else {
-            return null;
-        }
-    };
-
-    const handleSubmit = async () => {
-        const formValueDate = formValues.endDate.split("/");
-        const years = formValueDate[2];
-        const days = formValueDate[0];
-        const months = formValueDate[1];
-        const total = months + "-" + days + "-" + years;
-
-        try {
-            const project: IProjectSubmitNew = {
-                name: formValues.name,
-                theme: formValues.theme || "blank",
-                description: formValues.description || null,
-                endDate: new Date(total) || null,
-                isPublic: formValues.isPublic === "public" ? true : false,
-                picture: null,
-            };
-
-            await handleAddProject(project);
-
-            resetInputs();
-            close();
-        } catch (error) {
-            console.log(error);
-            // TODO set error notification
-        }
-    };
-
-    const handleCallBackDatePicker = (date: Date) => {
-        const days = date.getDate();
-        const months = date.getMonth();
-        const years = date.getFullYear();
-        const totalFormat: string = days + "/" + (months + 1) + "/" + years;
-        setFormValues({ ...formValues, endDate: totalFormat });
-    };
-
-    const editEUDateToUSAFormat = () => {
-        if (formValues.endDate.length > 0) {
-            const value = formValues.endDate.split("/");
-            const months = value[1];
-            const years = value[2];
-            const days = value[0];
-            const totalUSAFormat: string = months + "-" + days + "-" + years;
-            return new Date(totalUSAFormat);
-        } else {
-            return new Date();
-        }
-    };
+                formikHelpers.resetForm();
+                close();
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    toast.error(error.response?.data);
+                }
+            }
+        },
+    });
 
     const disableButton =
-        !formValues.name || !isValidENDateFormat(formValues.endDate);
+        Object.keys(touched).length === 0 ||
+        !isValid ||
+        Object.keys(errors).length > 0;
 
     return (
         <Modal
             open={open}
-            onClose={close}
+            hideBackdrop={true}
             aria-labelledby="add-project-modal"
             aria-describedby="add-project-modal"
         >
@@ -198,122 +114,115 @@ export default function AddProjectModal({
                 <Container>
                     <Box
                         sx={{
-                            textAlign: "center",
+                            textAlign: "start",
                             mt: 2,
                         }}
                     >
-                        <Typography variant="h5">Add a new project</Typography>
+                        <Typography variant="h4">
+                            Create a new project
+                        </Typography>
                     </Box>
-                    <Box component="form" sx={{ mt: 5 }}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <InputLabel htmlFor="projectName">
-                                    Name *
-                                </InputLabel>
-                                <TextField
-                                    onChange={(e) => handleInputChange(e)}
-                                    name="name"
-                                    value={formValues.name}
-                                    error={validateInputs("name")}
-                                    helperText={getErrorText("name")}
-                                    onBlur={() => handleInputBlur("name")}
-                                    required
-                                    fullWidth
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <InputLabel htmlFor="description">
-                                    Description
-                                </InputLabel>
-                                <TextField
-                                    fullWidth
-                                    value={formValues.description}
-                                    onChange={(e) => handleInputChange(e)}
-                                    type="text"
-                                    id="description"
-                                    error={validateInputs("description")}
-                                    helperText={getErrorText("description")}
-                                    onBlur={() =>
-                                        handleInputBlur("description")
-                                    }
-                                    name="description"
-                                    autoComplete="off"
-                                    multiline
-                                    rows={4}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <InputLabel htmlFor="projectEndDate">
-                                    End date
-                                </InputLabel>
-                                <DatePickerComponent
-                                    date={editEUDateToUSAFormat()}
-                                    handleCallBack={handleCallBackDatePicker}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <InputLabel htmlFor="theme">Theme</InputLabel>
-                                <FormControl fullWidth>
-                                    <Select
-                                        labelId="theme-select-label"
-                                        id="theme-select"
-                                        value={formValues.theme}
-                                        onChange={(e) => handleInputChange(e)}
-                                        name="theme"
+                    <Box sx={{ mt: 5 }}>
+                        <form onSubmit={handleSubmit}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <ProjectNameInput
+                                        name={values.name}
+                                        touched={touched.name}
+                                        error={errors.name}
+                                        handleChange={handleChange}
+                                        handleBlur={handleBlur}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <ProjectDescriptionInput
+                                        description={values.description}
+                                        touched={touched.description}
+                                        error={errors.description}
+                                        handleBlur={handleBlur}
+                                        handleChange={handleChange}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Grid
+                                        container
+                                        spacing={2}
+                                        justifyContent="space-evenly"
                                     >
-                                        <MenuItem value="default">
-                                            Default
-                                        </MenuItem>
-                                        <MenuItem value="red">Red</MenuItem>
-                                        <MenuItem value="yellow">
-                                            Yellow
-                                        </MenuItem>
-                                        <MenuItem value="blue">Blue</MenuItem>
-                                        <MenuItem value="green">Green</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid
-                                item
-                                display="flex"
-                                justifyContent="center"
-                                xs={12}
-                            >
-                                <FormControl>
-                                    <RadioGroup
-                                        defaultValue="not-public"
+                                        <Grid item>
+                                            <ProjectEndDateInput
+                                                endDate={values.endDate}
+                                                setFieldValue={setFieldValue}
+                                            />
+                                        </Grid>
+                                        <Grid item width="200px">
+                                            <ProjectThemeInput
+                                                theme={values.theme}
+                                                handleChange={handleChange}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        <InputLabel>Public project</InputLabel>
+                                        <Tooltip
+                                            title={
+                                                <p style={{ fontSize: "1rem" }}>
+                                                    Public projects can be found
+                                                    using search
+                                                </p>
+                                            }
+                                            placement="top"
+                                        >
+                                            <Icons.Info />
+                                        </Tooltip>
+                                    </Box>
+                                </Grid>
+                                <Grid
+                                    item
+                                    display="flex"
+                                    justifyContent="flex start"
+                                    xs={12}
+                                >
+                                    <CustomCheckbox
+                                        handleChange={handleChange}
                                         name="isPublic"
-                                        onChange={(e) => handleInputChange(e)}
-                                    >
-                                        <FormControlLabel
-                                            value="not-public"
-                                            control={<Radio />}
-                                            label="Not public"
-                                        />
-                                        <FormControlLabel
-                                            value="public"
-                                            control={<Radio />}
-                                            label="Public"
-                                        />
-                                    </RadioGroup>
-                                </FormControl>
+                                        value={values.isPublic}
+                                        label="This project can be viewed by everyone"
+                                    />
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                disabled={disableButton}
-                                onClick={handleSubmit}
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "space-evenly",
+                                    marginTop: "40px",
+                                    flexWrap: "wrap",
+                                }}
                             >
-                                Submit
-                            </Button>
-                        </div>
+                                <Button
+                                    variant="contained"
+                                    disabled={disableButton}
+                                    color="secondary"
+                                    type="submit"
+                                >
+                                    Create
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={close}
+                                >
+                                    Cancel
+                                </Button>
+                            </Box>
+                        </form>
                     </Box>
                 </Container>
             </Card>

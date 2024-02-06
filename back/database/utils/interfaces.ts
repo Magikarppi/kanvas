@@ -173,3 +173,17 @@ export interface IFavoriteProject extends IProject {
 export interface IFavoriteProjectDB extends IProjectDB {
     favorite_project_id: string;
 }
+
+export interface IReaction {
+    id: string;
+    userId: string;
+    cardComment: string;
+    emoji: string;
+}
+
+export interface IReactionDB {
+    id: string;
+    user_id: string;
+    card_comment: string;
+    emoji: string;
+}

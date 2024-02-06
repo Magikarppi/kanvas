@@ -12,6 +12,7 @@ import {
 } from "./server/middleware/middleware";
 import cardsRouter from "./server/routes/cardsRouter";
 import columnsRouter from "./server/routes/columnsRouter";
+import reactionsRouter from "./server/routes/reactionsRouter";
 import commentsRouter from "./server/routes/commentsRouter";
 // import { alterTableDeleteBehavior } from "./database/database-service";
 
@@ -29,6 +30,7 @@ server.use("/teams", authenticate, teamsRouter);
 server.use("/cards", authenticate, cardsRouter);
 server.use("/projects", authenticate, projectsRouter);
 server.use("/columns", authenticate, validateColumnRequest, columnsRouter);
+server.use("/reactions", authenticate, reactionsRouter);
 server.use("/comments", authenticate, commentsRouter);
 
 // createTablesAndFillWithDummyData();

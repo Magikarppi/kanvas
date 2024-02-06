@@ -1,43 +1,46 @@
-import {
-    Box,
-    Button,
-    Container,
-    Grid,
-    InputLabel,
-    Paper,
-    TextField,
-    Typography,
-} from "@mui/material";
-import React, { useState } from "react";
+import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
 import userRequests from "../../../services/userService";
 import NavigateBackIcon from "../../../components/NavigationButtons/NavigateBackIcon";
-import { validEmail } from "../../../utils/inputChecks";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import EmailInput from "../../../components/Inputs/EmailInput";
+import { useFormik } from "formik";
+import { forgotPasswordSchema } from "../../../schemas";
 
 export default function ForgotPasswordPage() {
-    const [email, setEmail] = useState<string>("");
-    const [touched, setTouched] = useState(false);
-
-    const isValidEmail = validEmail(email);
-    const isValidInput = touched && !isValidEmail;
-
-    const getErrorText = touched && !isValidEmail && "Invalid email address";
-    const disableButton = email === "" || !isValidEmail;
-
-    const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        try {
-            const response = await userRequests.forgotPassword(email);
-            setEmail("");
-            setTouched(false);
-            toast.success(response.data);
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error?.response?.data);
+    const {
+        values,
+        errors,
+        handleBlur,
+        handleChange,
+        touched,
+        isValid,
+        resetForm,
+        handleSubmit,
+    } = useFormik({
+        initialValues: {
+            email: "",
+        },
+        validationSchema: forgotPasswordSchema,
+        async onSubmit(values) {
+            try {
+                const response = await userRequests.forgotPassword(
+                    values.email
+                );
+                toast.success(response.data);
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    toast.error(error?.response?.data);
+                }
             }
-        }
-    };
+            resetForm();
+        },
+    });
+
+    const disableButton =
+        Object.keys(touched).length === 0 ||
+        !isValid ||
+        Object.keys(errors).length > 0;
 
     return (
         <div className="pageContainer">
@@ -73,24 +76,12 @@ export default function ForgotPasswordPage() {
                                                 will send you a password reset
                                                 link.
                                             </Typography>
-                                            <InputLabel htmlFor="email">
-                                                Email Address *
-                                            </InputLabel>
-                                            <TextField
-                                                error={isValidInput}
-                                                required
-                                                value={email}
-                                                fullWidth
-                                                size="small"
-                                                type="email"
-                                                id="email"
-                                                onChange={(e) =>
-                                                    setEmail(e.target.value)
-                                                }
-                                                name="email"
-                                                helperText={getErrorText}
-                                                onBlur={() => setTouched(true)}
-                                                autoComplete="off"
+                                            <EmailInput
+                                                email={values.email}
+                                                error={errors.email}
+                                                handleBlur={handleBlur}
+                                                handleChange={handleChange}
+                                                touched={touched.email}
                                             />
                                             <Grid
                                                 style={{ textAlign: "center" }}

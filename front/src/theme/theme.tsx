@@ -91,7 +91,7 @@ let theme = createTheme({
                 root: {
                     fontSize: 14,
                     marginBottom: 1,
-                    marginTop: 8,
+                    marginTop: 16,
                     marginLeft: 6,
                     marginRight: 6,
                     fontWeight: "bold",

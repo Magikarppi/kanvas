@@ -1,96 +1,63 @@
-import { useState, ChangeEvent } from "react";
-import {
-    Container,
-    TextField,
-    Button,
-    Grid,
-    Link,
-    Typography,
-    Box,
-    InputAdornment,
-    IconButton,
-    InputLabel,
-} from "@mui/material";
+import { useState } from "react";
+import { Container, Button, Grid, Link, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import Icons from "../../../components/Icons/Icons";
 import userRequests from "../../../services/userService";
-import { ILoginBody, IUser } from "../../../models/userModels";
-import { validEmail } from "../../../utils/inputChecks";
+import { IUser } from "../../../models/userModels";
 import { setToken, setUserInfo } from "../../../redux/userReducer";
 import { useAppDispatch } from "../../../redux/hooks";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import { invalidEmailHelperText } from "../../../utils/helperMessages";
+import { useFormik } from "formik";
+import { loginSchema } from "../../../schemas";
+import EmailInput from "../../../components/Inputs/EmailInput";
+import PasswordInput from "../../../components/Inputs/PasswordInput";
 
 const LoginForm = () => {
     const dispatch = useAppDispatch();
     const [showPassword, setShowPassword] = useState(false);
 
-    const [formData, setFormData] = useState<ILoginBody>({
-        email: "",
-        password: "",
-    });
-
-    const [touched, setTouched] = useState({
-        email: false,
-        password: false,
-    });
-
     const navigate = useNavigate();
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
-    };
+    const {
+        values,
+        errors,
+        handleBlur,
+        handleChange,
+        touched,
+        isValid,
+        resetForm,
+        handleSubmit,
+    } = useFormik({
+        initialValues: {
+            email: "",
+            password: "",
+        },
+        validationSchema: loginSchema,
+        async onSubmit(values) {
+            try {
+                const userData = await userRequests.loginUser(values);
+                if (userData.token) {
+                    dispatch(setToken(userData.token as string));
+                }
 
-    const handleInputBlur = (field: keyof typeof formData) => {
-        setTouched((prevTouched) => ({ ...prevTouched, [field]: true }));
-    };
-
-    const validateInputs = (field: keyof typeof formData) => {
-        const value = formData[field];
-
-        if (field === "email") {
-            return touched[field] && !validEmail(value);
-        } else {
-            return touched[field] && value === "";
-        }
-    };
-
-    const getErrorText = (field: keyof typeof formData) => {
-        const value = formData[field];
-
-        if (touched[field] && value === "") {
-            return "Field must be filled out";
-        } else if (field === "email" && touched[field] && !validEmail(value)) {
-            return invalidEmailHelperText;
-        } else {
-            return null;
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        try {
-            const userData = await userRequests.loginUser(formData);
-            if (userData.token) {
-                dispatch(setToken(userData.token as string));
+                if (userData.user) {
+                    dispatch(setUserInfo(userData.user as IUser));
+                }
+                resetForm();
+                navigate("/dashboard");
+                toast.success("Welcome!");
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    toast.error(error.response?.data);
+                }
             }
-
-            if (userData.user) {
-                dispatch(setUserInfo(userData.user as IUser));
-            }
-            navigate("/dashboard");
-            toast.success("Welcome!");
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data);
-            }
-        }
-    };
+        },
+    });
 
     const disableButton =
-        formData.password === "" || !validEmail(formData.email);
+        Object.keys(touched).length === 0 ||
+        !isValid ||
+        Object.keys(errors).length > 0;
 
     return (
         <Container maxWidth="xs">
@@ -106,64 +73,27 @@ const LoginForm = () => {
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
-                            <InputLabel htmlFor="email">
-                                Email Address *
-                            </InputLabel>
-                            <TextField
-                                data-cy="email-login-input"
-                                error={validateInputs("email")}
-                                required
-                                fullWidth
-                                type="email"
-                                id="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                name="email"
-                                size="small"
-                                onBlur={() => handleInputBlur("email")}
-                                helperText={getErrorText("email")}
-                                autoComplete="on"
+                            <EmailInput
+                                email={values.email}
+                                error={errors.email}
+                                handleBlur={handleBlur}
+                                handleChange={handleChange}
+                                touched={touched.email}
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <InputLabel htmlFor="password">
-                                Password *
-                            </InputLabel>
-                            <TextField
-                                data-cy="password-login-input"
-                                error={validateInputs("password")}
-                                required
-                                fullWidth
-                                id="password"
-                                value={formData.password}
-                                onChange={handleInputChange}
-                                name="password"
-                                size="small"
-                                autoComplete="off"
-                                onBlur={() => handleInputBlur("password")}
-                                helperText={getErrorText("password")}
-                                type={showPassword ? "text" : "password"}
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                aria-label="toggle password visibility"
-                                                onClick={() =>
-                                                    setShowPassword(
-                                                        (prevBoolean) =>
-                                                            !prevBoolean
-                                                    )
-                                                }
-                                            >
-                                                {showPassword ? (
-                                                    <Icons.Visibility />
-                                                ) : (
-                                                    <Icons.VisibilityOff />
-                                                )}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
-                                }}
+                            <PasswordInput
+                                dataCy="password-input"
+                                valueName="password"
+                                password={values.password}
+                                error={errors.password}
+                                touched={touched.password}
+                                showPassword={showPassword}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                                handleClickShowPassword={() =>
+                                    setShowPassword((prev) => !prev)
+                                }
                             />
                         </Grid>
                         <Grid

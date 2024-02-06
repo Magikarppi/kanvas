@@ -21,8 +21,8 @@ describe("Sign up + login", () => {
         cy.visit("sign-in");
 
         getCyData("login-button").should("be.disabled");
-        getCyData("email-login-input").type(userLoginSignUp.email);
-        getCyData("password-login-input").type(userLoginSignUp.password);
+        getCyData("email-input").type(userLoginSignUp.email);
+        getCyData("password-input").type(userLoginSignUp.password);
         getCyData("login-button").should("not.be.disabled");
         getCyData("login-button").click();
 

@@ -1,29 +1,16 @@
-import React, { useState, MouseEvent, ChangeEvent, FormEvent } from "react";
-import {
-    Button,
-    Grid,
-    InputAdornment,
-    IconButton,
-    Paper,
-    TextField,
-    Typography,
-    Box,
-    InputLabel,
-} from "@mui/material";
-import Icons from "../Icons/Icons";
+import { useState } from "react";
+import { Button, Grid, Paper, Typography, Box } from "@mui/material";
 import userRequests from "../../services/userService";
 import { IUpdatePasswordBody, IUser } from "../../models/userModels";
-import { validatePasswordFormat } from "../../utils/inputChecks";
 import { toast } from "react-toastify";
-import {
-    passwordsNoMatchHelperText,
-    validPasswordHelperText,
-} from "../../utils/helperMessages";
+import { useFormik } from "formik";
+import { changePasswordSchema } from "../../schemas";
+import PasswordInput from "../Inputs/PasswordInput";
 
-interface IChangePasswordState {
-    password: string;
-    newPassword: string;
-    newPasswordConfirm: string;
+interface ShowPassword {
+    password: boolean;
+    newPassword: boolean;
+    newPasswordConfirmation: boolean;
 }
 
 const UserChangePassword = ({
@@ -33,115 +20,60 @@ const UserChangePassword = ({
     token: string | null | undefined;
     user: IUser | null | undefined;
 }) => {
-    const [formData, setFormData] = useState<IChangePasswordState>({
-        password: "",
-        newPassword: "",
-        newPasswordConfirm: "",
-    });
-
-    const [showPasswords, setShowPasswords] = useState({
+    const [showPassword, setShowPassword] = useState<ShowPassword>({
         password: false,
         newPassword: false,
-        newPasswordConfirm: false,
+        newPasswordConfirmation: false,
     });
 
-    const [touchedFields, setTouchedFields] = useState({
-        password: false,
-        newPassword: false,
-        newPasswordConfirm: false,
-    });
-
-    const handleMouseDownPassword = (e: MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-    };
-
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-        try {
-            const changePasswordBody: IUpdatePasswordBody = {
-                id: user?.id || "",
-                oldPassword: formData.password,
-                newPassword: formData.newPassword,
-                newPasswordConfirmation: formData.newPasswordConfirm,
-            };
-
-            await userRequests.updatePassword(
-                token as string,
-                changePasswordBody
-            );
-            setFormData({
-                password: "",
-                newPassword: "",
-                newPasswordConfirm: "",
-            });
-            setTouchedFields({
-                password: false,
-                newPassword: false,
-                newPasswordConfirm: false,
-            });
-            toast.success("Password successfully updated");
-        } catch (error) {
-            toast.error("An error occurred while updating the password");
-        }
-    };
-
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
-    };
-
-    const handleClickShowPassword = (field: keyof typeof showPasswords) => {
-        setShowPasswords((prevFields) => ({
-            ...prevFields,
-            [field]: !prevFields[field],
+    const handleClickShowPassword = (field: keyof typeof showPassword) => {
+        setShowPassword((prevField) => ({
+            ...prevField,
+            [field]: !prevField[field],
         }));
     };
 
-    const handleInputBlur = (field: keyof typeof formData) => {
-        setTouchedFields((prevTouched) => ({ ...prevTouched, [field]: true }));
-    };
+    const {
+        values,
+        errors,
+        handleBlur,
+        handleChange,
+        touched,
+        isValid,
+        resetForm,
+        handleSubmit,
+    } = useFormik({
+        initialValues: {
+            password: "",
+            newPassword: "",
+            newPasswordConfirmation: "",
+        },
+        validationSchema: changePasswordSchema,
+        async onSubmit(values) {
+            try {
+                const changePasswordBody: IUpdatePasswordBody = {
+                    id: user?.id || "",
+                    oldPassword: values.password,
+                    newPassword: values.newPassword,
+                    newPasswordConfirmation: values.newPasswordConfirmation,
+                };
 
-    const validateInput = (field: keyof typeof formData) => {
-        const value = formData[field];
-        if (field === "newPassword") {
-            return touchedFields[field] && !validatePasswordFormat(value);
-        } else if (
-            field === "newPasswordConfirm" &&
-            formData.newPassword !== formData.newPasswordConfirm
-        ) {
-            return touchedFields[field];
-        } else {
-            return touchedFields[field] && value === "";
-        }
-    };
+                await userRequests.updatePassword(
+                    token as string,
+                    changePasswordBody
+                );
+                resetForm();
+                toast.success("Password successfully updated");
+            } catch (error) {
+                toast.error("An error occurred while updating the password");
+            }
+        },
+    });
 
-    const getErrorText = (field: keyof typeof formData) => {
-        const value = formData[field];
-        if (touchedFields[field] && value === "") {
-            return "The field must be filled out";
-        } else if (
-            touchedFields[field] &&
-            field === "newPassword" &&
-            !validatePasswordFormat(value)
-        ) {
-            return validPasswordHelperText;
-        } else if (
-            touchedFields[field] &&
-            field === "newPasswordConfirm" &&
-            formData.newPassword !== formData.newPasswordConfirm
-        ) {
-            return passwordsNoMatchHelperText;
-        } else {
-            return null;
-        }
-    };
-
-    const isSubmitDisabled =
-        formData.password === "" ||
-        formData.newPassword === "" ||
-        formData.newPasswordConfirm === "" ||
-        formData.newPassword !== formData.newPasswordConfirm ||
-        !validatePasswordFormat(formData.newPassword);
+    const disableButton =
+        Object.keys(touched).length === 0 ||
+        !isValid ||
+        Object.keys(errors).length > 0;
 
     return (
         <Paper elevation={2} className="elevatedSection">
@@ -168,140 +100,58 @@ const UserChangePassword = ({
                             justifyContent: "center",
                         }}
                     >
-                        <InputLabel htmlFor="password">
-                            Current password *
-                        </InputLabel>
-                        <TextField
-                            required
-                            fullWidth
-                            autoComplete="off"
-                            size="small"
-                            name="password"
-                            type={showPasswords.password ? "text" : "password"}
-                            id="password"
-                            error={validateInput("password")}
-                            helperText={getErrorText("password")}
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            onBlur={() => handleInputBlur("password")}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={() =>
-                                                handleClickShowPassword(
-                                                    "password"
-                                                )
-                                            }
-                                            onMouseDown={
-                                                handleMouseDownPassword
-                                            }
-                                            edge="end"
-                                        >
-                                            {showPasswords.password ? (
-                                                <Icons.VisibilityOff />
-                                            ) : (
-                                                <Icons.Visibility />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                        <InputLabel htmlFor="newPassword" sx={{ mt: 2 }}>
-                            New password *
-                        </InputLabel>
-                        <TextField
-                            required
-                            fullWidth
-                            autoComplete="off"
-                            size="small"
-                            name="newPassword"
-                            type={
-                                showPasswords.newPassword ? "text" : "password"
+                        <PasswordInput
+                            dataCy="password-input"
+                            valueName="password"
+                            disableValidation={true}
+                            label="Current password"
+                            error={errors.password}
+                            handleBlur={handleBlur}
+                            handleChange={handleChange}
+                            password={values.password}
+                            touched={touched.password}
+                            showPassword={showPassword.password}
+                            handleClickShowPassword={() =>
+                                handleClickShowPassword("password")
                             }
-                            id="newPassword"
-                            error={validateInput("newPassword")}
-                            helperText={getErrorText("newPassword")}
-                            value={formData.newPassword}
-                            onChange={handleInputChange}
-                            onBlur={() => handleInputBlur("newPassword")}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={() =>
-                                                handleClickShowPassword(
-                                                    "newPassword"
-                                                )
-                                            }
-                                            onMouseDown={
-                                                handleMouseDownPassword
-                                            }
-                                            edge="end"
-                                        >
-                                            {showPasswords.newPassword ? (
-                                                <Icons.VisibilityOff />
-                                            ) : (
-                                                <Icons.Visibility />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
                         />
-                        <InputLabel htmlFor="newPasswordConfirm" sx={{ mt: 2 }}>
-                            Confirm new password *
-                        </InputLabel>
-                        <TextField
-                            required
-                            fullWidth
-                            autoComplete="off"
-                            size="small"
-                            name="newPasswordConfirm"
-                            type={
-                                showPasswords.newPasswordConfirm
-                                    ? "text"
-                                    : "password"
+                        <PasswordInput
+                            dataCy="new-password-input"
+                            valueName="newPassword"
+                            disableValidation={false}
+                            label="New password *"
+                            error={errors.newPassword}
+                            handleBlur={handleBlur}
+                            handleChange={handleChange}
+                            password={values.newPassword}
+                            touched={touched.newPassword}
+                            showPassword={showPassword.newPassword}
+                            handleClickShowPassword={() =>
+                                handleClickShowPassword("newPassword")
                             }
-                            id="newPasswordConfirm"
-                            error={validateInput("newPasswordConfirm")}
-                            helperText={getErrorText("newPasswordConfirm")}
-                            value={formData.newPasswordConfirm}
-                            onChange={handleInputChange}
-                            onBlur={() => handleInputBlur("newPasswordConfirm")}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={() =>
-                                                handleClickShowPassword(
-                                                    "newPasswordConfirm"
-                                                )
-                                            }
-                                            onMouseDown={
-                                                handleMouseDownPassword
-                                            }
-                                            edge="end"
-                                        >
-                                            {showPasswords.newPasswordConfirm ? (
-                                                <Icons.VisibilityOff />
-                                            ) : (
-                                                <Icons.Visibility />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
+                        />
+                        <PasswordInput
+                            dataCy="new-password-confirmation-input"
+                            valueName="newPasswordConfirmation"
+                            disableValidation={false}
+                            label="Confirm new password *"
+                            error={errors.newPasswordConfirmation}
+                            handleBlur={handleBlur}
+                            handleChange={handleChange}
+                            password={values.newPasswordConfirmation}
+                            touched={touched.newPasswordConfirmation}
+                            showPassword={showPassword.newPasswordConfirmation}
+                            handleClickShowPassword={() =>
+                                handleClickShowPassword(
+                                    "newPasswordConfirmation"
+                                )
+                            }
                         />
                         <Button
                             type="submit"
                             variant="contained"
                             color="secondary"
-                            disabled={isSubmitDisabled}
+                            disabled={disableButton}
                             sx={{ mt: 5, alignSelf: "center" }}
                         >
                             Change Password

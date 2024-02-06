@@ -9,6 +9,8 @@ import {
     IProjectColumnDB,
     IProjectDB,
     IProjectMemberDB,
+    IReaction,
+    IReactionDB,
     ITeam,
     ITeamDB,
 } from "../../database/utils/interfaces";
@@ -181,4 +183,11 @@ export const formatCardComment = (cardComment: ICardCommentDB) => ({
     author: cardComment.author,
     commentText: cardComment.comment_text,
     timeAdded: cardComment.time_added,
+});
+
+export const formatReaction = (reaction: IReactionDB): IReaction => ({
+    id: reaction.id,
+    userId: reaction.user_id,
+    cardComment: reaction.card_comment,
+    emoji: reaction.emoji,
 });

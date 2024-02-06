@@ -7,12 +7,11 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import EmailIcon from "@mui/icons-material/Email";
 import GridViewIcon from "@mui/icons-material/GridView";
 import Groups2Icon from "@mui/icons-material/Groups2";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import KeyIcon from "@mui/icons-material/Key";
@@ -31,7 +30,7 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Favorite } from "@mui/icons-material";
+import { Delete, Email, Favorite, PersonAddAlt1 } from "@mui/icons-material";
 import { FavoriteBorder } from "@mui/icons-material";
 
 interface IconProps {
@@ -56,6 +55,14 @@ const Icons = {
             style={{ color: props.iconColor, fontSize: props.size }}
         />
     )),
+    AddPerson: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <PersonAddAlt1
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+
     ArrowBack: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <ArrowBackIosNewIcon
             {...props}
@@ -92,7 +99,7 @@ const Icons = {
         />
     )),
     Delete: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
-        <DeleteIcon
+        <Delete
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}
@@ -107,6 +114,13 @@ const Icons = {
     )),
     Edit: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <EditIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    Email: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <Email
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}
@@ -128,6 +142,13 @@ const Icons = {
     )),
     Grid: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <GridViewIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    Groups: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <Groups2Icon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}

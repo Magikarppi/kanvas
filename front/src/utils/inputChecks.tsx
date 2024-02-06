@@ -1,7 +1,7 @@
 import validator from "validator";
 import { projectDescriptionMaxLength, projectNameMaxLength } from "./consts";
 
-export const validEmail = (value: string) => {
+export const isValidEmail = (value: string) => {
     return validator.isEmail(value) ? true : false;
 };
 

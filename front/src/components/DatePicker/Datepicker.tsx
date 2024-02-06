@@ -1,21 +1,26 @@
-import { TextField } from "@mui/material";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface IDatePicker {
-    handleCallBack: (date: Date) => void;
     date: Date;
+    onChange: (date: Date | null) => void;
+    customInput: React.ReactNode;
 }
 
 export const DatePickerComponent = (props: IDatePicker) => {
-    const input = <TextField name="endDate" value={props.date} fullWidth />;
+    const handleCallBackDatePicker = (date: Date) => {
+        const days = date.getDate();
+        const months = date.getMonth();
+        const years = date.getFullYear();
+        const totalFormat: string = days + "/" + (months + 1) + "/" + years;
+        props.onChange(new Date(totalFormat));
+    };
 
     return (
         <DatePicker
-            customInput={input}
+            customInput={props.customInput}
             selected={props.date}
-            onChange={(date: Date) => props.handleCallBack(date)}
-            dateFormat="dd/MM/yyyy"
+            onChange={(date: Date) => handleCallBackDatePicker(date)}
         />
     );
 };

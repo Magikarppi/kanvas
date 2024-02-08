@@ -30,7 +30,7 @@ interface Props {
     updateColumns: (column: IProjectColumn) => void;
 }
 
-export default function Column({ column, cards, index, updateColumns }: Props) {
+export default function GridColumn({ column, cards, index, updateColumns }: Props) {
     return (
         <Draggable draggableId={column.id} index={index}>
             {(provided) => (

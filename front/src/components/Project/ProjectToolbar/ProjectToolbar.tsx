@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent } from "react";
 import {
     Autocomplete,
     Grid,
@@ -25,20 +25,20 @@ const dummyCardOptions = [
 ];
 
 type DisplayType = "grid" | "list";
-const isDisplayType = (string: string): string is DisplayType => {
-    return ["grid", "list"].includes(string);
+type Props = {
+    toggleListOrGrid: (
+        _: React.MouseEvent<HTMLElement>,
+        display: string
+    ) => void;
+    showGridOrList: DisplayType;
 };
 
-const ProjectToolbar = () => {
-    const [display, setDisplay] = useState<DisplayType>("grid");
+const ProjectToolbar = ({ toggleListOrGrid, showGridOrList }: Props) => {
     const handleDisplay = (
         _: React.MouseEvent<HTMLElement>,
         display: string
     ) => {
-        const isCorrectType = isDisplayType(display);
-        if (isCorrectType) {
-            setDisplay(display);
-        }
+        toggleListOrGrid(_, display);
     };
 
     const handleSelectCard = (_: SyntheticEvent, value: string | null) => {
@@ -52,7 +52,7 @@ const ProjectToolbar = () => {
         <Grid container py={2} alignItems="center">
             <Grid item xs={12} sm={6}>
                 <ToggleButtonGroup
-                    value={display}
+                    value={showGridOrList}
                     onChange={handleDisplay}
                     exclusive
                     sx={{

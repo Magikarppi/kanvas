@@ -13,6 +13,7 @@ import {
     IReactionDB,
     ITeam,
     ITeamDB,
+    ICardResponsiblePersonDB,
 } from "../../database/utils/interfaces";
 
 export const getCurrentTimestamp = (): Date => {
@@ -191,3 +192,26 @@ export const formatReaction = (reaction: IReactionDB): IReaction => ({
     cardComment: reaction.card_comment,
     emoji: reaction.emoji,
 });
+
+export const formatCardResponsiblePersons = (
+    membersFromDB: ICardResponsiblePersonDB[] | undefined
+) => {
+    if (membersFromDB) {
+        const formattedCardResponsiblePersons = membersFromDB.map((member) => {
+            const formattedMember = {
+                cardResponsibleId: member.card_responsible_id,
+                userId: member.user_id,
+                firstName: member.first_name,
+                lastName: member.last_name,
+                email: member.email,
+                picture: member.picture,
+            };
+            return formattedMember;
+        });
+        return formattedCardResponsiblePersons;
+    } else {
+        return [];
+    }
+};
+
+

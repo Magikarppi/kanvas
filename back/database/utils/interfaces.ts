@@ -133,6 +133,12 @@ export interface IProjectMember {
     projectId: string;
 }
 
+export interface IResponsiblePerson {
+    id: string;
+    userId: string;
+    cardId: string;
+}
+
 export type ProjectMember = Pick<
     IUser,
     "id" | "firstName" | "lastName" | "email" | "picture"
@@ -145,6 +151,25 @@ export interface IProjectMemberDB {
     email: string;
     picture: string;
 }
+
+export interface ICardResponsiblePerson {
+    cardResponsibleId: string;
+    userId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    picture: string;
+}
+
+export interface ICardResponsiblePersonDB {
+    card_responsible_id: string;
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    picture: string;
+}
+
 
 export interface IUserRole {
     projectId: string;

@@ -13,9 +13,18 @@ import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
     getCurrentTimestamp,
+    formatCardResponsiblePersons,
 } from "../utils/utilities";
-import { ICard } from "../../database/utils/interfaces";
+import { ICard, IResponsiblePerson, ICardResponsiblePerson } from "../../database/utils/interfaces";
 import { UserRequest } from "../middleware/middleware";
+import { 
+    allCardResponsiblePersonsDAO, 
+    addCardResponsiblePersonDAO, 
+    deleteCardResponsiblePersonDAO,
+    cardResponsiblePersonDataDAO, } from "../../database/DAOs/cardResponsibleDAO";
+import { getProjectMembersByCardIdDAO } from "../../database/DAOs";
+import { getUserByIdDAO } from "../../database/DAOs";
+
 
 const cards = express.Router();
 
@@ -46,8 +55,6 @@ cards.post("", async (req: UserRequest, res: Response) => {
             inColumn: req.body.inColumn,
             orderIndex: req.body.orderIndex,
         };
-
-        console.log("card", card);
 
         await insertCardDAO(card);
         res.status(HTTP_RESPONSE_CODES.CREATED).send(card);
@@ -115,6 +122,116 @@ cards.delete("/:id", async (req: UserRequest, res: Response) => {
             res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
                 RESPONSE_MESSAGES.CARD_NOT_FOUND
             );
+        }
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
+    }
+});
+
+cards.get("/responsible-persons/:id", async (req: UserRequest, res: Response) => {
+    const cardId = req.params.id;
+    try {
+        const card = await getCardDAO(cardId);
+        if (card) {
+            const cardResponsiblePersons = await allCardResponsiblePersonsDAO(cardId);
+            const formattedResponsiblePersons: ICardResponsiblePerson[] =
+            formatCardResponsiblePersons(cardResponsiblePersons) || [];
+    
+            res.status(HTTP_RESPONSE_CODES.OK).send(formattedResponsiblePersons);  
+        } else {
+            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
+                RESPONSE_MESSAGES.CARD_NOT_FOUND
+            );
+        }    
+    } catch (error) {
+        res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
+            RESPONSE_MESSAGES.SERVER_ERROR
+        );
+    }
+});
+
+cards.post("/add-responsible-person", async (req: UserRequest, res: Response) => {
+    const {userId, cardId} = req.body;
+    const isBodyPropertiesMissing = !userId || !cardId;
+
+    if (isBodyPropertiesMissing) {
+        res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
+        return;
+    }
+    try {     
+        const card = await getCardDAO(req.body.cardId);
+        
+        if(!card) {
+            res.status(HTTP_RESPONSE_CODES.NOT_FOUND).send(
+                RESPONSE_MESSAGES.CARD_NOT_FOUND);
+            return;
+        }
+        const projectMembers = await getProjectMembersByCardIdDAO(cardId);
+        const isProjectMember = projectMembers?.some(
+            (projectMember) => projectMember.user_id === userId
+        );
+
+        if(!isProjectMember) {
+            res
+                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                .send("The user is not a member of this project");
+            return;
+        }
+
+        const cardResponsiblePersons = await allCardResponsiblePersonsDAO(cardId);
+
+        const isCardAlreadyMember = cardResponsiblePersons?.some(
+            (person) => person.user_id === userId
+        );
+
+        if (isCardAlreadyMember) {
+            res
+                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                .send("The user is already responsible for this card");
+            return;
+        }
+
+        const cardResponsiblePersonData: IResponsiblePerson = {
+            id: uuid(),
+            userId: userId,
+            cardId: cardId,               
+        };
+
+        await addCardResponsiblePersonDAO(cardResponsiblePersonData);
+        const user = await getUserByIdDAO(cardResponsiblePersonData.userId);
+        const formattedUser : ICardResponsiblePerson  = {
+            cardResponsibleId: cardResponsiblePersonData.id,
+            userId: user.id,
+            firstName: user.first_name,
+            lastName: user.last_name,
+            email: user.email,
+            picture: user.picture
+        };
+        res.status(HTTP_RESPONSE_CODES.OK).send(formattedUser);
+    } catch (error) {
+        res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
+            RESPONSE_MESSAGES.SERVER_ERROR
+        );
+    }
+});
+
+cards.delete("/delete-responsible-person/:id", async (req: UserRequest, res: Response) => {
+    const { id } = req.params;
+    try {
+        const found = await cardResponsiblePersonDataDAO(id);
+        if(!found) {
+            res
+                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                .send("Responsible person not found");
+            return;
+        } else {
+            await deleteCardResponsiblePersonDAO(id);
+            return res.status(HTTP_RESPONSE_CODES.OK).send("Card responsible person deleted");
         }
     } catch (error) {
         console.error(error);

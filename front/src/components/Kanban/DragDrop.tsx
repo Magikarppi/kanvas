@@ -1,7 +1,7 @@
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import { IProjectColumn } from "../../models/projectModels";
 import { ICard } from "../../models/cardModels";
-import Column from "./Column";
+import GridColumn from "./GridColumn";
 import styled from "styled-components";
 import { useRef, useState } from "react";
 import { Box, Button, Collapse, TextField } from "@mui/material";
@@ -122,7 +122,7 @@ export default function DragDrop({
                         {columns
                             .sort((a, b) => a.orderIndex - b.orderIndex)
                             .map((col, index) => (
-                                <Column
+                                <GridColumn
                                     key={col.id}
                                     column={col}
                                     cards={cards.filter(

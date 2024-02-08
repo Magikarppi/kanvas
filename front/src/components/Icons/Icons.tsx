@@ -21,6 +21,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import ReorderIcon from "@mui/icons-material/Reorder";
 import Search from "@mui/icons-material/Search";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ShareIcon from "@mui/icons-material/Share";
@@ -226,6 +227,13 @@ const Icons = {
     )),
     Projects: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <AccountTreeIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    Reorder: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <ReorderIcon
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}

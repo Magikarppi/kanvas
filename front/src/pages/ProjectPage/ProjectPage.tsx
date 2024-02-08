@@ -18,6 +18,13 @@ import { ICard } from "../../models/cardModels";
 
 import { AxiosError } from "axios";
 import DragDrop from "../../components/Kanban/DragDrop";
+import ListView from "../../components/Kanban/ListView";
+
+type DisplayType = "grid" | "list";
+const isDisplayType = (string: string): string is DisplayType => {
+    return ["grid", "list"].includes(string);
+};
+
 
 const ProjectPage = () => {
     const { id } = useParams();
@@ -29,6 +36,8 @@ const ProjectPage = () => {
     const [columns, setColumns] = useState<IProjectColumn[]>([]);
     const [cards, setCards] = useState<ICard[]>([]);
     const [members, setMembers] = useState<ProjectMember[]>([]);
+
+    const [showGridOrList, setShowGridOrList] = useState<DisplayType>("grid");
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -56,6 +65,16 @@ const ProjectPage = () => {
         };
         fetchProject();
     }, [id]);
+
+    const handleDisplay = (
+        _: React.MouseEvent<HTMLElement>,
+        display: string
+    ) => {
+        const isCorrectType = isDisplayType(display);
+        if (isCorrectType) {
+            setShowGridOrList(display);
+        }
+    };
 
     const handleNewColumn = (newColumn: IProjectColumn) => {
         setColumns((prevColumns) => {
@@ -205,17 +224,30 @@ const ProjectPage = () => {
         <div>
             <ProjectHeader projectInfo={project} projectMembers={members} />
             <Divider style={{ marginTop: "20px" }} />
-            <ProjectToolbar />
+            <ProjectToolbar toggleListOrGrid={handleDisplay} showGridOrList={showGridOrList}  />
             <Divider style={{ marginBottom: "20px" }} />
-            <DragDrop
-                columns={columns}
-                cards={cards}
-                addNewColumn={handleNewColumn}
-                updateColumns={handleUpdateColumns}
-                updateCards={handleUpdateCards}
-                projectId={id as string}
-                token={token}
-            />
+
+            {showGridOrList === "grid" ? (
+                <DragDrop
+                    columns={columns}
+                    cards={cards}
+                    addNewColumn={handleNewColumn}
+                    updateColumns={handleUpdateColumns}
+                    updateCards={handleUpdateCards}
+                    projectId={id as string}
+                    token={token}
+                />
+            ) : (
+                <ListView
+                    columns={columns}
+                    cards={cards}
+                    addNewColumn={handleNewColumn}
+                    updateColumns={handleUpdateColumns}
+                    updateCards={handleUpdateCards}
+                    projectId={id as string}
+                    token={token}
+                />
+            )}
         </div>
     );
 };

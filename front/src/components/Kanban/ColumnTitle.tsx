@@ -3,12 +3,6 @@ import {
     Box,
     IconButton,
     InputAdornment,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Popover,
     TextField,
     Typography,
 } from "@mui/material";
@@ -18,6 +12,7 @@ import { AxiosError } from "axios";
 import { IProjectColumn } from "../../models/projectModels";
 import columnsService from "../../services/columnsService";
 import { selectToken } from "../../redux/hooks";
+import ColumnDotMenu from "./ColumnDotMenu";
 
 interface Props {
     columnInfo: IProjectColumn;
@@ -28,8 +23,7 @@ const ColumnTitle = ({ columnInfo, updateColumns }: Props) => {
     const token = selectToken() as string;
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-    const id = open ? "simple-popper" : undefined;
+
 
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -132,47 +126,11 @@ const ColumnTitle = ({ columnInfo, updateColumns }: Props) => {
                     <Icons.MoreHoriz size="22px" />
                 </IconButton>
             )}
-            <Popover
-                disableScrollLock={true}
-                id={id}
-                open={open}
+            <ColumnDotMenu
+                wantsToRename={handleWantsToRename}
                 anchorEl={anchorEl}
-                onClose={() => setAnchorEl(null)}
-                anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "left" }}
-                sx={{ ".MuiPopover-paper": { padding: 0 } }}
-            >
-                <List sx={{ padding: 0 }}>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <Icons.Add />
-                            </ListItemIcon>
-                            <ListItemText>Add a New Card</ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={handleWantsToRename}>
-                            <ListItemIcon>
-                                <Icons.Edit />
-                            </ListItemIcon>
-                            <ListItemText>Rename Column</ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <Icons.DeleteForever />
-                            </ListItemIcon>
-                            <ListItemText
-                                primaryTypographyProps={{ color: "error" }}
-                            >
-                                Delete Column
-                            </ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                </List>
-            </Popover>
+                setAnchorEl={setAnchorEl}
+            />
         </>
     );
 };

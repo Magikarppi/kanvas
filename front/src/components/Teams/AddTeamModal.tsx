@@ -213,6 +213,8 @@ export const AddTeamModal = ({
                                                             color="success"
                                                             sx={{ p: "10px" }}
                                                             aria-label="directions"
+                                                            name="iconButton"
+                                                            id="iconButton"
                                                             onClick={
                                                                 addNewEmail
                                                             }
@@ -248,6 +250,8 @@ export const AddTeamModal = ({
                                         <IconButton
                                             edge="end"
                                             aria-label="delete"
+                                            name="iconDeleteButton"
+                                            id="iconDeleteButton"
                                         >
                                             <Icons.Delete
                                                 iconColor="red"
@@ -279,6 +283,7 @@ export const AddTeamModal = ({
                                 disabled={disableCreateButton}
                                 color="secondary"
                                 type="submit"
+                                name="createTeam"
                             >
                                 Create
                             </Button>
@@ -286,6 +291,7 @@ export const AddTeamModal = ({
                                 variant="contained"
                                 color="error"
                                 onClick={close}
+                                name="closeTeamModal"
                             >
                                 Cancel
                             </Button>

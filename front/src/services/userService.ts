@@ -2,7 +2,7 @@ import {
     ILoginBody,
     INewUserBody,
     IUpdatePasswordBody,
-    IUser,
+    IUpdateUser,
 } from "../models/userModels";
 import { createClient } from "../utils/axiosUtils";
 
@@ -28,7 +28,7 @@ const userRequests = {
         return response.data;
     },
 
-    updateUser: async (token: string, userInformation: Partial<IUser>) => {
+    updateUser: async (token: string, userInformation: IUpdateUser) => {
         const client = createClient(token);
         const response = await client.put(
             `/users/${userInformation.id}`,
@@ -65,11 +65,22 @@ const userRequests = {
 
     newPassword: async (
         token: string,
-        newPasswordBody: Pick<IUpdatePasswordBody, "newPassword" | "newPasswordConfirmation">
+        newPasswordBody: Pick<
+            IUpdatePasswordBody,
+            "newPassword" | "newPasswordConfirmation"
+        >
     ) => {
         const client = createClient();
         const response = await client.put(`/users/reset-password/${token}`, {
-            ... newPasswordBody,
+            ...newPasswordBody,
+        });
+        return response.data;
+    },
+
+    addProfileImage: async (token: string, image: string | ArrayBuffer) => {
+        const client = createClient(token);
+        const response = await client.post("/users/profile-image", {
+            image,
         });
         return response.data;
     },

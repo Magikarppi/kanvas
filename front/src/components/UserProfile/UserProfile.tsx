@@ -1,22 +1,9 @@
-import { useState, ChangeEvent } from "react";
-import {
-    Avatar,
-    Button,
-    Grid,
-    Paper,
-    Tooltip,
-    Typography,
-    Box,
-    IconButton,
-    CardActionArea,
-    CardMedia,
-} from "@mui/material";
+import { Button, Grid, Paper, Typography, Box } from "@mui/material";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
-import { IUser } from "../../models/userModels";
+import { IUpdateUser, IUser } from "../../models/userModels";
 import userRequests from "../../services/userService";
-import Icons from "../Icons/Icons";
 import { useAppDispatch } from "../../redux/hooks";
 import { setUserInfo } from "../../redux/userReducer";
 import { useFormik } from "formik";
@@ -30,6 +17,8 @@ import CityInput from "../Inputs/CityInput";
 import LinkedinUsernameInput from "../Inputs/LinkedinUsernameInput";
 import JobPitchInput from "../Inputs/JobPitchInput";
 import IsOpenToWorkInput from "../Inputs/IsOpenToWorkInput";
+import useImage from "../../hooks/useImage";
+import AddImage from "../Image/AddImage";
 
 const UserProfile = ({
     token,
@@ -39,8 +28,7 @@ const UserProfile = ({
     user: IUser | null | undefined;
 }) => {
     const dispatch = useAppDispatch();
-    const [image, setImage] = useState<string | ArrayBuffer | null>("");
-    const [hoveringImage, setHoveringImage] = useState<boolean>(true);
+    const { image, handleSetImage } = useImage(user!.picture);
 
     const {
         values,
@@ -65,10 +53,7 @@ const UserProfile = ({
         },
         validationSchema: userInfoSchema,
         async onSubmit(values) {
-            const updatedUser: Omit<
-                IUser,
-                "accountCreationDate" | "isOnline" | "lastOnline"
-            > = {
+            const updatedUser: IUpdateUser = {
                 id: user!.id,
                 firstName: values.firstName,
                 lastName: values.lastName,
@@ -76,7 +61,7 @@ const UserProfile = ({
                 phoneNumber: values.phoneNumber || null,
                 country: values.country || null,
                 city: values.city || null,
-                picture: "Tähän tulee kuvan url" || null,
+                picture: image || null,
                 isOpenToWork: values.isOpenToWork,
                 linkedinUsername: values.linkedinUsername || null,
                 jobPitch: values.jobPitch || null,
@@ -99,71 +84,11 @@ const UserProfile = ({
         },
     });
 
-    const handleSetImage = (event: ChangeEvent<HTMLInputElement>) => {
-        const reader = new FileReader();
-        if (event.target.files && event.target.files[0]) {
-            const isJpeg = event.target.files[0].type.slice(-4) === "jpeg";
-            const isPng = event.target.files[0].type.slice(-3) === "png";
-
-            if (isJpeg || isPng) {
-                reader.addEventListener("load", () => {
-                    setImage(reader.result);
-                });
-                reader.readAsDataURL(event.target.files[0]);
-            }
-        }
-    };
-
     const disableButton = !isValid || Object.keys(errors).length > 0;
 
     return (
         <Paper elevation={2} className="elevatedSection">
-            <Avatar
-                style={{
-                    height: "100px",
-                    width: "100px",
-                    marginTop: "40px",
-                    marginBottom: "25px",
-                }}
-                onMouseEnter={() => setHoveringImage(true)}
-                onMouseLeave={() => setHoveringImage(false)}
-            >
-                {hoveringImage ? (
-                    <Tooltip
-                        title={
-                            <Typography sx={{ fontSize: 14 }}>
-                                Edit image
-                            </Typography>
-                        }
-                        arrow
-                    >
-                        <IconButton>
-                            <Icons.Add />
-                            <input
-                                type="file"
-                                onChange={handleSetImage}
-                                style={{
-                                    position: "absolute",
-                                    opacity: 0,
-                                    cursor: "pointer",
-                                }}
-                            />
-                        </IconButton>
-                    </Tooltip>
-                ) : (
-                    <CardActionArea>
-                        {typeof image === "string" && image.length > 0 ? (
-                            <CardMedia
-                                style={{ height: "100px" }}
-                                image={image}
-                                component="img"
-                            />
-                        ) : (
-                            <Box />
-                        )}
-                    </CardActionArea>
-                )}
-            </Avatar>
+            <AddImage image={image} handleSetImage={handleSetImage} />
             <Box
                 component="form"
                 onSubmit={handleSubmit}

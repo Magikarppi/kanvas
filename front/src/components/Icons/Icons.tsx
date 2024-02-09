@@ -31,7 +31,13 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Delete, Email, Favorite, PersonAddAlt1 } from "@mui/icons-material";
+import {
+    Delete,
+    Email,
+    Favorite,
+    PersonAddAlt1,
+    Image,
+} from "@mui/icons-material";
 import { FavoriteBorder } from "@mui/icons-material";
 
 interface IconProps {
@@ -164,6 +170,13 @@ const Icons = {
     )),
     Info: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <InfoIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
+    Image: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <Image
             {...props}
             ref={ref}
             style={{ color: props.iconColor, fontSize: props.size }}

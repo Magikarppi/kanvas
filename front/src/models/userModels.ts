@@ -26,11 +26,19 @@ export interface IUser {
     phoneNumber: string | null;
     country: string | null;
     city: string | null;
-    picture: string | null | ArrayBuffer;
+    picture: string | null;
     accountCreationDate: Date | string;
     isOnline: boolean;
     lastOnline: Date | null;
     isOpenToWork: boolean;
     linkedinUsername: string | null;
     jobPitch: string | null;
+}
+
+export interface IUpdateUser
+    extends Omit<
+        IUser,
+        "lastOnline" | "isOnline" | "accountCreationDate" | "picture"
+    > {
+    picture: string | ArrayBuffer | null;
 }

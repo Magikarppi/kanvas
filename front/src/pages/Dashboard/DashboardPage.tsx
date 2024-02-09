@@ -201,6 +201,7 @@ export default function AllProjectsPage() {
             onClick={cardType === "project" ? openAddProjectModal : openAddTeamModal}
             elevation={2}
             sx={{ backgroundColor: "#2e490d" }}
+            id={cardType === "project" ? ("openProject") : ("openTeam")}
         >
             <CardContent>
                 <Typography variant="h6">

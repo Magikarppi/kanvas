@@ -9,7 +9,10 @@ import { JwtPayload } from "jsonwebtoken";
 import { UserRequest } from "../middleware/middleware";
 import { getProjectMembersByCommentIdDAO } from "../../database/DAOs";
 import { IReaction } from "../../database/utils/interfaces";
-import { insertReactionDAO } from "../../database/DAOs/reactionsDAO";
+import {
+    deleteReactionDAO,
+    insertReactionDAO,
+} from "../../database/DAOs/reactionsDAO";
 
 const reactions = express.Router();
 
@@ -59,6 +62,29 @@ reactions.post("/", async (request: UserRequest, response: Response) => {
         const storedReaction = await insertReactionDAO(reactionToAdd);
         const formattedReaction: IReaction = formatReaction(storedReaction);
         response.json(formattedReaction);
+    } catch (error) {
+        console.error(error);
+        response
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
+    }
+});
+
+reactions.delete("/:id", async (request: UserRequest, response: Response) => {
+    try {
+        const reactionId = request.params.id;
+        const { value: userId } = request.user as JwtPayload;
+        
+        const deletedReaction = await deleteReactionDAO(reactionId, userId);
+        if (deletedReaction) {
+            response.status(HTTP_RESPONSE_CODES.OK).send();
+        } else {
+            response
+                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                .send(
+                    "Unable to delete: The reaction id is invalid or you are not the reaction author"
+                );
+        }
     } catch (error) {
         console.error(error);
         response

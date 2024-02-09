@@ -2,15 +2,18 @@ import express, { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
 import jwt, { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
+import nodemailer from "nodemailer";
 
 import {
     IResetPasswordRequest,
     IUpdateUser,
     IUser,
+    IUserFromDB,
 } from "../../database/utils/interfaces";
 import {
     HTTP_RESPONSE_CODES,
     RESPONSE_MESSAGES,
+    formatUser,
     getCurrentTimestamp,
     validatePasswordFormat,
 } from "../utils/utilities";
@@ -32,7 +35,7 @@ import {
     authenticate,
     validateEmailAndNames,
 } from "../middleware/middleware";
-import nodemailer from "nodemailer";
+import { uploadImageBlob } from "../services/azureServices";
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -61,6 +64,48 @@ const sendEmail = async (link: string, email: string) => {
             link +
             "</b>",
     });
+};
+
+const handleProfileImageUpload = async (
+    userId: string,
+    profilePicture: string | null | undefined
+): Promise<string | null> => {
+    const currentUserInfo: IUserFromDB = await getUserByIdDAO(userId);
+
+    if (
+        profilePicture === undefined ||
+        profilePicture === currentUserInfo.picture
+    ) {
+        return currentUserInfo.picture;
+    }
+
+    if (profilePicture === null) {
+        // user wants to delete their profile picture
+        // TODO delete user's profile picture from Azure container if there is one
+        return null;
+    }
+
+    // new profile picture needs to be uploaded to azure
+
+    const metaData = profilePicture.substring(
+        profilePicture.indexOf(":") + 1,
+        profilePicture.indexOf(";")
+    );
+    const base64ImageData = profilePicture.split(",")[1];
+    const imageName = `profile-image-user-${userId}.${metaData.split("/")[1]}`;
+
+    const imageUrl = await uploadImageBlob(
+        imageName,
+        base64ImageData,
+        metaData
+    );
+
+    if (!imageUrl) {
+        console.error("Failed to save profile picture");
+        throw Error();
+    } else {
+        return imageUrl;
+    }
 };
 
 users.put(
@@ -93,6 +138,11 @@ users.put(
                         "Cannot update: another user with different ID already has this email"
                     );
             } else {
+                const profilePicture = await handleProfileImageUpload(
+                    id,
+                    request.body.picture
+                );
+
                 const user: IUpdateUser = {
                     firstName: request.body.firstName,
                     lastName: request.body.lastName,
@@ -100,31 +150,16 @@ users.put(
                     phoneNumber: request.body.phoneNumber,
                     country: request.body.country,
                     city: request.body.city,
-                    picture: request.body.picture,
+                    picture: profilePicture,
                     isOnline: true,
                     lastOnline: getCurrentTimestamp(),
                     isOpenToWork: request.body.isOpenToWork,
                     linkedinUsername: request.body.linkedinUsername,
                     jobPitch: request.body.jobPitch,
                 };
-                const updatedUser = await updateUserDAO(id, user);
+                const updatedUser: IUserFromDB = await updateUserDAO(id, user);
 
-                const formattedUser: IUser = {
-                    id: updatedUser.id,
-                    firstName: updatedUser.first_name,
-                    lastName: updatedUser.last_name,
-                    email: updatedUser.email,
-                    phoneNumber: updatedUser.phone_number,
-                    country: updatedUser.country,
-                    city: updatedUser.city,
-                    picture: updatedUser.picture,
-                    isOnline: updatedUser.last_online,
-                    lastOnline: updatedUser.last_online,
-                    accountCreationDate: updatedUser.account_creation_date,
-                    isOpenToWork: updatedUser.is_open_to_work,
-                    linkedinUsername: updatedUser.linkedin_username,
-                    jobPitch: updatedUser.job_pitch,
-                };
+                const formattedUser: IUser = formatUser(updatedUser);
                 response.status(HTTP_RESPONSE_CODES.OK).send(formattedUser);
             }
         } catch (error) {
@@ -329,7 +364,7 @@ users.post("/login", async (req: Request, res: Response) => {
     }
 
     try {
-        const user = await getUserByEmailDAO(email);
+        const user: IUserFromDB = await getUserByEmailDAO(email);
 
         if (!user) {
             return res
@@ -350,22 +385,7 @@ users.post("/login", async (req: Request, res: Response) => {
 
         const token = createToken(user.id);
 
-        const formattedUser: IUser = {
-            id: user.id,
-            firstName: user.first_name,
-            lastName: user.last_name,
-            email: user.email,
-            phoneNumber: user.phone_number,
-            country: user.country,
-            city: user.city,
-            picture: user.picture_url,
-            accountCreationDate: new Date(user.account_created_at),
-            isOnline: user.is_online,
-            lastOnline: new Date(user.last_online),
-            isOpenToWork: user.is_open_to_work,
-            linkedinUsername: user.linkedin_username,
-            jobPitch: user.job_pitch,
-        };
+        const formattedUser: IUser = formatUser(user);
 
         res.status(HTTP_RESPONSE_CODES.OK).json({ token, user: formattedUser });
     } catch (error) {

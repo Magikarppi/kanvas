@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 import userRouter from "./server/routes/usersRouter";
 // import { createTablesAndFillWithDummyData } from "./database/database-service";
 import teamsRouter from "./server/routes/teamsRouter";
@@ -20,8 +21,8 @@ const server = express();
 
 server.use(cors());
 
-server.use(express.json());
 server.use(cookieParser());
+server.use(bodyParser.json({ limit: "1mb" }));
 
 server.use(loggerMiddleWare);
 

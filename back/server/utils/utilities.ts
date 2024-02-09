@@ -13,6 +13,8 @@ import {
     IReactionDB,
     ITeam,
     ITeamDB,
+    IUser,
+    IUserFromDB,
     ICardResponsiblePersonDB,
 } from "../../database/utils/interfaces";
 
@@ -71,6 +73,23 @@ export const RESPONSE_MESSAGES = {
     PROJECT_NOT_FOUND: "Project with that id was not found",
     CARD_NOT_FOUND: "Card with that id was not found",
 };
+
+export const formatUser = (userFromDB: IUserFromDB): IUser => ({
+    id: userFromDB.id,
+    firstName: userFromDB.first_name,
+    lastName: userFromDB.last_name,
+    accountCreationDate: userFromDB.account_creation_date,
+    city: userFromDB.city,
+    country: userFromDB.country,
+    email: userFromDB.email,
+    isOnline: userFromDB.is_online,
+    isOpenToWork: userFromDB.is_open_to_work,
+    jobPitch: userFromDB.job_pitch,
+    lastOnline: userFromDB.last_online,
+    linkedinUsername: userFromDB.linkedin_username,
+    phoneNumber: userFromDB.phone_number,
+    picture: userFromDB.picture,
+});
 
 export const formatProject = (projectFromDB: IProjectDB): IProject => ({
     id: projectFromDB.id,
@@ -213,5 +232,3 @@ export const formatCardResponsiblePersons = (
         return [];
     }
 };
-
-

@@ -26,6 +26,24 @@ export interface IUser {
     jobPitch: string | null;
 }
 
+export interface IUserFromDB {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    password_hash: string;
+    phone_number: string | null;
+    country: string | null;
+    city: string | null;
+    picture: string | null;
+    account_creation_date: Date;
+    is_online: boolean;
+    last_online: Date | null;
+    is_open_to_work: boolean | null;
+    linkedin_username: string | null;
+    job_pitch: string | null;
+}
+
 export interface IUpdateUser {
     firstName: string;
     lastName: string;

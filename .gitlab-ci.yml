@@ -1,0 +1,27 @@
+stages:
+    - lint
+    - test
+
+front-lint-job:
+    image: node:21
+    stage: lint
+    script:
+        - cd front
+        - npm install
+        - npm run lint
+
+back-lint-job:
+    image: node:21
+    stage: lint
+    script:
+        - cd back
+        - npm install
+        - npm run lint
+
+front-jest-test-job:
+    image: node:21
+    stage: test
+    script:
+        - cd front
+        - npm install
+        - npm run test

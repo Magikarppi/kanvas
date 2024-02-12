@@ -7,7 +7,8 @@
 		"build": "npx tsc",
 		"start": "ts-node --transpile-only index.ts",
 		"dev": "nodemon -r dotenv/config index.ts",
-		"test": "jest --verbose --runInBand --forceExit"
+		"test": "jest --verbose --runInBand --forceExit",
+		"lint": "eslint ."
 	},
 	"author": "",
 	"license": "ISC",

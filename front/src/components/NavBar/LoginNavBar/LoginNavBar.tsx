@@ -21,10 +21,13 @@ const LoginNavBar = ({ open, setOpen }: TOpen) => {
     };
 
     return (
-        <div className="navBarContainer">
-            <Box sx={{ display: "flex" }}>
-                <AppBar position="absolute">
-                    <Toolbar variant="dense">
+        <>
+            <Box sx={{ display: "flex", height: "65px" }}>
+                <AppBar sx={{ paddingLeft: "0px" }}>
+                    <Toolbar
+                        variant="dense"
+                        sx={{ boxShadow: "0px 5px 5px #3d3d3d" }}
+                    >
                         <IconButton
                             color="inherit"
                             aria-label="open drawer"
@@ -64,7 +67,7 @@ const LoginNavBar = ({ open, setOpen }: TOpen) => {
                 </AppBar>
                 <LoginNavDrawer open={open} setOpen={setOpen} />
             </Box>
-        </div>
+        </>
     );
 };
 

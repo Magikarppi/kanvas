@@ -31,9 +31,10 @@ type Props = {
         display: string
     ) => void;
     showGridOrList: DisplayType;
+    width: number;
 };
 
-const ProjectToolbar = ({ toggleListOrGrid, showGridOrList }: Props) => {
+const ProjectToolbar = ({ toggleListOrGrid, showGridOrList, width }: Props) => {
     const handleDisplay = (
         _: React.MouseEvent<HTMLElement>,
         display: string
@@ -49,7 +50,7 @@ const ProjectToolbar = ({ toggleListOrGrid, showGridOrList }: Props) => {
     };
 
     return (
-        <Grid container py={2} alignItems="center">
+        <Grid container py={2} alignItems="center" width={`${width}px`}>
             <Grid item xs={12} sm={6}>
                 <ToggleButtonGroup
                     value={showGridOrList}

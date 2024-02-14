@@ -24,7 +24,6 @@ const ColumnTitle = ({ columnInfo, updateColumns }: Props) => {
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
     };
@@ -73,9 +72,25 @@ const ColumnTitle = ({ columnInfo, updateColumns }: Props) => {
     };
 
     return (
-        <>
+        <Box
+            sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "270px",
+                border: "none",
+                backgroundColor: "transparent",
+                marginBottom: "10px",
+            }}
+        >
             {!wantsToRename ? (
-                <Typography variant="h5" marginLeft="3%" fontWeight="bold">
+                <Typography
+                    variant="h5"
+                    marginLeft="3%"
+                    fontWeight="bold"
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                >
                     {columnInfo.columnName}
                 </Typography>
             ) : (
@@ -131,7 +146,7 @@ const ColumnTitle = ({ columnInfo, updateColumns }: Props) => {
                 anchorEl={anchorEl}
                 setAnchorEl={setAnchorEl}
             />
-        </>
+        </Box>
     );
 };
 

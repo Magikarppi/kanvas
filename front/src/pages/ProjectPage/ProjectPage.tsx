@@ -25,11 +25,14 @@ const isDisplayType = (string: string): string is DisplayType => {
     return ["grid", "list"].includes(string);
 };
 
-
 const ProjectPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const token = selectToken() as string;
+
+    const [scrollWidth, setScrollWidth] = useState(
+        document.documentElement.scrollWidth
+    );
 
     const [loading, setLoading] = useState(true);
     const [project, setProject] = useState<IProject>();
@@ -65,6 +68,19 @@ const ProjectPage = () => {
         };
         fetchProject();
     }, [id]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setScrollWidth(document.documentElement.scrollWidth);
+        };
+
+        handleResize();
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, [loading, columns]);
 
     const handleDisplay = (
         _: React.MouseEvent<HTMLElement>,
@@ -222,10 +238,18 @@ const ProjectPage = () => {
 
     return loading === true ? null : (
         <div>
-            <ProjectHeader projectInfo={project} projectMembers={members} />
-            <Divider style={{ marginTop: "20px" }} />
-            <ProjectToolbar toggleListOrGrid={handleDisplay} showGridOrList={showGridOrList}  />
-            <Divider style={{ marginBottom: "20px" }} />
+            <ProjectHeader
+                projectInfo={project}
+                projectMembers={members}
+                width={scrollWidth}
+            />
+            <Divider style={{ marginTop: "20px", width: scrollWidth }} />
+            <ProjectToolbar
+                toggleListOrGrid={handleDisplay}
+                showGridOrList={showGridOrList}
+                width={scrollWidth}
+            />
+            <Divider style={{ marginBottom: "20px", width: scrollWidth }} />
 
             {showGridOrList === "grid" ? (
                 <DragDrop

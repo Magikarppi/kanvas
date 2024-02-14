@@ -7,9 +7,11 @@ import { IProject, ProjectMember } from "../../../models/projectModels";
 const ProjectHeader = ({
     projectInfo,
     projectMembers,
+    width,
 }: {
     projectInfo: IProject | undefined;
     projectMembers: ProjectMember[];
+    width: number;
 }) => {
     if (!projectInfo) {
         return null;
@@ -17,7 +19,12 @@ const ProjectHeader = ({
 
     return (
         <>
-            <Grid container alignItems="center" marginTop="1%">
+            <Grid
+                container
+                alignItems="center"
+                marginTop="1%"
+                sx={{ width: `${width}px` }}
+            >
                 <Grid
                     item
                     display="flex"

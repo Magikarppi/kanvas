@@ -24,6 +24,7 @@ export default function NameInput({
         <>
             <InputLabel htmlFor="projectName">Name *</InputLabel>
             <TextField
+                data-cy="project-name-input"
                 onChange={handleChange}
                 name="name"
                 value={name}

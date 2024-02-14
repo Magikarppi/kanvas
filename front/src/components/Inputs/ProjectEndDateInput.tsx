@@ -37,7 +37,12 @@ export default function ProjectEndDateInput({
                 }}
                 dateFormat="dd/MM/yyyy"
                 customInput={
-                    <TextField name="endDate" value={endDate} fullWidth />
+                    <TextField
+                        name="endDate"
+                        value={endDate}
+                        fullWidth
+                        data-cy="project-end-date-input"
+                    />
                 }
             />
         </>

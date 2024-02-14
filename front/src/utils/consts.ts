@@ -13,3 +13,5 @@ export const keywordMaxLength = 100;
 export const cardColorMaxLength = 100;
 // team
 export const teamNameMaxLength = 100;
+
+export const projectThemes = ["blank", "red", "yellow", "blue", "green"];

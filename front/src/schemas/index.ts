@@ -64,6 +64,7 @@ export const signUpSchema = yup.object().shape({
 export const addProjectSchema = yup.object().shape({
     name: yup
         .string()
+        .transform((name) => (name as string).trim())
         .max(projectNameMaxLength, maxLengthProjectNameHelperText)
         .required(emptyFieldHelperText),
     description: yup

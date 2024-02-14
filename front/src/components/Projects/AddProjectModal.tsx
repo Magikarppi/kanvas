@@ -110,7 +110,7 @@ export default function AddProjectModal({
             aria-labelledby="add-project-modal"
             aria-describedby="add-project-modal"
         >
-            <Card sx={style}>
+            <Card sx={style} data-cy="add-project-modal">
                 <Container>
                     <Box
                         sx={{
@@ -195,6 +195,7 @@ export default function AddProjectModal({
                                         name="isPublic"
                                         value={values.isPublic}
                                         label="This project can be viewed by everyone"
+                                        dataCy="project-is-public-checkbox"
                                     />
                                 </Grid>
                             </Grid>
@@ -211,6 +212,7 @@ export default function AddProjectModal({
                                     disabled={disableButton}
                                     color="secondary"
                                     type="submit"
+                                    data-cy="project-add-button"
                                 >
                                     Create
                                 </Button>
@@ -218,6 +220,7 @@ export default function AddProjectModal({
                                     variant="contained"
                                     color="error"
                                     onClick={close}
+                                    data-cy="project-close-button"
                                 >
                                     Cancel
                                 </Button>

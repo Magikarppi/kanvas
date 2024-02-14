@@ -7,6 +7,7 @@ interface IProps {
     name: string;
     value: boolean;
     label?: string;
+    dataCy?: string;
 }
 
 export default function CustomCheckbox({
@@ -14,6 +15,7 @@ export default function CustomCheckbox({
     value,
     name,
     label,
+    dataCy,
 }: IProps) {
     return (
         <>
@@ -24,6 +26,7 @@ export default function CustomCheckbox({
                     checked={value}
                     onChange={handleChange}
                     sx={{ "& .MuiSvgIcon-root": { fontSize: 22 } }}
+                    data-cy={dataCy}
                 />
                 <InputLabel sx={{ color: "white", marginTop: "4px" }}>
                     {label}

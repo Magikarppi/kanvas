@@ -6,6 +6,7 @@ import {
     SelectChangeEvent,
 } from "@mui/material";
 import { ReactNode } from "react";
+import { projectThemes } from "../../utils/consts";
 
 interface IProps {
     handleChange:
@@ -25,12 +26,19 @@ export default function ProjectThemeInput({ handleChange, theme }: IProps) {
                     value={theme}
                     onChange={handleChange}
                     name="theme"
+                    data-cy="project-theme-input"
                 >
-                    <MenuItem value="blank">Blank</MenuItem>
-                    <MenuItem value="red">Red</MenuItem>
-                    <MenuItem value="yellow">Yellow</MenuItem>
-                    <MenuItem value="blue">Blue</MenuItem>
-                    <MenuItem value="green">Green</MenuItem>
+                    {projectThemes.map((theme) => {
+                        return (
+                            <MenuItem
+                                value={theme}
+                                key={theme}
+                                data-cy={`select-option-${theme}`}
+                            >
+                                {theme}
+                            </MenuItem>
+                        );
+                    })}
                 </Select>
             </FormControl>
         </>

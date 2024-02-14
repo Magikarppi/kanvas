@@ -18,3 +18,11 @@ export const userInfo = {
     jobPitch: "Ryömies",
     password: "cypresstest123!",
 };
+
+export const projectInfo = {
+    name: "testi projekti",
+    description: "kattava kuvaus",
+    isPublic: true,
+    endDate: new Date(),
+    theme: "red",
+};

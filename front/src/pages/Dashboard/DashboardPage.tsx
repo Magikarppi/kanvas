@@ -102,7 +102,6 @@ export default function AllProjectsPage() {
         useState<boolean>(false);
     const [addTeamModalOpen, setAddTeamModalOpen] = useState<boolean>(false);
 
-
     const token = selectToken();
     const user = selectUser();
 
@@ -169,13 +168,13 @@ export default function AllProjectsPage() {
         }
     };
 
-    const handleAddTeam = async(team: INewTeamInitalFormValues) => {
-        const {publicValue, teamName, emails} = team;
+    const handleAddTeam = async (team: INewTeamInitalFormValues) => {
+        const { publicValue, teamName, emails } = team;
         if (token) {
             try {
                 const addedTeam = await teamsService.addTeam(
                     token,
-                    teamName, 
+                    teamName,
                     publicValue,
                     emails
                 );
@@ -183,10 +182,7 @@ export default function AllProjectsPage() {
                 if (addedTeam) {
                     setDashboardData({
                         ...dashboardData,
-                        userTeams: [
-                            ...dashboardData.userTeams,
-                            addedTeam,
-                        ],
+                        userTeams: [...dashboardData.userTeams, addedTeam],
                     });
                 }
             } catch (error) {
@@ -198,7 +194,14 @@ export default function AllProjectsPage() {
 
     const AddNewCreateCard = (cardType: string) => (
         <Card
-            onClick={cardType === "project" ? openAddProjectModal : openAddTeamModal}
+            onClick={
+                cardType === "project" ? openAddProjectModal : openAddTeamModal
+            }
+            data-cy={
+                cardType === "project"
+                    ? "open-add-project-modal-button"
+                    : "open-add-team-modal-button"
+            }
             elevation={2}
             sx={{ backgroundColor: "#2e490d" }}
             id={cardType === "project" ? ("openProject") : ("openTeam")}
@@ -319,9 +322,9 @@ export default function AllProjectsPage() {
                 close={closeAddProjectModal}
                 handleAddProject={handleAddProject}
             />
-            <AddTeamModal 
+            <AddTeamModal
                 open={addTeamModalOpen}
-                close={closeAddTeamModal} 
+                close={closeAddTeamModal}
                 handleAddTeam={handleAddTeam}
             />
             <Stack sx={{ minHeight: "90vh" }}>

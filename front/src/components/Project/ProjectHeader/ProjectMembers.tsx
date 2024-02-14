@@ -41,6 +41,8 @@ const ProjectMembers = ({
         };
     };
 
+    // ToDo: use this state to open project settings after we have modal
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [settingsModalOpen, setSettingsModalOpen] = useState<boolean>(false);
 
     const handleSettingsClick = () => {
@@ -56,14 +58,15 @@ const ProjectMembers = ({
                 alignItems="center"
             >
                 <Chip
-                    icon={<Icons.Edit size="14px" />}
+                    icon={<Icons.Edit size="16px" />}
                     onClick={handleSettingsClick}
                     label="Edit Project"
-                    color="primary"
-                    variant="outlined"
-                    size="small"
+                    color="secondary"
+                    variant="filled"
+                    size="medium"
                     sx={{
-                        fontSize: "11px",
+                        width: "115px",
+                        fontSize: "12px",
                         alignSelf: {
                             xs: "center",
                             sm: "flex-end",

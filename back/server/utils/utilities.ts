@@ -59,7 +59,8 @@ export const HTTP_RESPONSE_CODES = {
 };
 
 export const RESPONSE_MESSAGES = {
-    SERVER_ERROR: "An unexpected error occurred while processing your request",
+    CARD_NOT_FOUND: "Card with that id was not found",
+    COMMENT_TEXT_EMPTY: "Comment text cannot be empty",
     FNAME_LNAME_EMPTY: "First name or last name cannot be empty",
     FORBIDDEN: "You have no authorization to do this",
     INVALID_EMAIL_FORMAT: "Invalid Email address format",
@@ -67,11 +68,11 @@ export const RESPONSE_MESSAGES = {
         "Password should be 8-50 characters long and contain at least one special character and one number",
     INVALID_REQ_BODY: "One or more properties missing from the request body",
     INVALID_UNAME_PWORD: "Invalid username or password",
-    USER_NOT_FOUND: "User with that id was not found",
     PASSWORDS_NO_MATCH: "The provided passwords do not match",
-    TEAM_NOT_FOUND: "Team with that id was not found",
     PROJECT_NOT_FOUND: "Project with that id was not found",
-    CARD_NOT_FOUND: "Card with that id was not found",
+    SERVER_ERROR: "An unexpected error occurred while processing your request",
+    TEAM_NOT_FOUND: "Team with that id was not found",
+    USER_NOT_FOUND: "User with that id was not found",
 };
 
 export const formatUser = (userFromDB: IUserFromDB): IUser => ({
@@ -197,13 +198,28 @@ export const formatProjectColumn = (
     projectId: projectColumnFromDB.project_id,
 });
 
-export const formatCardComment = (cardComment: ICardCommentDB) => ({
-    id: cardComment.id,
-    cardId: cardComment.card_id,
-    author: cardComment.author,
-    commentText: cardComment.comment_text,
-    timeAdded: cardComment.time_added,
-});
+export const formatCardComments = (
+    cardComments: ICardCommentDB[] | ICardCommentDB
+) => {
+    const parameterIsArray = Array.isArray(cardComments);
+    if (parameterIsArray) {
+        const formattedCardComments = cardComments.map((cardComment) => ({
+            id: cardComment.id,
+            cardId: cardComment.card_id,
+            author: cardComment.author,
+            commentText: cardComment.comment_text,
+            timeAdded: cardComment.time_added,
+        }));
+        return formattedCardComments;
+    } else
+        return {
+            id: cardComments.id,
+            cardId: cardComments.card_id,
+            author: cardComments.author,
+            commentText: cardComments.comment_text,
+            timeAdded: cardComments.time_added,
+        };
+};
 
 export const formatReaction = (reaction: IReactionDB): IReaction => ({
     id: reaction.id,

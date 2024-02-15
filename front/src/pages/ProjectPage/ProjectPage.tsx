@@ -19,6 +19,8 @@ import { ICard } from "../../models/cardModels";
 import { AxiosError } from "axios";
 import DragDrop from "../../components/Kanban/DragDrop";
 import ListView from "../../components/Kanban/ListView";
+import cardsService from "../../services/cardsService";
+import columnsService from "../../services/columnsService";
 
 type DisplayType = "grid" | "list";
 const isDisplayType = (string: string): string is DisplayType => {
@@ -82,6 +84,23 @@ const ProjectPage = () => {
         };
     }, [loading, columns]);
 
+    useEffect(() => {
+        // send updates also to backend
+        const updateCard = async (card: ICard) => {
+            try {
+                await cardsService.updateCard(token, card);
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    toast.error(error?.response?.data);
+                }
+            }
+        };
+
+        if (cards.length > 0) {
+            cards.forEach((card) => updateCard(card));
+        }
+    }, [cards]);
+
     const handleDisplay = (
         _: React.MouseEvent<HTMLElement>,
         display: string
@@ -134,6 +153,19 @@ const ProjectPage = () => {
                 col.id === updatedColumn.id ? updatedColumn : col
             );
         });
+
+        // send update also to backend
+        const updateColumn = async (column: IProjectColumn) => {
+            try {
+                await columnsService.editColumn(token, column);
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    toast.error(error.response?.data);
+                }
+            }
+        };
+
+        updateColumn(updatedColumn);
     };
 
     const handleUpdateCards = (updatedCard: ICard) => {

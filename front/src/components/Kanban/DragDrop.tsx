@@ -1,4 +1,9 @@
-import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
+import {
+    DragDropContext,
+    DragStart,
+    DropResult,
+    Droppable,
+} from "react-beautiful-dnd";
 import { IProjectColumn } from "../../models/projectModels";
 import { ICard } from "../../models/cardModels";
 import GridColumn from "./GridColumn";
@@ -12,7 +17,7 @@ import { toast } from "react-toastify";
 interface Props {
     columns: IProjectColumn[];
     cards: ICard[];
-    addNewColumn: (newColumn:IProjectColumn) => void;
+    addNewColumn: (newColumn: IProjectColumn) => void;
     updateCards: (card: ICard) => void;
     updateColumns: (column: IProjectColumn) => void;
     projectId: string;
@@ -36,6 +41,9 @@ export default function DragDrop({
     const [wantsToAddColumn, setWantsToAddColumn] = useState(false);
     const ref = useRef<HTMLInputElement | null>(null);
 
+    const [isColumnDragDisabled, setIsColumnDragDisabled] = useState(false);
+    const [isCardDragDisabled, setIsCardDragDisabled] = useState(false);
+
     const handleAddColumn = async () => {
         const newColumn: Omit<IProjectColumn, "id"> = {
             columnName: newColumnName,
@@ -44,7 +52,10 @@ export default function DragDrop({
         };
 
         try {
-            const addedColumn: IProjectColumn = await columnsService.addColumn(token, newColumn);
+            const addedColumn: IProjectColumn = await columnsService.addColumn(
+                token,
+                newColumn
+            );
             addNewColumn(addedColumn);
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -65,6 +76,9 @@ export default function DragDrop({
 
     const onDragEnd = (result: DropResult) => {
         const { destination, source, draggableId, type } = result;
+
+        setIsCardDragDisabled(false);
+        setIsColumnDragDisabled(false);
 
         if (!destination) {
             return;
@@ -107,8 +121,18 @@ export default function DragDrop({
         }
     };
 
+    const onDragStart = (start: DragStart) => {
+        const { type } = start;
+        if (type === "card") {
+            setIsColumnDragDisabled(true);
+        }
+        if (type === "column") {
+            setIsCardDragDisabled(true);
+        }
+    };
+
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
             <Droppable
                 droppableId="all-columns"
                 direction="horizontal"
@@ -130,6 +154,8 @@ export default function DragDrop({
                                     )}
                                     index={index}
                                     updateColumns={updateColumns}
+                                    columnDragDisabled={isColumnDragDisabled}
+                                    cardDragDisabled={isCardDragDisabled}
                                 />
                             ))}
                         {provided.placeholder}
@@ -142,7 +168,7 @@ export default function DragDrop({
                                 padding: "20px 35px 5px 35px",
                                 height: wantsToAddColumn ? "150px" : "80px",
                                 transition: "height 0.2s margin-left 0s",
-                                marginLeft: columns.length === 0 ? "1.5%" : 0
+                                marginLeft: columns.length === 0 ? "1.5%" : 0,
                             }}
                         >
                             <Collapse in={wantsToAddColumn} timeout="auto">

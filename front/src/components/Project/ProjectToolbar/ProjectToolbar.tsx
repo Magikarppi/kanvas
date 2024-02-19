@@ -64,7 +64,7 @@ const ProjectToolbar = ({ toggleListOrGrid, showGridOrList, width }: Props) => {
                         },
                         marginLeft: {
                             xs: 0,
-                            sm: "10.8%",
+                            sm: "10%",
                         },
                     }}
                 >
@@ -114,7 +114,7 @@ const ProjectToolbar = ({ toggleListOrGrid, showGridOrList, width }: Props) => {
                     isOptionEqualToValue={(option, value) => option === value}
                     sx={{
                         marginRight: {
-                            sm: 2.5,
+                            sm: 4,
                             xs: 0,
                         },
                     }}

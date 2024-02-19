@@ -81,6 +81,7 @@ const ColumnTitle = ({ columnInfo, updateColumns }: Props) => {
                 border: "none",
                 backgroundColor: "transparent",
                 marginBottom: "10px",
+                userSelect: "none",
             }}
         >
             {!wantsToRename ? (

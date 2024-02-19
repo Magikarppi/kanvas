@@ -6,7 +6,7 @@ import BoardCard from "./BoardCard";
 import ColumnTitle from "./ColumnTitle";
 
 const Container = styled.div`
-    margin: 10px;
+    margin: 0px 10px 0px 10px;
     width: 270px;
     border-radius: 7px;
     display: flex;
@@ -27,6 +27,8 @@ interface Props {
     cards: ICard[];
     index: number;
     updateColumns: (column: IProjectColumn) => void;
+    columnDragDisabled: boolean;
+    cardDragDisabled: boolean;
 }
 
 export default function GridColumn({
@@ -34,10 +36,16 @@ export default function GridColumn({
     cards,
     index,
     updateColumns,
+    columnDragDisabled,
+    cardDragDisabled,
 }: Props) {
     return (
-        <Draggable draggableId={column.id} index={index}>
-            {(provided) => (
+        <Draggable
+            draggableId={column.id}
+            index={index}
+            isDragDisabled={columnDragDisabled}
+        >
+            {(provided, snapshot) => (
                 <Container
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
@@ -47,6 +55,9 @@ export default function GridColumn({
                             cards.length === 0
                                 ? "224px"
                                 : `${cards.length * 154 + 70}px`,
+                        background: snapshot.isDragging
+                            ? "linear-gradient(180deg, #7c4fc8 0%, #5E00FF 100%)"
+                            : "linear-gradient(180deg, #535353 0%, #434343 28%, #272727 100%)",
                         ...provided.draggableProps.style,
                     }}
                 >
@@ -54,6 +65,7 @@ export default function GridColumn({
                         columnInfo={column}
                         updateColumns={updateColumns}
                     />
+
                     <Droppable droppableId={column.id} type="card">
                         {(provided) => (
                             <CardList
@@ -67,6 +79,7 @@ export default function GridColumn({
                                             key={card.id}
                                             card={card}
                                             index={index}
+                                            cardDragDisabled={cardDragDisabled}
                                         />
                                     ))}
                                 {provided.placeholder}

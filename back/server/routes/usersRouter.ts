@@ -29,13 +29,14 @@ import {
     getResetPasswordRequestDAO,
     deleteResetPasswordRequestDAO,
     updateResetPasswordRequestDAO,
+    getUserPictureDAO,
 } from "../../database/DAOs";
 import {
     UserRequest,
     authenticate,
     validateEmailAndNames,
 } from "../middleware/middleware";
-import { uploadImageBlob } from "../services/azureServices";
+import { deleteImageBlob, uploadImageBlob } from "../services/azureServices";
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -81,7 +82,16 @@ const handleProfileImageUpload = async (
 
     if (profilePicture === null) {
         // user wants to delete their profile picture
-        // TODO delete user's profile picture from Azure container if there is one
+        const imageObj = await getUserPictureDAO(userId);
+        const imageUrl = imageObj.picture;
+        const parts = imageUrl.split("/");
+
+        // Last part is string including blobName and queryParams
+        const lastPart = parts[parts.length - 1];
+        // Split by query parameter character and select the first element, i.e. blob name ending with .jpeg
+        const blobName = lastPart.split("?")[0];
+
+        await deleteImageBlob(blobName);
         return null;
     }
 

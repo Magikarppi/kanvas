@@ -1,4 +1,9 @@
-import { BlobSASPermissions, BlobServiceClient } from "@azure/storage-blob";
+import {
+    BlobClient,
+    BlobDeleteOptions,
+    BlobSASPermissions,
+    BlobServiceClient,
+} from "@azure/storage-blob";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -35,4 +40,15 @@ export const uploadImageBlob = async (
     const urlWithSasToken = `${sasToken}`;
 
     return urlWithSasToken;
+};
+
+export const deleteImageBlob = async (blobName: string): Promise<void> => {
+    const blockBlobClient: BlobClient =
+        containerClient.getBlockBlobClient(blobName);
+
+    const options: BlobDeleteOptions = {
+        deleteSnapshots: "include", // delete the base blob and all it's possible snapshots
+    };
+
+    await blockBlobClient.deleteIfExists(options);
 };

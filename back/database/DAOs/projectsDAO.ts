@@ -1,6 +1,9 @@
 import { executeMultipleQueries, executeQuery } from "../database-service";
 import { insertPlaceholderColumns } from "../queries/projectColumnsQueries";
-import { insertProjectMember } from "../queries/projectMemberQueries";
+import {
+    deleteProjectMembers,
+    insertProjectMember,
+} from "../queries/projectMemberQueries";
 import {
     getProject,
     getUserProjects,
@@ -20,7 +23,7 @@ import {
 
 export const insertProjectDAO = async (
     project: IProject,
-    projectMember: IProjectMember,
+    projectMembers: IProjectMember[],
     userRole: IUserRole,
     placeholderColumns: IProjectColumn[]
 ) => {
@@ -38,14 +41,15 @@ export const insertProjectDAO = async (
         ],
     };
 
-    const insertProjectMemberOperation: IParametrizedQuery = {
-        query: insertProjectMember,
-        parameters: [
-            projectMember.id,
-            projectMember.userId,
-            projectMember.projectId,
-        ],
-    };
+    const insertProjectMemberOperations: IParametrizedQuery[] =
+        projectMembers.map((projectMember) => ({
+            query: insertProjectMember,
+            parameters: [
+                projectMember.id,
+                projectMember.userId,
+                projectMember.projectId,
+            ],
+        }));
 
     const insertProjectAdminOperation: IParametrizedQuery = {
         query: insertProjectAdmin,
@@ -72,7 +76,7 @@ export const insertProjectDAO = async (
 
     const results = await executeMultipleQueries(
         insertProjectOperation,
-        insertProjectMemberOperation,
+        ...insertProjectMemberOperations,
         insertProjectAdminOperation,
         insertPlaceholderColumnsOperation
     );
@@ -103,19 +107,44 @@ export const getUserProjectsDAO = async (userId: string) => {
 
 export const updateProjectDAO = async (
     projectId: string,
-    project: IProject
+    project: IProject,
+    projectMembers: IProjectMember[],
+    adminId: string
 ) => {
-    const params = [
-        project.name,
-        project.description,
-        project.isPublic,
-        project.creationDate,
-        project.endDate,
-        project.theme,
-        project.picture,
-        projectId,
-    ];
-    await executeQuery(updateProject, params);
+    const clearProjectMembersOperation: IParametrizedQuery = {
+        query: deleteProjectMembers,
+        parameters: [projectId, adminId],
+    };
+
+    const updateProjectMemberOperations: IParametrizedQuery[] =
+        projectMembers.map((projectMember) => ({
+            query: insertProjectMember,
+            parameters: [
+                projectMember.id,
+                projectMember.userId,
+                projectMember.projectId,
+            ],
+        }));
+
+    const updateProjectInfoOperation: IParametrizedQuery = {
+        query: updateProject,
+        parameters: [
+            project.name,
+            project.description,
+            project.isPublic,
+            project.creationDate,
+            project.endDate,
+            project.theme,
+            project.picture,
+            projectId,
+        ],
+    };
+
+    await executeMultipleQueries(
+        clearProjectMembersOperation,
+        ...updateProjectMemberOperations,
+        updateProjectInfoOperation
+    );
 };
 
 export const getPublicProjectsDAO = async (isPublic: boolean) => {

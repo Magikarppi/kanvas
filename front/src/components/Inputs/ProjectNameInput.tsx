@@ -28,7 +28,7 @@ export default function NameInput({
                 onChange={handleChange}
                 name="name"
                 value={name}
-                error={touched && Boolean(error)}
+                error={!name && touched && Boolean(error)}
                 helperText={touched && error}
                 onBlur={handleBlur}
                 required

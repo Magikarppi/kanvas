@@ -6,7 +6,8 @@ import {
     RESPONSE_MESSAGES,
     validateEmail,
 } from "../utils/utilities";
-import { getProjectMemberDAO } from "../../database/DAOs";
+import { getProjectMemberDAO, getUserByEmailDAO } from "../../database/DAOs";
+import { IUserFromDB } from "../../database/utils/interfaces";
 
 dotenv.config();
 
@@ -144,6 +145,35 @@ export const validateColumnRequest = async (
             return response
                 .status(HTTP_RESPONSE_CODES.FORBIDDEN)
                 .send(RESPONSE_MESSAGES.FORBIDDEN);
+        }
+        next();
+    } catch (error) {
+        return response
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
+    }
+};
+
+export const validateMembers = async (
+    request: UserRequest,
+    response: Response,
+    next: NextFunction
+) => {
+    try {
+        const memberEmails = request.body.members;
+        if (Array.isArray(memberEmails)) {
+            const users: Array<IUserFromDB | undefined | null> =
+                await Promise.all(
+                    memberEmails.map(
+                        async (email) => await getUserByEmailDAO(email)
+                    )
+                );
+            const filteredUsers: IUserFromDB[] = users.filter(
+                (user) => !!user
+            ) as IUserFromDB[];
+            request.body.members = filteredUsers;
+        } else {
+            request.body.members = [];
         }
         next();
     } catch (error) {

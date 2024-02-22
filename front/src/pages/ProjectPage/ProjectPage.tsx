@@ -12,6 +12,7 @@ import { selectToken } from "../../redux/hooks";
 import {
     IProject,
     IProjectColumn,
+    IProjectSubmitNew,
     ProjectMember,
 } from "../../models/projectModels";
 import { ICard } from "../../models/cardModels";
@@ -21,6 +22,7 @@ import DragDrop from "../../components/Kanban/DragDrop";
 import ListView from "../../components/Kanban/ListView";
 import cardsService from "../../services/cardsService";
 import columnsService from "../../services/columnsService";
+import EditProjectModal from "../../components/Projects/EditProjectModal";
 
 type DisplayType = "grid" | "list";
 const isDisplayType = (string: string): string is DisplayType => {
@@ -28,7 +30,7 @@ const isDisplayType = (string: string): string is DisplayType => {
 };
 
 const ProjectPage = () => {
-    const { id } = useParams();
+    const { id: projectId } = useParams();
     const navigate = useNavigate();
     const token = selectToken() as string;
 
@@ -44,13 +46,15 @@ const ProjectPage = () => {
 
     const [showGridOrList, setShowGridOrList] = useState<DisplayType>("grid");
 
+    const [projectModalOpen, setProjectModalOpen] = useState<boolean>(false);
+
     useEffect(() => {
         const fetchProject = async () => {
             if (token) {
                 try {
                     const projectData = await projectService.getProjectById(
                         token,
-                        id as string
+                        projectId as string
                     );
                     setLoading(false);
                     setProject(projectData.project);
@@ -69,7 +73,7 @@ const ProjectPage = () => {
             }
         };
         fetchProject();
-    }, [id]);
+    }, [projectId]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -268,12 +272,68 @@ const ProjectPage = () => {
         });
     };
 
+    const handleUpdateProject = async (
+        projectInfo: IProjectSubmitNew,
+        members: string[]
+    ) => {
+        if (!project || !projectId) {
+            return;
+        }
+        const updatedProject: IProject = {
+            ...project,
+            ...projectInfo,
+        };
+
+        try {
+            await projectService.updateProjectById(
+                token,
+                updatedProject,
+                projectId,
+                members
+            );
+
+            setProject(updatedProject);
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error?.response?.data);
+            }
+        }
+    };
+
+    const handleDeleteProject = async () => {
+        if (!projectId) {
+            return;
+        }
+
+        try {
+            await projectService.deleteProjectById(token, projectId);
+
+            setProject(undefined);
+            navigate("/dashboard");
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                toast.error(error?.response?.data);
+            }
+        }
+    };
+
+    const projectMemberEmails = members.map((member) => member.email);
+
     return loading === true ? null : (
-        <div>
+        <>
+            <EditProjectModal
+                close={() => setProjectModalOpen(false)}
+                open={projectModalOpen}
+                project={project}
+                handleUpdateProject={handleUpdateProject}
+                handleDeleteProject={handleDeleteProject}
+                members={projectMemberEmails}
+            />
             <ProjectHeader
                 projectInfo={project}
                 projectMembers={members}
                 width={scrollWidth}
+                handleOpenEditProjectModal={() => setProjectModalOpen(true)}
             />
             <Divider style={{ marginTop: "20px", width: scrollWidth }} />
             <ProjectToolbar
@@ -290,7 +350,7 @@ const ProjectPage = () => {
                     addNewColumn={handleNewColumn}
                     updateColumns={handleUpdateColumns}
                     updateCards={handleUpdateCards}
-                    projectId={id as string}
+                    projectId={projectId as string}
                     token={token}
                 />
             ) : (
@@ -300,11 +360,11 @@ const ProjectPage = () => {
                     addNewColumn={handleNewColumn}
                     updateColumns={handleUpdateColumns}
                     updateCards={handleUpdateCards}
-                    projectId={id as string}
+                    projectId={projectId as string}
                     token={token}
                 />
             )}
-        </div>
+        </>
     );
 };
 

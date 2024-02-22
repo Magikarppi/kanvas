@@ -12,3 +12,6 @@ export const getProjectMembersByCardId =
 
 export const getProjectMembersByCommentId =
     "SELECT project_members.user_id FROM project_members INNER JOIN projects ON project_members.project_id = projects.id INNER JOIN project_columns ON project_columns.project_id = projects.id INNER JOIN cards ON project_columns.id = cards.in_column INNER JOIN card_comments ON cards.id = card_comments.card_id WHERE card_comments.id = $1";
+
+export const deleteProjectMembers =
+    "DELETE FROM project_members WHERE project_id = $1 AND NOT user_id = $2";

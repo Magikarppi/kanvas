@@ -1,4 +1,4 @@
-import { userLoginSignUp } from "./cypress-consts";
+import { projectInfo, userLoginSignUp } from "./cypress-consts";
 
 export const getCyData = (selector: string) => {
     return cy.get(`[data-cy="${selector}"]`);
@@ -24,4 +24,20 @@ export const login = () => {
 
 export const openAddProjectModal = () => {
     getCyData("open-add-project-modal-button").click();
+};
+
+export const openEditProjectModal = () => {
+    getCyData("open-edit-project-modal-button").click();
+};
+
+export const addProject = () => {
+    getCyData("project-name-input").type(projectInfo.name);
+    getCyData("project-description-input").type(projectInfo.description);
+    getCyData("project-end-date-input").clear().type("24/12/2030");
+
+    getCyData("project-theme-input").click();
+    getCyData("select-option-red").click();
+
+    getCyData("project-is-public-checkbox").click();
+    getCyData("project-submit-button").click();
 };

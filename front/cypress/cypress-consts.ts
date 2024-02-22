@@ -23,6 +23,6 @@ export const projectInfo = {
     name: "testi projekti",
     description: "kattava kuvaus",
     isPublic: true,
-    endDate: new Date(),
+    endDate: "24/12/2030",
     theme: "red",
 };

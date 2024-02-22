@@ -76,6 +76,7 @@ export const addProjectSchema = yup.object().shape({
     endDate: yup.date(),
     theme: yup.string().required(),
     isPublic: yup.string<TisPublic>().required(),
+    memberEmail: yup.string(),
 });
 
 export const userInfoSchema = yup.object().shape({

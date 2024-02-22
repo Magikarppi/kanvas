@@ -45,7 +45,6 @@ const LoginForm = () => {
                 }
                 resetForm();
                 navigate("/dashboard");
-                toast.success("Welcome!");
             } catch (error) {
                 if (error instanceof AxiosError) {
                     toast.error(error.response?.data);

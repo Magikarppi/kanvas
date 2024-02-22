@@ -1,28 +1,33 @@
-import { ICard } from "../../models/cardModels";
+import { ICard, ICardResponsiblePerson } from "../../models/cardModels";
 import { Draggable } from "react-beautiful-dnd";
+import { useState, useEffect } from "react";
 import {
     CardContent,
     CardActions,
-    Collapse,
     Typography,
-    Divider,
-    Box,
     Avatar,
     Chip,
     Stack,
+    AvatarGroup,
+    Tooltip,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import * as React from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { ExpandLess } from "@mui/icons-material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import { getDate, stringAvatar } from "../../utils/utilFunctions";
+import BoardCardModal from "./BoardCardModal";
+import { ProjectMember } from "../../models/projectModels";
+import { selectToken } from "../../redux/hooks";
+import cardsService from "../../services/cardsService";
+import { stringAvatar } from "../../utils/utilFunctions";
 
 interface Props {
     card: ICard;
     index: number;
+    projectMembers: ProjectMember[];
+    updateCards: (card: ICard) => void;
     cardDragDisabled: boolean;
+    allCards: ICard[];
+    setCards:React.Dispatch<React.SetStateAction<ICard[]>>;
 }
 
 const cardStyle = {
@@ -31,7 +36,7 @@ const cardStyle = {
     borderRadius: "12px",
     marginBottom: "10px",
     border: "2px solid",
-    height: "auto",
+    height: "117.5px",
     width: "220px",
     background: "black",
     paddinLeft: "0px",
@@ -45,28 +50,39 @@ const getItemStyle = (isDragging: boolean, draggableStyle?: object) => ({
     ...draggableStyle,
 });
 
-const dummyUser = {
-    firstName: "Keijo",
-    lastName: "Pekkonen",
-    picture: "dsadsdsa",
-};
+export default function BoardCard({ card, index, projectMembers, updateCards, cardDragDisabled, allCards, setCards}: Props) {
+    const [cardModal, setCardModal] = useState<boolean>(false);
+    const [responsiblePersons, setResponsiblePersons] = useState<ICardResponsiblePerson[]>([]);
+    const [oneCard, setOneCard] = useState(card);
+    const token = selectToken();
+    
+    useEffect(() => {
+        cardsService
+            .getResponsiblePerson(token!, card.id)
+            .then((data => {
+                setResponsiblePersons(data);
+            })
+            )
+            .catch((err) => console.error(err));
+            
+    }, [oneCard]);
 
-const fullName = `${dummyUser.firstName} ${dummyUser.lastName}`;
+    const openCardModal = () => setCardModal(true);
+    const closeCardModal = () => setCardModal(false);
 
-export default function BoardCard({ card, index, cardDragDisabled }: Props) {
-    const [expanded, setExpanded] = React.useState(false);
 
-    const dueDateString: string = card.dueDate?.toString() ?? "";
+    let cardDueDate: Date | null = null;
+    if (oneCard.dueDate) {
+        cardDueDate = new Date(oneCard.dueDate);
+    }
 
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
+    const showOnlyRealData = false;
 
     return (
         <Draggable
             draggableId={card.id}
             index={index}
-            isDragDisabled={expanded || cardDragDisabled}
+            isDragDisabled={cardDragDisabled}
         >
             {(provided, snapshot) => (
                 <>
@@ -82,87 +98,81 @@ export default function BoardCard({ card, index, cardDragDisabled }: Props) {
                             ),
                         }}
                     >
-                        <CardContent
+                        <CardContent onClick={openCardModal} sx={{textAlign: "center", padding:"7px"}}>
+                            <Typography>{oneCard.title}</Typography>
+                            {oneCard.dueDate ? (
+                                <Typography style={{ fontSize: 10 }}>{cardDueDate?.toLocaleDateString("fi-FI")}</Typography>
+                            ) : (null)}
+                            {showOnlyRealData ? (
+                                <Stack direction="row" spacing={1}  sx={{ marginTop: "9px" }}>
+                                    <Chip label="primary" size="small" color="primary" />
+                                    <Chip label="success" size="small" color="success" />
+                                    <Chip label="success" size="small" color="success" />
+                                </Stack>) : (null)}
+                        </CardContent>
+                        <CardActions
+                            disableSpacing
                             sx={{
-                                textAlign: "center",
-                                padding: "7px",
-                                userSelect: "none",
+                                cursor: "grab",
                             }}
                         >
-                            <Typography>{card.title}</Typography>
-                            {card.dueDate ? (
-                                <Typography style={{ fontSize: "11px" }}>
-                                    Due {getDate(dueDateString)}
-                                </Typography>
-                            ) : null}
-                            <Stack
-                                direction="row"
-                                spacing={1}
-                                sx={{ marginTop: "9px" }}
+                            <AvatarGroup
+                                sx={{
+                                    "& .MuiAvatar-root": {
+                                        width: 35,
+                                        height: 35,
+                                    },
+                                    marginTop: "10px",
+                                }}
+                                max={2}
                             >
-                                <Chip
-                                    label="primary"
-                                    size="small"
-                                    color="primary"
-                                />
-                                <Chip
-                                    label="success"
-                                    size="small"
-                                    color="success"
-                                />
-                                <Chip
-                                    label="success"
-                                    size="small"
-                                    color="success"
-                                />
-                            </Stack>
-                        </CardContent>
-                        <CardActions disableSpacing>
-                            <Avatar
-                                {...stringAvatar(fullName)}
-                                alt={`${dummyUser.firstName} ${dummyUser.lastName}`}
-                                src={dummyUser.picture as string}
-                                sx={{ width: 26, height: 26 }}
-                            >
-                                {`${dummyUser.firstName[0]}${dummyUser.lastName[0]}`}
-                            </Avatar>
-                            {card.attachments?.split(" ").length && (
+                                {responsiblePersons.map((member) => {
+                                    const fullName = `${member.firstName} ${member.lastName}`;
+                                    return (
+                                        <Tooltip
+                                            key={member.userId}
+                                            title={
+                                                <Typography sx={{ fontSize: 13 }}>
+                                                    {fullName}
+                                                </Typography>
+                                            }
+                                            arrow
+                                        >
+                                            <Avatar
+                                                {...stringAvatar(fullName)}
+                                                alt={fullName}
+                                                src={member.picture as string}
+                                            >
+                                                {`${member.firstName[0]}${member.lastName[0]}`}
+                                            </Avatar>
+                                        </Tooltip>
+                                    );
+                                })}
+                            </AvatarGroup>
+                            {showOnlyRealData ? (
                                 <>
                                     <IconButton aria-label="add to favorites">
                                         <AttachFileIcon />
                                     </IconButton>
-                                    <p>{card.attachments.split(" ").length}</p>
-                                </>
-                            )}
-                            <IconButton aria-label="share">
-                                <ChatBubbleOutlineIcon />
-                            </IconButton>
-                            <p>2</p>
-                            {!expanded ? (
-                                <ExpandMoreIcon
-                                    sx={{ marginLeft: "auto" }}
-                                    onClick={handleExpandClick}
-                                />
-                            ) : (
-                                <ExpandLess
-                                    sx={{ marginLeft: "auto" }}
-                                    onClick={handleExpandClick}
-                                />
-                            )}
+                                    <p>2</p>
+                                    <IconButton aria-label="share">
+                                        <ChatBubbleOutlineIcon />
+                                    </IconButton>
+                                    <p>2</p> </>) : (null)}
                         </CardActions>
-                        <Collapse in={expanded} timeout="auto" unmountOnExit>
-                            <Divider sx={{ marginBottom: "5px" }} />
-                            <Box
-                                sx={{
-                                    padding: "14px",
-                                    overflowY: "auto",
-                                    maxHeight: "230px",
-                                }}
-                            >
-                                <Typography>{card.description}</Typography>
-                            </Box>
-                        </Collapse>
                     </div>
+                    <BoardCardModal 
+                        open={cardModal} 
+                        close={closeCardModal}
+                        card={oneCard}
+                        setCard={setOneCard}
+                        projectMembers={projectMembers}
+                        cardResponsiblePersons={responsiblePersons}
+                        setCardResponsiblePersons={setResponsiblePersons}
+                        updateCards={updateCards}
+                        allCards={allCards}
+                        setCards={setCards}
+                    />
                 </>
             )}
         </Draggable>

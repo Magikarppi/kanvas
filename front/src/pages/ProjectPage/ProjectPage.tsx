@@ -175,21 +175,19 @@ const ProjectPage = () => {
     const handleUpdateCards = (updatedCard: ICard) => {
         setCards((prevData) => {
             const prevCards = [...prevData];
-
             // original card that is updated (updatedCard)
             const originalCard = prevCards.find(
                 (card) => card.id === updatedCard.id
             );
-
             const originalCardIndex = prevCards.findIndex(
                 (card) => card.id === updatedCard.id
             );
+            prevCards[originalCardIndex] = updatedCard;
 
             if (!originalCard) {
                 console.log("no originalCard found");
                 return prevData;
             }
-
             const inSameColumn = updatedCard.inColumn === originalCard.inColumn;
             if (inSameColumn) {
                 // card dragged in the same column
@@ -199,14 +197,14 @@ const ProjectPage = () => {
                     if (movedCard.orderIndex > updatedCard.orderIndex) {
                         if (
                             card.orderIndex >= updatedCard.orderIndex &&
-                            card.orderIndex < movedCard.orderIndex
+                          card.orderIndex < movedCard.orderIndex
                         ) {
                             card.orderIndex++;
                         }
                     } else if (movedCard.orderIndex < updatedCard.orderIndex) {
                         if (
                             card.orderIndex > movedCard.orderIndex &&
-                            card.orderIndex <= updatedCard.orderIndex
+                          card.orderIndex <= updatedCard.orderIndex
                         ) {
                             card.orderIndex--;
                         }
@@ -219,49 +217,44 @@ const ProjectPage = () => {
                 return prevCards;
             } else {
                 // card dragged from one column to another
-                const cardsInNewColumn = prevCards.filter(
+                const cardsInOtherColumn = [...prevData];
+                const cardsInNewColumn = cardsInOtherColumn.filter(
                     (card) => card.inColumn === updatedCard.inColumn
                 );
-                const cardsInOldColumn = cards.filter(
+                const cardsInOldColumn = cardsInOtherColumn.filter(
                     (card) => card.inColumn === originalCard.inColumn
                 );
-
+      
                 // update orderIndexes in the column where a card was dragged from
                 cardsInOldColumn.forEach((card) => {
                     if (card.orderIndex > originalCard.orderIndex) {
                         card.orderIndex--;
                     }
                 });
-
+      
                 // update orderIndexes in the column where a card was dragged to
                 cardsInNewColumn.forEach((card) => {
                     if (card.orderIndex >= updatedCard.orderIndex) {
                         card.orderIndex++;
                     }
                 });
-
+      
                 // remove dragged card from the old column
                 cardsInOldColumn.splice(
-                    cardsInOldColumn.findIndex(
-                        (card) => card.id === originalCard.id
-                    ),
+                    cardsInOldColumn.findIndex((card) => card.id === originalCard.id),
                     1
                 );
-
+      
                 // insert the draged card into the new column
                 cardsInNewColumn.splice(updatedCard.orderIndex, 0, updatedCard);
-
+      
                 // keep the rest of the columns along
                 const restOfCards = prevCards.filter(
                     (card) =>
-                        !cardsInOldColumn
-                            .map((oldCard) => oldCard.id)
-                            .includes(card.id) &&
-                        !cardsInNewColumn
-                            .map((newCard) => newCard.id)
-                            .includes(card.id)
+                        !cardsInOldColumn.map((oldCard) => oldCard.id).includes(card.id) &&
+              !cardsInNewColumn.map((newCard) => newCard.id).includes(card.id)
                 );
-
+                
                 // return untouched and updated columns
                 return [
                     ...restOfCards,
@@ -271,6 +264,7 @@ const ProjectPage = () => {
             }
         });
     };
+      
 
     const handleUpdateProject = async (
         projectInfo: IProjectSubmitNew,
@@ -352,6 +346,8 @@ const ProjectPage = () => {
                     updateCards={handleUpdateCards}
                     projectId={projectId as string}
                     token={token}
+                    projectMembers={members}
+                    setCards={setCards}
                 />
             ) : (
                 <ListView

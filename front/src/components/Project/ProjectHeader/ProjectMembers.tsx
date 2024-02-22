@@ -8,12 +8,13 @@ import {
 } from "@mui/material";
 import { ProjectMember } from "../../../models/projectModels";
 import Icons from "../../Icons/Icons";
-import { useState } from "react";
 
 const ProjectMembers = ({
     projectMembers,
+    handleOpenEditProjectModal,
 }: {
     projectMembers: ProjectMember[];
+    handleOpenEditProjectModal: () => void;
 }) => {
     const stringToColor = (string: string) => {
         let hash = 0;
@@ -41,14 +42,6 @@ const ProjectMembers = ({
         };
     };
 
-    // ToDo: use this state to open project settings after we have modal
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [settingsModalOpen, setSettingsModalOpen] = useState<boolean>(false);
-
-    const handleSettingsClick = () => {
-        setSettingsModalOpen(true);
-    };
-
     return (
         <>
             <Grid
@@ -59,8 +52,9 @@ const ProjectMembers = ({
             >
                 <Chip
                     icon={<Icons.Edit size="16px" />}
-                    onClick={handleSettingsClick}
+                    onClick={handleOpenEditProjectModal}
                     label="Edit Project"
+                    data-cy="open-edit-project-modal-button"
                     color="secondary"
                     variant="filled"
                     size="medium"

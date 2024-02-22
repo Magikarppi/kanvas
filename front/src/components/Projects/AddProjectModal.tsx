@@ -1,60 +1,71 @@
-import {
-    Box,
-    Button,
-    Card,
-    Container,
-    Grid,
-    InputLabel,
-    Modal,
-    Tooltip,
-    Typography,
-} from "@mui/material";
-import { IProjectSubmitNew } from "../../models/projectModels";
-import { useFormik } from "formik";
-import { addProjectSchema } from "../../schemas";
-import "react-datepicker/dist/react-datepicker.css";
-import ProjectNameInput from "../Inputs/ProjectNameInput";
-import ProjectDescriptionInput from "../Inputs/ProjectDescriptionInput";
-import ProjectThemeInput from "../Inputs/ProjectThemeInput";
-import ProjectEndDateInput from "../Inputs/ProjectEndDateInput";
-import { toast } from "react-toastify";
+import { Modal, Card, Container, Typography, Box, Grid } from "@mui/material";
 import { AxiosError } from "axios";
+import { useFormik } from "formik";
 import { useEffect } from "react";
-import CustomCheckbox from "../Inputs/CustomCheckbox";
-import Icons from "../Icons/Icons";
+import { toast } from "react-toastify";
 
-const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "70%",
-    height: "70%",
-    border: "2px solid #5e00ff",
-    boxShadow: 24,
-    p: 1,
-    overflowY: "auto",
-    maxWidth: "1200px",
-    maxHeight: "760px",
-    minWidth: "320px",
-};
+import { IProjectSubmitNew } from "../../models/projectModels";
+import { addProjectSchema } from "../../schemas";
+import ProjectDescriptionInput from "../Inputs/ProjectDescriptionInput";
+import ProjectEndDateInput from "../Inputs/ProjectEndDateInput";
+import ProjectNameInput from "../Inputs/ProjectNameInput";
+import ProjectThemeInput from "../Inputs/ProjectThemeInput";
+import ProjectModalMainButtons from "./ProjectModalMainButtons";
+import PublicProjectElement from "./PublicProjectElement";
+import AddProjectMembers from "./AddProjectMembers";
+import useMemberEmails from "../../hooks/useMemberEmails";
 
 interface Props {
     open: boolean;
     close: () => void;
-    handleAddProject: (project: IProjectSubmitNew) => Promise<void>;
+    handleAddProject: (
+        project: IProjectSubmitNew,
+        members: string[]
+    ) => Promise<void>;
 }
+
+export const projectModalStyle = {
+    border: "2px solid #5e00ff",
+    boxShadow: 24,
+    p: 1,
+    overflowY: "auto",
+    width: "100%",
+    height: "100%",
+};
 
 export default function AddProjectModal({
     open,
     close,
     handleAddProject,
 }: Props) {
+    const {
+        addMemberEmail,
+        deleteMemberEmail,
+        memberEmails,
+        resetMemberEmails,
+    } = useMemberEmails([]);
+
     useEffect(() => {
         if (!open) {
             resetForm();
+            setFieldValue("name", initialValues.name);
+            setFieldValue("description", initialValues.description);
+            setFieldValue("endDate", initialValues.endDate);
+            setFieldValue("theme", initialValues.theme);
+            setFieldValue("isPublic", initialValues.isPublic);
+            setFieldValue("memberEmail", initialValues.memberEmail);
+            resetMemberEmails();
         }
     }, [open]);
+
+    const initialValues = {
+        name: "",
+        description: "",
+        endDate: new Date(),
+        theme: "blank",
+        isPublic: false,
+        memberEmail: "",
+    };
 
     const {
         values,
@@ -67,26 +78,19 @@ export default function AddProjectModal({
         isValid,
         resetForm,
     } = useFormik({
-        initialValues: {
-            name: "",
-            description: "",
-            endDate: new Date(),
-            theme: "blank",
-            isPublic: false,
-        },
+        initialValues,
         validationSchema: addProjectSchema,
         async onSubmit(values, formikHelpers) {
+            const newProject: IProjectSubmitNew = {
+                name: values.name,
+                theme: values.theme || "blank",
+                description: values.description || null,
+                endDate: values.endDate || null,
+                isPublic: values.isPublic,
+                picture: null,
+            };
             try {
-                const project: IProjectSubmitNew = {
-                    name: values.name,
-                    theme: values.theme || "blank",
-                    description: values.description || null,
-                    endDate: values.endDate || null,
-                    isPublic: values.isPublic,
-                    picture: null,
-                };
-
-                await handleAddProject(project);
+                await handleAddProject(newProject, memberEmails);
 
                 formikHelpers.resetForm();
                 close();
@@ -98,10 +102,14 @@ export default function AddProjectModal({
         },
     });
 
-    const disableButton =
-        Object.keys(touched).length === 0 ||
-        !isValid ||
-        Object.keys(errors).length > 0;
+    const onAddMemberEmail = () => {
+        addMemberEmail(values.memberEmail);
+        setFieldValue("memberEmail", "");
+    };
+
+    const isNotTouched = Object.keys(touched).length === 0;
+    const disableSubmitButton =
+        isNotTouched || !isValid || Object.keys(errors).length > 0;
 
     return (
         <Modal
@@ -110,19 +118,12 @@ export default function AddProjectModal({
             aria-labelledby="add-project-modal"
             aria-describedby="add-project-modal"
         >
-            <Card sx={style} data-cy="add-project-modal">
+            <Card sx={projectModalStyle} data-cy="add-project-modal">
                 <Container>
-                    <Box
-                        sx={{
-                            textAlign: "start",
-                            mt: 2,
-                        }}
-                    >
+                    <Box sx={{ width: "100%" }}>
                         <Typography variant="h4">
                             Create a new project
                         </Typography>
-                    </Box>
-                    <Box sx={{ mt: 5 }}>
                         <form onSubmit={handleSubmit}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
@@ -163,68 +164,25 @@ export default function AddProjectModal({
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                        }}
-                                    >
-                                        <InputLabel>Public project</InputLabel>
-                                        <Tooltip
-                                            title={
-                                                <p style={{ fontSize: "1rem" }}>
-                                                    Public projects can be found
-                                                    using search
-                                                </p>
-                                            }
-                                            placement="top"
-                                        >
-                                            <Icons.Info />
-                                        </Tooltip>
-                                    </Box>
-                                </Grid>
-                                <Grid
-                                    item
-                                    display="flex"
-                                    justifyContent="flex start"
-                                    xs={12}
-                                >
-                                    <CustomCheckbox
-                                        handleChange={handleChange}
-                                        name="isPublic"
-                                        value={values.isPublic}
-                                        label="This project can be viewed by everyone"
-                                        dataCy="project-is-public-checkbox"
-                                    />
-                                </Grid>
+                                <PublicProjectElement
+                                    handleChange={handleChange}
+                                    isPublic={values.isPublic}
+                                />
+                                <AddProjectMembers
+                                    memberEmail={values.memberEmail}
+                                    memberEmails={memberEmails}
+                                    handleBlur={handleBlur}
+                                    handleChange={handleChange}
+                                    error={errors.memberEmail}
+                                    onAddMemberEmail={onAddMemberEmail}
+                                    onDeleteMemberEmail={deleteMemberEmail}
+                                />
                             </Grid>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "space-evenly",
-                                    marginTop: "40px",
-                                    flexWrap: "wrap",
-                                }}
-                            >
-                                <Button
-                                    variant="contained"
-                                    disabled={disableButton}
-                                    color="secondary"
-                                    type="submit"
-                                    data-cy="project-add-button"
-                                >
-                                    Create
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    onClick={close}
-                                    data-cy="project-close-button"
-                                >
-                                    Cancel
-                                </Button>
-                            </Box>
+                            <ProjectModalMainButtons
+                                disableSubmitButton={disableSubmitButton}
+                                submitButtonLabel="Create"
+                                close={close}
+                            />
                         </form>
                     </Box>
                 </Container>

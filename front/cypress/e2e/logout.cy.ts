@@ -31,8 +31,7 @@ describe("Sign up + login", () => {
             .invoke("getItem", "token")
             .should("exist");
 
-        cy.contains(/Welcome/i);
-        cy.wait(6700);
+        cy.contains(/My projects/i);
         cy.get("[data-testid='MenuIcon']").click();
         cy.wait(500);
         getCyData("sign-out-drawer").click();

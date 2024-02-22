@@ -1,7 +1,7 @@
 import { Router, Response } from "express";
 import { v4 as uuid } from "uuid";
 
-import { UserRequest } from "../middleware/middleware";
+import { UserRequest, validateMembers } from "../middleware/middleware";
 import {
     insertProjectDAO,
     getProjectMemberDAO,
@@ -30,6 +30,7 @@ import {
     IProjectDB,
     IProjectMember,
     ITeamDB,
+    IUserFromDB,
     IUserRole,
     ProjectMember,
 } from "../../database/utils/interfaces";
@@ -48,6 +49,15 @@ import { JwtPayload } from "jsonwebtoken";
 import { deleteImageBlob, uploadImageBlob } from "../services/azureServices";
 
 const router = Router();
+
+const createProjectMember = (
+    userId: string,
+    projectId: string
+): IProjectMember => ({
+    id: uuid(),
+    userId,
+    projectId,
+});
 
 const handleProjectImageUpload = async (
     projectId: string,
@@ -84,7 +94,9 @@ const handleProjectImageUpload = async (
         projectPicture.indexOf(";")
     );
     const base64ImageData = projectPicture.split(",")[1];
-    const imageName = `project-image-project-${projectId}.${metaData.split("/")[1]}`;
+    const imageName = `project-image-project-${projectId}.${
+        metaData.split("/")[1]
+    }`;
 
     const imageUrl = await uploadImageBlob(
         imageName,
@@ -100,10 +112,17 @@ const handleProjectImageUpload = async (
     }
 };
 
-router.post("/", async (req: UserRequest, res: Response) => {
+router.post("/", validateMembers, async (req: UserRequest, res: Response) => {
     try {
-        const { name, description, picture, endDate, theme, isPublic } =
-            req.body;
+        const {
+            name,
+            description,
+            picture,
+            endDate,
+            theme,
+            isPublic,
+            members,
+        } = req.body;
 
         if (!name || isPublic === undefined) {
             return res
@@ -133,13 +152,18 @@ router.post("/", async (req: UserRequest, res: Response) => {
         };
 
         const { value: userId } = req.user as JwtPayload;
-        const projectMember: IProjectMember = {
+
+        const projectOwner: IProjectMember = {
             id: uuid(),
             userId: userId,
             projectId: project.id,
         };
 
-        const userRole: IUserRole = {
+        const projectMembers: IProjectMember[] = (members as IUserFromDB[])
+            .map((member) => createProjectMember(member.id, project.id))
+            .concat([projectOwner]);
+
+        const projectOwnerRole: IUserRole = {
             projectId: project.id,
             userId: userId,
             role: "admin",
@@ -168,8 +192,8 @@ router.post("/", async (req: UserRequest, res: Response) => {
 
         const addedProject: IProjectDB = await insertProjectDAO(
             project,
-            projectMember,
-            userRole,
+            projectMembers,
+            projectOwnerRole,
             placeholderColumns
         );
         if (!addedProject) {
@@ -229,14 +253,14 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
         if (formattedProject.isPublic === false) {
             const projectMember = await getProjectMemberDAO(userId, projectId);
 
-
-            const existingProjectColumns: IProjectColumnDB[] | undefined = await getProjectColumnsDAO(
-                projectId
-            );
-            const formattedColumns: IProjectColumn[] = formatProjectColumns(existingProjectColumns) || [];
+            const existingProjectColumns: IProjectColumnDB[] | undefined =
+                await getProjectColumnsDAO(projectId);
+            const formattedColumns: IProjectColumn[] =
+                formatProjectColumns(existingProjectColumns) || [];
 
             const existingProjectCards = await getProjectCardsDAO(projectId);
-            const formattedCards: ICard[] = formatProjectCards(existingProjectCards) || [];
+            const formattedCards: ICard[] =
+                formatProjectCards(existingProjectCards) || [];
 
             const projectMembers = await getProjectMembersDAO(projectId);
             const formattedMembers: ProjectMember[] =
@@ -260,14 +284,15 @@ router.get("/:id", async (req: UserRequest, res: Response) => {
                 projectId
             );
             const formattedColumns: IProjectColumn[] =
-                 formatProjectColumns(existingProjectColumns) || [];    
+                formatProjectColumns(existingProjectColumns) || [];
 
             const existingProjectCards = await getProjectCardsDAO(projectId);
             const formattedCards: ICard[] =
                 formatProjectCards(existingProjectCards) || [];
-            
+
             const projectMembers = await getProjectMembersDAO(projectId);
-            const formattedMembers: ProjectMember[] = formatProjectMembers(projectMembers) || [];
+            const formattedMembers: ProjectMember[] =
+                formatProjectMembers(projectMembers) || [];
 
             const projectData = {
                 project: formattedProject,
@@ -335,7 +360,7 @@ router.get("/dashboard/:id", async (req: UserRequest, res: Response) => {
     }
 });
 
-router.put("/:id", async (req: UserRequest, res: Response) => {
+router.put("/:id", validateMembers, async (req: UserRequest, res: Response) => {
     try {
         const {
             name,
@@ -345,6 +370,7 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
             endDate,
             theme,
             picture,
+            members,
         } = req.body;
 
         const { value: userId } = req.user as JwtPayload;
@@ -366,7 +392,14 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
                 .send(RESPONSE_MESSAGES.PROJECT_NOT_FOUND);
         }
 
-        const projectPicture = await handleProjectImageUpload(projectId, picture);
+        const projectMembers: IProjectMember[] = (members as IUserFromDB[])
+            .map((member) => createProjectMember(member.id, project.id))
+            .filter((member) => member.userId !== userId);
+
+        const projectPicture = await handleProjectImageUpload(
+            projectId,
+            picture
+        );
 
         const updatedProject: IProject = {
             id: project.id,
@@ -383,7 +416,12 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
             picture: projectPicture,
         };
 
-        await updateProjectDAO(projectId, updatedProject);
+        await updateProjectDAO(
+            projectId,
+            updatedProject,
+            projectMembers,
+            userId
+        );
 
         res.status(HTTP_RESPONSE_CODES.OK).send();
     } catch (error) {

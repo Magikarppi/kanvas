@@ -9,7 +9,6 @@ import {
     IconButton,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import AddProjectModal from "../../components/Projects/AddProjectModal";
 import { useEffect, useState } from "react";
 import {
     IFavoriteProject,
@@ -25,6 +24,7 @@ import { toast } from "react-toastify";
 import { INewTeamInitalFormValues } from "../../components/Teams/AddTeamModal";
 import teamsService from "../../services/teamsService";
 import AddTeamModal from "../../components/Teams/AddTeamModal";
+import AddProjectModal from "../../components/Projects/AddProjectModal";
 
 const createCard = (
     input: IProject | ITeam,
@@ -64,7 +64,7 @@ const createCard = (
                     )
                 }
             />
-            <Link to={linkTo}>
+            <Link to={linkTo} data-cy="project-link">
                 <CardContent sx={{ padding: 0 }}>
                     <Typography variant="h6">
                         {truncateString(input.name)}
@@ -98,8 +98,7 @@ export default function AllProjectsPage() {
         publicProjects: [],
     });
 
-    const [addProjectModalOpen, setAddProjectModalOpen] =
-        useState<boolean>(false);
+    const [projectModalOpen, setProjectModalOpen] = useState<boolean>(false);
     const [addTeamModalOpen, setAddTeamModalOpen] = useState<boolean>(false);
 
     const token = selectToken();
@@ -125,18 +124,22 @@ export default function AllProjectsPage() {
         }
     }, [token, user]);
 
-    const openAddProjectModal = () => setAddProjectModalOpen(true);
-    const closeAddProjectModal = () => setAddProjectModalOpen(false);
+    const openProjectModal = () => setProjectModalOpen(true);
+    const closeProjectModal = () => setProjectModalOpen(false);
 
     const openAddTeamModal = () => setAddTeamModalOpen(true);
     const closeAddTeamModal = () => setAddTeamModalOpen(false);
 
-    const handleAddProject = async (project: IProjectSubmitNew) => {
+    const handleAddProject = async (
+        project: IProjectSubmitNew,
+        members: string[]
+    ) => {
         if (token) {
             try {
                 const addedProject = await projectService.createNewProject(
                     token,
-                    project
+                    project,
+                    members
                 );
 
                 if (addedProject && !addedProject.isPublic) {
@@ -195,7 +198,7 @@ export default function AllProjectsPage() {
     const AddNewCreateCard = (cardType: string) => (
         <Card
             onClick={
-                cardType === "project" ? openAddProjectModal : openAddTeamModal
+                cardType === "project" ? openProjectModal : openAddTeamModal
             }
             data-cy={
                 cardType === "project"
@@ -204,7 +207,7 @@ export default function AllProjectsPage() {
             }
             elevation={2}
             sx={{ backgroundColor: "#2e490d" }}
-            id={cardType === "project" ? ("openProject") : ("openTeam")}
+            id={cardType === "project" ? "openProject" : "openTeam"}
         >
             <CardContent>
                 <Typography variant="h6">
@@ -318,8 +321,8 @@ export default function AllProjectsPage() {
     return !token ? null : (
         <>
             <AddProjectModal
-                open={addProjectModalOpen}
-                close={closeAddProjectModal}
+                open={projectModalOpen}
+                close={closeProjectModal}
                 handleAddProject={handleAddProject}
             />
             <AddTeamModal

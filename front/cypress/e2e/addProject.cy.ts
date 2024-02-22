@@ -18,7 +18,7 @@ beforeEach(() => {
     login();
 });
 
-describe("Project modal", () => {
+describe("Add project modal", () => {
     it("renders correctly", () => {
         // initially closed
         getCyData("add-project-modal").should("not.exist");
@@ -31,8 +31,9 @@ describe("Project modal", () => {
         getCyData("project-end-date-input").should("exist");
         getCyData("project-theme-input").should("exist");
         getCyData("project-is-public-checkbox").should("exist");
-        getCyData("project-add-button").should("exist");
-        getCyData("project-add-button").should("be.disabled");
+        getCyData("add-project-member-input").should("exist");
+        getCyData("project-submit-button").should("exist");
+        getCyData("project-submit-button").should("be.disabled");
         getCyData("project-close-button").should("not.be.disabled");
     });
 
@@ -56,7 +57,7 @@ describe("Project modal", () => {
         );
         getCyData("project-description-input").type("D");
         cy.contains(maxLengthProjectNameHelperText);
-        getCyData("project-add-button").should("be.disabled");
+        getCyData("project-submit-button").should("be.disabled");
     });
 
     it("shows a error message for too long project description", () => {
@@ -67,31 +68,34 @@ describe("Project modal", () => {
         );
         getCyData("project-name-input").type("D");
         cy.contains(maxLengthProjectDescriptionHelperText);
-        getCyData("project-add-button").should("be.disabled");
+        getCyData("project-submit-button").should("be.disabled");
     });
 
     it("add button is disabled if project name is empty", () => {
         openAddProjectModal();
 
-        getCyData("project-add-button").should("be.disabled");
+        getCyData("project-submit-button").should("be.disabled");
         getCyData("project-name-input").type(" ");
         getCyData("project-description-input").type("D");
         cy.contains(emptyFieldHelperText);
-        getCyData("project-add-button").should("be.disabled");
+        getCyData("project-submit-button").should("be.disabled");
     });
 
     it("allows user to add a project with valid info", () => {
+        const projectMemberEmail = "projectmember@test.com";
         openAddProjectModal();
 
         getCyData("project-name-input").type(projectInfo.name);
         getCyData("project-description-input").type(projectInfo.description);
-        getCyData("project-end-date-input").clear().type("24/12/2030");
-
+        getCyData("project-end-date-input").clear().type(projectInfo.endDate);
         getCyData("project-theme-input").click();
         getCyData("select-option-red").click();
-
         getCyData("project-is-public-checkbox").click();
-        getCyData("project-add-button").click();
+        getCyData("add-project-member-input").type(projectMemberEmail);
+        getCyData("add-project-member-button").click();
+        cy.contains(projectMemberEmail);
+
+        getCyData("project-submit-button").click();
 
         getCyData("add-project-modal").should("not.exist");
         cy.contains(projectInfo.name);

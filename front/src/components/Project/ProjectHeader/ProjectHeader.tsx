@@ -8,12 +8,14 @@ interface Props {
     projectInfo: IProject | undefined;
     projectMembers: ProjectMember[];
     width: number;
+    handleOpenEditProjectModal: () => void;
 }
 
 const ProjectHeader = ({
     projectInfo,
     projectMembers,
     width,
+    handleOpenEditProjectModal,
 }: Props) => {
     if (!projectInfo) {
         return null;
@@ -56,7 +58,10 @@ const ProjectHeader = ({
                         },
                     }}
                 >
-                    <ProjectMembers projectMembers={projectMembers} />
+                    <ProjectMembers
+                        projectMembers={projectMembers}
+                        handleOpenEditProjectModal={handleOpenEditProjectModal}
+                    />
                 </Grid>
             </Grid>
         </>

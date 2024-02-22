@@ -122,3 +122,22 @@ export const newPasswordSchema = yup.object().shape({
         .required()
         .oneOf([yup.ref("newPassword")], passwordsNoMatchHelperText),
 });
+
+export const updateCardSchema = yup.object().shape({
+    title: yup
+        .string()
+        .required(emptyFieldHelperText),
+    subTitle: yup
+        .string()
+        .required(),
+    description: yup
+        .string()
+        .max(
+            projectDescriptionMaxLength,
+            maxLengthProjectDescriptionHelperText
+        ),
+    status: yup
+        .string()
+        .required(emptyFieldHelperText),
+    dueDate: yup.date(),
+});

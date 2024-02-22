@@ -4,6 +4,7 @@ import { ICard } from "../../models/cardModels";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import BoardCard from "./BoardCard";
 import ColumnTitle from "./ColumnTitle";
+import { ProjectMember } from "../../models/projectModels";
 
 const Container = styled.div`
     margin: 0px 10px 0px 10px;
@@ -29,6 +30,10 @@ interface Props {
     updateColumns: (column: IProjectColumn) => void;
     columnDragDisabled: boolean;
     cardDragDisabled: boolean;
+    projectMembers: ProjectMember[];
+    updateCards: (card: ICard) => void;
+    allCards: ICard[];
+    setCards:React.Dispatch<React.SetStateAction<ICard[]>>;
 }
 
 export default function GridColumn({
@@ -38,6 +43,10 @@ export default function GridColumn({
     updateColumns,
     columnDragDisabled,
     cardDragDisabled,
+    projectMembers,
+    updateCards,
+    allCards,
+    setCards,
 }: Props) {
     return (
         <Draggable
@@ -79,7 +88,11 @@ export default function GridColumn({
                                             key={card.id}
                                             card={card}
                                             index={index}
+                                            projectMembers={projectMembers}
+                                            updateCards={updateCards}
                                             cardDragDisabled={cardDragDisabled}
+                                            allCards={allCards}
+                                            setCards={setCards}
                                         />
                                     ))}
                                 {provided.placeholder}

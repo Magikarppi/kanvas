@@ -13,6 +13,7 @@ import { Box, Button, Collapse, TextField } from "@mui/material";
 import columnsService from "../../services/columnsService";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { ProjectMember } from "../../models/projectModels";
 
 interface Props {
     columns: IProjectColumn[];
@@ -22,6 +23,8 @@ interface Props {
     updateColumns: (column: IProjectColumn) => void;
     projectId: string;
     token: string;
+    projectMembers: ProjectMember[]
+    setCards:React.Dispatch<React.SetStateAction<ICard[]>>;
 }
 
 const Container = styled.div`
@@ -36,6 +39,8 @@ export default function DragDrop({
     updateColumns,
     projectId,
     token,
+    projectMembers,
+    setCards,
 }: Props) {
     const [newColumnName, setNewColumnName] = useState<string>("");
     const [wantsToAddColumn, setWantsToAddColumn] = useState(false);
@@ -154,8 +159,12 @@ export default function DragDrop({
                                     )}
                                     index={index}
                                     updateColumns={updateColumns}
+                                    projectMembers={projectMembers}
+                                    updateCards={updateCards}
                                     columnDragDisabled={isColumnDragDisabled}
                                     cardDragDisabled={isCardDragDisabled}
+                                    allCards={cards}
+                                    setCards={setCards}
                                 />
                             ))}
                         {provided.placeholder}

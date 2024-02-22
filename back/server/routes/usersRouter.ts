@@ -29,7 +29,6 @@ import {
     getResetPasswordRequestDAO,
     deleteResetPasswordRequestDAO,
     updateResetPasswordRequestDAO,
-    getUserPictureDAO,
 } from "../../database/DAOs";
 import {
     UserRequest,
@@ -82,21 +81,22 @@ const handleProfileImageUpload = async (
 
     if (profilePicture === null) {
         // user wants to delete their profile picture
-        const imageObj = await getUserPictureDAO(userId);
-        const imageUrl = imageObj.picture;
-        const parts = imageUrl.split("/");
-
-        // Last part is string including blobName and queryParams
-        const lastPart = parts[parts.length - 1];
-        // Split by query parameter character and select the first element, i.e. blob name ending with .jpeg
-        const blobName = lastPart.split("?")[0];
-
-        await deleteImageBlob(blobName);
-        return null;
+        const imageUrl = currentUserInfo.picture;
+        if (imageUrl !== null) {
+            const parts = imageUrl.split("/");
+    
+            // Last part is string including blobName and queryParams
+            const lastPart = parts[parts.length - 1];
+            // Split by query parameter character and select the first element, i.e. blob name ending with .jpeg
+            const blobName = lastPart.split("?")[0];
+    
+            await deleteImageBlob(blobName);
+            return null;
+        } else {
+            return null;
+        }
     }
-
     // new profile picture needs to be uploaded to azure
-
     const metaData = profilePicture.substring(
         profilePicture.indexOf(":") + 1,
         profilePicture.indexOf(";")

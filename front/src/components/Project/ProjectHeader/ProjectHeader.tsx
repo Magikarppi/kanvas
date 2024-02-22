@@ -4,15 +4,17 @@ import ProjectTitle from "./ProjectTitle";
 import ProjectMembers from "./ProjectMembers";
 import { IProject, ProjectMember } from "../../../models/projectModels";
 
+interface Props {
+    projectInfo: IProject | undefined;
+    projectMembers: ProjectMember[];
+    width: number;
+}
+
 const ProjectHeader = ({
     projectInfo,
     projectMembers,
     width,
-}: {
-    projectInfo: IProject | undefined;
-    projectMembers: ProjectMember[];
-    width: number;
-}) => {
+}: Props) => {
     if (!projectInfo) {
         return null;
     }

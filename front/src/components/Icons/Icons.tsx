@@ -3,6 +3,7 @@ import { forwardRef } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import AddIcon from "@mui/icons-material/Add";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -69,7 +70,13 @@ const Icons = {
             style={{ color: props.iconColor, fontSize: props.size }}
         />
     )),
-
+    AddPhoto: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+        <AddPhotoAlternateIcon
+            {...props}
+            ref={ref}
+            style={{ color: props.iconColor, fontSize: props.size }}
+        />
+    )),
     ArrowBack: forwardRef<SVGSVGElement, IconProps>((props, ref) => (
         <ArrowBackIosNewIcon
             {...props}

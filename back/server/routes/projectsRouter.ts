@@ -45,8 +45,60 @@ import {
     getCurrentTimestamp,
 } from "../utils/utilities";
 import { JwtPayload } from "jsonwebtoken";
+import { deleteImageBlob, uploadImageBlob } from "../services/azureServices";
 
 const router = Router();
+
+const handleProjectImageUpload = async (
+    projectId: string,
+    projectPicture: string | null | undefined
+) => {
+    const currentProject = await getProjectDAO(projectId);
+
+    if (
+        projectPicture === undefined ||
+        projectPicture === currentProject.picture
+    ) {
+        return currentProject.picture;
+    }
+
+    if (projectPicture === null) {
+        // Deleting Project Picture
+        const imageUrl = currentProject.picture;
+
+        const parts = imageUrl.split("/");
+
+        // Last part is string including blobName and queryParams
+        const lastPart = parts[parts.length - 1];
+
+        // Split by query parameter character and select the first element, i.e. blob name ending with .jpeg
+        const blobName = lastPart.split("?")[0];
+
+        await deleteImageBlob(blobName);
+        return null;
+    }
+
+    // Uploading new project pic to Azure
+    const metaData = projectPicture.substring(
+        projectPicture.indexOf(":") + 1,
+        projectPicture.indexOf(";")
+    );
+    const base64ImageData = projectPicture.split(",")[1];
+    const imageName = `project-image-project-${projectId}.${metaData.split("/")[1]}`;
+
+    const imageUrl = await uploadImageBlob(
+        imageName,
+        base64ImageData,
+        metaData
+    );
+
+    if (!imageUrl) {
+        console.error("Failed to save profile picture");
+        throw Error();
+    } else {
+        return imageUrl;
+    }
+};
 
 router.post("/", async (req: UserRequest, res: Response) => {
     try {
@@ -314,6 +366,8 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
                 .send(RESPONSE_MESSAGES.PROJECT_NOT_FOUND);
         }
 
+        const projectPicture = await handleProjectImageUpload(projectId, picture);
+
         const updatedProject: IProject = {
             id: project.id,
             name: name || project.name,
@@ -326,7 +380,7 @@ router.put("/:id", async (req: UserRequest, res: Response) => {
                     : project.project_creation_date,
             endDate: endDate !== undefined ? endDate : project.project_end_date,
             theme: theme !== undefined ? theme : project.theme,
-            picture: picture !== undefined ? picture : project.picture,
+            picture: projectPicture,
         };
 
         await updateProjectDAO(projectId, updatedProject);

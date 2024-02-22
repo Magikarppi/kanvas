@@ -7,8 +7,9 @@ import {
     CardMedia,
     Box,
 } from "@mui/material";
-import Icons from "../Icons/Icons";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { ChangeEvent, useState } from "react";
+import Icons from "../Icons/Icons";
 
 interface IProps {
     image: string | null | ArrayBuffer;
@@ -37,7 +38,7 @@ export default function AddImage({ image, handleSetImage }: IProps) {
                     <Tooltip
                         title={
                             <Typography sx={{ fontSize: 14 }}>
-                                Add Image
+                                {image ? "Replace Image" : "Add Image"}
                             </Typography>
                         }
                         arrow
@@ -48,15 +49,18 @@ export default function AddImage({ image, handleSetImage }: IProps) {
                                 height: "100%",
                                 marginLeft: image ? "0px" : "32px",
                                 borderRadius: "0px",
-                                borderRight: image ? "1.5px solid white" : "0px",
+                                borderRight: image
+                                    ? "1.5px solid white"
+                                    : "0px",
                                 "&:hover": {
                                     backgroundColor: "#5F01FB",
                                 },
                             }}
                         >
-                            <Icons.Add />
+                            <Icons.Add size="42px" />
                             <input
                                 type="file"
+                                title=" "
                                 onChange={handleSetImage}
                                 style={{
                                     position: "absolute",
@@ -86,7 +90,7 @@ export default function AddImage({ image, handleSetImage }: IProps) {
                                     },
                                 }}
                             >
-                                <Icons.Delete />
+                                <Icons.Delete size="32px" />
                             </IconButton>
                         </Tooltip>
                     )}
@@ -102,7 +106,12 @@ export default function AddImage({ image, handleSetImage }: IProps) {
                 </CardActionArea>
             ) : (
                 <Box visibility={hoveringImage ? "hidden" : "visible"}>
-                    <Icons.Image size="xx-large" iconColor="white" />
+                    <AddPhotoAlternateIcon
+                        sx={{
+                            color: "white",
+                            fontSize: "xx-large",
+                        }}
+                    />
                 </Box>
             )}
         </Avatar>

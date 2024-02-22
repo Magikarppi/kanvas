@@ -48,5 +48,3 @@ export const getUserByEmail =
 
 export const getExistingEmailConflict =
     "SELECT * FROM users WHERE id <> $1 AND LOWER(email) = LOWER($2)";
-
-export const getUserPicture = "SELECT picture FROM users WHERE id = $1";

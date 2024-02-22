@@ -1,10 +1,5 @@
 import { IUser } from "./userModels";
 
-export interface IProject extends IProjectSubmitNew {
-    id: string;
-    creationDate: Date;
-}
-
 export interface IProjectSubmitNew {
     name: string;
     description: string | null;
@@ -12,6 +7,14 @@ export interface IProjectSubmitNew {
     endDate: Date | null;
     theme: string;
     picture: string | null;
+}
+export interface IProject extends IProjectSubmitNew {
+    id: string;
+    creationDate: Date;
+}
+
+export interface IProjectImage {
+    picture: string | ArrayBuffer | null;
 }
 
 export interface IFavoriteProject extends IProject {

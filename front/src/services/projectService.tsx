@@ -1,4 +1,4 @@
-import { IProject, IProjectSubmitNew } from "../models/projectModels";
+import { IProject, IProjectImage, IProjectSubmitNew } from "../models/projectModels";
 import { createClient } from "../utils/axiosUtils";
 
 const projectService = {
@@ -39,7 +39,18 @@ const projectService = {
             `/projects/${projectId}`,
             projectPayload
         );
-
+        return response.data;
+    },
+    updateProjectImage: async (
+        token: string,
+        projectImage: IProjectImage,
+        projectId: string
+    ) => {
+        const client = createClient(token);
+        const response = await client.put(
+            `/projects/${projectId}`,
+            projectImage
+        );
         return response.data;
     },
     addFavoriteProject: async (token: string, projectId: string) => {

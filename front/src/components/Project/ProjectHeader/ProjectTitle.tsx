@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { useState, useEffect } from "react";
 import {
     Box,
     Card,
@@ -11,34 +11,43 @@ import {
 } from "@mui/material";
 
 import Icons from "../../Icons/Icons";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { IProject } from "../../../models/projectModels";
+import useImage from "../../../hooks/useImage";
+import { selectToken } from "../../../redux/hooks";
+import projectService from "../../../services/projectService";
 
-const ProjectTitle = ({ projectInfo }: { projectInfo: IProject }) => {
-    const [image, setImage] = useState<string | ArrayBuffer | null>("");
-    const [hoveringImage, setHoveringImage] = useState<boolean>(true);
+interface Props {
+    projectInfo: IProject;
+}
 
-    const handleSetImage = (event: ChangeEvent<HTMLInputElement>) => {
-        const reader = new FileReader();
-        if (event.target.files && event.target.files[0]) {
-            const isJpeg = event.target.files[0].type.slice(-4) === "jpeg";
-            const isPng = event.target.files[0].type.slice(-3) === "png";
+const ProjectTitle = ({ projectInfo }: Props) => {
+    const [hoveringImage, setHoveringImage] = useState<boolean>(false);
 
-            if (isJpeg || isPng) {
-                reader.addEventListener("load", () => {
-                    setImage(reader.result);
-                });
-                reader.readAsDataURL(event.target.files[0]);
-            }
+    const token = selectToken();
+    const { image, handleSetImage } = useImage(projectInfo!.picture);
+
+    useEffect(() => {
+        const updateProjectImage = async () => {
+            await projectService.updateProjectImage(
+                token as string,
+                { picture: image },
+                projectInfo.id
+            );
+        };
+
+        if (image !== projectInfo.picture) {
+            updateProjectImage();
         }
-    };
+    }, [image]);
 
     return (
         <>
             <Grid item>
                 <Card
                     style={{
-                        height: "115px",
-                        width: "115px",
+                        height: "120px",
+                        width: "120px",
                         textAlign: "center",
                         display: "flex",
                         justifyContent: "center",
@@ -48,36 +57,86 @@ const ProjectTitle = ({ projectInfo }: { projectInfo: IProject }) => {
                     onMouseEnter={() => setHoveringImage(true)}
                     onMouseLeave={() => setHoveringImage(false)}
                 >
-                    {hoveringImage ? (
-                        <Tooltip
-                            title={<Typography>Edit image</Typography>}
-                            arrow
-                        >
-                            <IconButton>
-                                <Icons.Add size="54px" />
-                                <input
-                                    type="file"
-                                    onChange={handleSetImage}
-                                    style={{
-                                        position: "absolute",
-                                        opacity: 0,
-                                        cursor: "pointer",
+                    {hoveringImage && (
+                        <>
+                            <Tooltip
+                                title={
+                                    <Typography sx={{ fontSize: "14px" }}>
+                                        {image ? "Replace Image" : "Add Image"}
+                                    </Typography>
+                                }
+                                arrow
+                            >
+                                <IconButton
+                                    sx={{
+                                        width: image ? "50%" : "100%",
+                                        height: "100%",
+                                        marginLeft: image ? "0px" : "56px",
+                                        borderRadius: "0px",
+                                        borderRight: image
+                                            ? "2px solid white"
+                                            : "0px",
+                                        "&:hover": {
+                                            backgroundColor: "#5F01FB",
+                                        },
                                     }}
-                                />
-                            </IconButton>
-                        </Tooltip>
-                    ) : (
-                        <CardActionArea>
-                            {typeof image === "string" && image.length > 0 ? (
-                                <CardMedia
-                                    style={{ height: "100px" }}
-                                    image={image}
-                                    component="img"
-                                />
-                            ) : (
-                                <Box />
+                                >
+                                    <Icons.Add size="40px" />
+                                    <input
+                                        type="file"
+                                        title=" "
+                                        onChange={handleSetImage}
+                                        style={{
+                                            position: "absolute",
+                                            opacity: 0,
+                                            cursor: "pointer",
+                                        }}
+                                    />
+                                </IconButton>
+                            </Tooltip>
+                            {image && (
+                                <Tooltip
+                                    title={
+                                        <Typography sx={{ fontSize: 14 }}>
+                                            Delete Image
+                                        </Typography>
+                                    }
+                                    arrow
+                                >
+                                    <IconButton
+                                        onClick={handleSetImage}
+                                        sx={{
+                                            width: "50%",
+                                            height: "100%",
+                                            borderRadius: "0px",
+                                            "&:hover": {
+                                                backgroundColor: "red",
+                                            },
+                                        }}
+                                    >
+                                        <Icons.Delete size="32px" />
+                                    </IconButton>
+                                </Tooltip>
                             )}
+                        </>
+                    )}
+
+                    {image ? (
+                        <CardActionArea>
+                            <CardMedia
+                                image={typeof image === "string" ? image : ""}
+                                component="img"
+                            />
                         </CardActionArea>
+                    ) : (
+                        <Box visibility={hoveringImage ? "hidden" : "visible"}>
+                            <AddPhotoAlternateIcon
+                                sx={{
+                                    color: "white",
+                                    fontSize: "56px",
+                                }}
+                            />
+                        </Box>
                     )}
                 </Card>
             </Grid>

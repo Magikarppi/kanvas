@@ -18,6 +18,9 @@ export default function CardStatusInput({
                 onChange={handleChange}
                 value={status}
                 name="status"
+                type="text"
+                id="status"
+                autoComplete="off"
                 InputProps={{
                     endAdornment: (
                         <InputAdornment position="end">

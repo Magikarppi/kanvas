@@ -137,7 +137,6 @@ export const updateCardSchema = yup.object().shape({
             maxLengthProjectDescriptionHelperText
         ),
     status: yup
-        .string()
-        .required(emptyFieldHelperText),
+        .string(),
     dueDate: yup.date(),
 });

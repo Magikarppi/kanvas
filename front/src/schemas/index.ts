@@ -124,19 +124,12 @@ export const newPasswordSchema = yup.object().shape({
 });
 
 export const updateCardSchema = yup.object().shape({
-    title: yup
-        .string()
-        .required(emptyFieldHelperText),
-    subTitle: yup
-        .string()
-        .required(),
+    title: yup.string().required(emptyFieldHelperText),
+    subTitle: yup.string().nullable(),
     description: yup
         .string()
-        .max(
-            projectDescriptionMaxLength,
-            maxLengthProjectDescriptionHelperText
-        ),
-    status: yup
-        .string(),
-    dueDate: yup.date(),
+        .max(projectDescriptionMaxLength, maxLengthProjectDescriptionHelperText)
+        .nullable(),
+    status: yup.string().nullable(),
+    dueDate: yup.date().nullable(),
 });

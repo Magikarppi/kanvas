@@ -141,7 +141,7 @@ export const BoardCardModal = ({
     } = useFormik({
         initialValues: {
             title: card!.title,
-            subTitle: card!.subTitle,
+            subTitle: card!.subTitle || "",
             description: card!.description || "",
             status: card!.status || "",
             dueDate: card!.dueDate || new Date(),
@@ -153,10 +153,10 @@ export const BoardCardModal = ({
                     const updateCard: ICard = {
                         ...card,
                         title: values!.title,
-                        subTitle: values!.subTitle,
-                        description: values!.description || "",
-                        status: values!.status || "",
-                        dueDate: values!.dueDate || new Date(),
+                        subTitle: values!.subTitle || null,
+                        description: values!.description || null,
+                        status: values!.status || null,
+                        dueDate: values!.dueDate || null,
                     };
                     await cardsService.updateCard(token, updateCard);
                     if (selectedUsersState.length > 0) {

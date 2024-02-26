@@ -180,14 +180,14 @@ const ProjectPage = () => {
                     if (movedCard.orderIndex > updatedCard.orderIndex) {
                         if (
                             card.orderIndex >= updatedCard.orderIndex &&
-                          card.orderIndex < movedCard.orderIndex
+                            card.orderIndex < movedCard.orderIndex
                         ) {
                             card.orderIndex++;
                         }
                     } else if (movedCard.orderIndex < updatedCard.orderIndex) {
                         if (
                             card.orderIndex > movedCard.orderIndex &&
-                          card.orderIndex <= updatedCard.orderIndex
+                            card.orderIndex <= updatedCard.orderIndex
                         ) {
                             card.orderIndex--;
                         }
@@ -207,37 +207,43 @@ const ProjectPage = () => {
                 const cardsInOldColumn = cardsInOtherColumn.filter(
                     (card) => card.inColumn === originalCard.inColumn
                 );
-      
+
                 // update orderIndexes in the column where a card was dragged from
                 cardsInOldColumn.forEach((card) => {
                     if (card.orderIndex > originalCard.orderIndex) {
                         card.orderIndex--;
                     }
                 });
-      
+
                 // update orderIndexes in the column where a card was dragged to
                 cardsInNewColumn.forEach((card) => {
                     if (card.orderIndex >= updatedCard.orderIndex) {
                         card.orderIndex++;
                     }
                 });
-      
+
                 // remove dragged card from the old column
                 cardsInOldColumn.splice(
-                    cardsInOldColumn.findIndex((card) => card.id === originalCard.id),
+                    cardsInOldColumn.findIndex(
+                        (card) => card.id === originalCard.id
+                    ),
                     1
                 );
-      
+
                 // insert the draged card into the new column
                 cardsInNewColumn.splice(updatedCard.orderIndex, 0, updatedCard);
-      
+
                 // keep the rest of the columns along
                 const restOfCards = prevCards.filter(
                     (card) =>
-                        !cardsInOldColumn.map((oldCard) => oldCard.id).includes(card.id) &&
-              !cardsInNewColumn.map((newCard) => newCard.id).includes(card.id)
+                        !cardsInOldColumn
+                            .map((oldCard) => oldCard.id)
+                            .includes(card.id) &&
+                        !cardsInNewColumn
+                            .map((newCard) => newCard.id)
+                            .includes(card.id)
                 );
-                
+
                 // return untouched and updated columns
                 return [
                     ...restOfCards,
@@ -247,7 +253,6 @@ const ProjectPage = () => {
             }
         });
     };
-      
 
     const handleUpdateProject = async (
         projectInfo: IProjectSubmitNew,
@@ -286,6 +291,7 @@ const ProjectPage = () => {
             await projectService.deleteProjectById(token, projectId);
 
             setProject(undefined);
+            toast.success("Project deleted");
             navigate("/dashboard");
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -311,7 +317,7 @@ const ProjectPage = () => {
                 projectMembers={members}
                 handleOpenEditProjectModal={() => setProjectModalOpen(true)}
             />
-            <Divider style={{ marginTop: "20px"}} />
+            <Divider style={{ marginTop: "20px" }} />
             <ProjectToolbar
                 toggleListOrGrid={handleDisplay}
                 showGridOrList={showGridOrList}
@@ -321,7 +327,7 @@ const ProjectPage = () => {
                 projectMembers={members}
                 setCards={setCards}
             />
-            <Divider style={{ marginBottom: "20px"}} />
+            <Divider style={{ marginBottom: "20px" }} />
 
             {showGridOrList === "grid" ? (
                 <DragDrop

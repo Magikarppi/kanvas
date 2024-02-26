@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
 import jwt, { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
 
 import {
     IResetPasswordRequest,
@@ -37,25 +38,28 @@ import {
 } from "../middleware/middleware";
 import { deleteImageBlob, uploadImageBlob } from "../services/azureServices";
 
+dotenv.config();
+
+const JWT_SECRET = process.env.SECRET as string;
+const app_path = process.env.appPath;
+const EMAIL_ADDRESS = process.env.EMAIL_ADDRESS as string;
+
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "kanbanprojectbuutti@gmail.com",
+        user: EMAIL_ADDRESS,
         pass: process.env.emailPassword,
     },
 });
-const users = express.Router();
-const JWT_SECRET = process.env.SECRET as string;
-const app_path = process.env.appPath;
 
 const createToken = (userId: string) =>
     jwt.sign({ value: userId }, JWT_SECRET, {
         expiresIn: 60000 * 60 * 24,
     });
 
-const sendEmail = async (link: string, email: string) => {
+const sendEmailResetPassword = async (link: string, email: string) => {
     transporter.sendMail({
-        from: "kanbanprojectbuutti@gmail.com",
+        from: EMAIL_ADDRESS,
         to: email,
         subject: "Forgot password for Kanban project",
         text: "",
@@ -63,6 +67,16 @@ const sendEmail = async (link: string, email: string) => {
             "<b>You have forgotten your password. Link for resetting password: " +
             link +
             "</b>",
+    });
+};
+
+const sendEmailPasswordChangeNotification = async (email: string) => {
+    transporter.sendMail({
+        from: EMAIL_ADDRESS,
+        to: email,
+        subject: "Password is changed succesfully",
+        text: "",
+        html: "<b>Your password is changed succesfully!</b>",
     });
 };
 
@@ -117,6 +131,8 @@ const handleProfileImageUpload = async (
         return imageUrl;
     }
 };
+
+const users = express.Router();
 
 users.put(
     "/:id",
@@ -219,6 +235,7 @@ users.put(
                     const hashedPassword = await argon2.hash(newPassword);
                     await updatePasswordDAO(userId, hashedPassword);
                     await deleteResetPasswordRequestDAO(userId);
+                    sendEmailPasswordChangeNotification(email);
                     response
                         .status(HTTP_RESPONSE_CODES.OK)
                         .send(
@@ -269,7 +286,7 @@ users.post(
                 };
 
                 const url: string = app_path + token;
-                sendEmail(url, email);
+                sendEmailResetPassword(url, email);
 
                 const existsResetPasswordReq = await getResetPasswordRequestDAO(
                     existingUser.id
@@ -514,6 +531,7 @@ users.put(
             if (isOldPasswordCorrect) {
                 const newHashedPassword = await argon2.hash(newPassword);
                 await updatePasswordDAO(userId, newHashedPassword);
+                sendEmailPasswordChangeNotification(user.email);
                 response.status(HTTP_RESPONSE_CODES.NO_CONTENT).send();
             } else {
                 response

@@ -7,14 +7,12 @@ import { IProject, ProjectMember } from "../../../models/projectModels";
 interface Props {
     projectInfo: IProject | undefined;
     projectMembers: ProjectMember[];
-    width: number;
     handleOpenEditProjectModal: () => void;
 }
 
 const ProjectHeader = ({
     projectInfo,
     projectMembers,
-    width,
     handleOpenEditProjectModal,
 }: Props) => {
     if (!projectInfo) {
@@ -27,7 +25,7 @@ const ProjectHeader = ({
                 container
                 alignItems="center"
                 marginTop="1%"
-                sx={{ width: `${width}px` }}
+                position="sticky"
             >
                 <Grid
                     item

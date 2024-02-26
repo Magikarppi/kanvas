@@ -1,4 +1,4 @@
-import React, { SyntheticEvent } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import {
     Autocomplete,
     Grid,
@@ -8,33 +8,80 @@ import {
     Tooltip,
     Typography,
 } from "@mui/material";
+import { styled } from "@mui/system";
 
 import Icons from "../../Icons/Icons";
-
-const dummyCardOptions = [
-    { title: "Refactor spaghetti code into linguini code" },
-    { title: "Hunt down the elusive memory leak" },
-    { title: "Tame the wild callback jungle" },
-    { title: "Battle CSS specificity wars" },
-    { title: "Herding asynchronous cats" },
-    { title: "Chase after the floating point precision" },
-    { title: "Debugging with a blindfold on" },
-    { title: "Conquer the endless meeting loop" },
-    { title: "Unravel the mystery of NaN" },
-    { title: "Survive the event-driven apocalypse" },
-];
+import { ICard, ICardResponsiblePerson } from "../../../models/cardModels";
+import { IProjectColumn, ProjectMember } from "../../../models/projectModels";
+import { selectToken } from "../../../redux/hooks";
+import BoardCardModal from "../../Kanban/BoardCardModal";
+import cardsService from "../../../services/cardsService";
 
 type DisplayType = "grid" | "list";
+
 type Props = {
     toggleListOrGrid: (
         _: React.MouseEvent<HTMLElement>,
         display: string
     ) => void;
     showGridOrList: DisplayType;
-    width: number;
+    cards: ICard[];
+    columns: IProjectColumn[];
+    updateCards: (card: ICard) => void;
+    setCards: React.Dispatch<React.SetStateAction<ICard[]>>;
+    projectMembers: ProjectMember[];
 };
 
-const ProjectToolbar = ({ toggleListOrGrid, showGridOrList, width }: Props) => {
+const GroupHeader = styled("div")({
+    position: "sticky",
+    top: "-8px",
+    padding: "4px 10px",
+    marginRight: "10px",
+    color: "white",
+    fontWeight: "bold",
+    fontSize: "15.5px",
+    backgroundColor: "#424242",
+    borderRadius: "4px",
+    textAlign: "center",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+});
+
+const GroupItems = styled("ul")({
+    fontSize: "13.5px",
+    padding: 0,
+    marginRight: "10px",
+    "& > *:hover": {
+        backgroundColor: "#5F01FB !important",
+        fontWeight: "bold",
+        transition: "all 0.2s",
+        borderRadius: "4px",
+    },
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+});
+
+const ProjectToolbar = ({
+    toggleListOrGrid,
+    showGridOrList,
+    cards,
+    columns,
+    updateCards,
+    setCards,
+    projectMembers,
+}: Props) => {
+    const [cardModal, setCardModal] = useState<boolean>(false);
+    const [responsiblePersons, setResponsiblePersons] = useState<
+        ICardResponsiblePerson[]
+    >([]);
+    const [oneCard, setOneCard] = useState<ICard>({} as ICard);
+    const token = selectToken();
+
+    const openCardModal = () => setCardModal(true);
+    const closeCardModal = () => {
+        setCardModal(false);
+    };
+
     const handleDisplay = (
         _: React.MouseEvent<HTMLElement>,
         display: string
@@ -42,15 +89,47 @@ const ProjectToolbar = ({ toggleListOrGrid, showGridOrList, width }: Props) => {
         toggleListOrGrid(_, display);
     };
 
-    const handleSelectCard = (_: SyntheticEvent, value: string | null) => {
-        if (value && value.trim() !== "") {
-            // ToDo: Open card modal when card is selected
-            console.log(value);
+    const handleSelectCard = async (
+        _: SyntheticEvent,
+        value: ICard | undefined
+    ) => {
+        if (value) {
+            const card: ICard = {
+                id: value.id,
+                projectId: value.projectId,
+                title: value.title,
+                subTitle: value.subTitle,
+                description: value.description,
+                status: value.status,
+                creationDate: value.creationDate,
+                dueDate: value.dueDate,
+                attachments: value.attachments,
+                inColumn: value.inColumn,
+                orderIndex: value.orderIndex,
+            };
+            setOneCard({ ...card });
+            const responsiblePersons = await cardsService.getResponsiblePerson(
+                token as string,
+                card.id
+            );
+            setResponsiblePersons([...responsiblePersons]);
+            openCardModal();
         }
     };
 
+    const enchancedCards = cards.map((card) => {
+        const column = columns.find((col) => col.id === card.inColumn);
+        const columnName = column!.columnName;
+        const orderIndex = column!.orderIndex;
+        return {
+            columnName: columnName,
+            columnOrderIndex: orderIndex,
+            ...card,
+        };
+    });
+
     return (
-        <Grid container py={2} alignItems="center" width={`${width}px`}>
+        <Grid container py={2} alignItems="center" position="sticky">
             <Grid item xs={12} sm={6}>
                 <ToggleButtonGroup
                     value={showGridOrList}
@@ -108,26 +187,32 @@ const ProjectToolbar = ({ toggleListOrGrid, showGridOrList, width }: Props) => {
                 }}
             >
                 <Autocomplete
+                    key={Math.random()}
                     clearOnEscape
                     blurOnSelect
-                    onChange={handleSelectCard}
-                    isOptionEqualToValue={(option, value) => option === value}
                     sx={{
                         marginRight: {
                             sm: 4,
                             xs: 0,
                         },
                     }}
-                    ListboxProps={{
-                        sx: {
-                            fontSize: "14px",
-                        },
-                    }}
-                    options={dummyCardOptions.map((card) => card.title)}
+                    onChange={(_, card) =>
+                        handleSelectCard(_, card ? card : undefined)
+                    }
+                    options={enchancedCards.sort(
+                        (card1, card2) =>
+                            card1.columnOrderIndex - card2.columnOrderIndex
+                    )}
+                    noOptionsText="This Project has no Cards"
+                    groupBy={(card) => card.columnName}
+                    getOptionLabel={(card) => card.title}
+                    isOptionEqualToValue={(option, value) =>
+                        option.id === value.id
+                    }
                     renderInput={(params) => (
                         <TextField
                             {...params}
-                            placeholder="Search for a Card"
+                            placeholder="Select or Search for a Card"
                             sx={{
                                 width: "325px",
                                 "& .MuiSvgIcon-root": {
@@ -136,8 +221,26 @@ const ProjectToolbar = ({ toggleListOrGrid, showGridOrList, width }: Props) => {
                             }}
                         />
                     )}
+                    renderGroup={(params) => (
+                        <li key={params.key}>
+                            <GroupHeader>{params.group}</GroupHeader>
+                            <GroupItems>{params.children}</GroupItems>
+                        </li>
+                    )}
                 />
             </Grid>
+            <BoardCardModal
+                open={cardModal}
+                close={closeCardModal}
+                card={oneCard}
+                setCard={setOneCard}
+                projectMembers={projectMembers}
+                cardResponsiblePersons={responsiblePersons}
+                setCardResponsiblePersons={setResponsiblePersons}
+                updateCards={updateCards}
+                allCards={cards}
+                setCards={setCards}
+            />
         </Grid>
     );
 };

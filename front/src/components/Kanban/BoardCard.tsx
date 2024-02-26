@@ -27,7 +27,7 @@ interface Props {
     updateCards: (card: ICard) => void;
     cardDragDisabled: boolean;
     allCards: ICard[];
-    setCards:React.Dispatch<React.SetStateAction<ICard[]>>;
+    setCards: React.Dispatch<React.SetStateAction<ICard[]>>;
 }
 
 const cardStyle = {
@@ -50,30 +50,38 @@ const getItemStyle = (isDragging: boolean, draggableStyle?: object) => ({
     ...draggableStyle,
 });
 
-export default function BoardCard({ card, index, projectMembers, updateCards, cardDragDisabled, allCards, setCards}: Props) {
+export default function BoardCard({
+    card,
+    index,
+    projectMembers,
+    updateCards,
+    cardDragDisabled,
+    allCards,
+    setCards,
+}: Props) {
     const [cardModal, setCardModal] = useState<boolean>(false);
-    const [responsiblePersons, setResponsiblePersons] = useState<ICardResponsiblePerson[]>([]);
+    const [responsiblePersons, setResponsiblePersons] = useState<
+        ICardResponsiblePerson[]
+    >([]);
     const [oneCard, setOneCard] = useState(card);
     const token = selectToken();
-    
+
     useEffect(() => {
+        setOneCard({ ...card });
         cardsService
             .getResponsiblePerson(token!, card.id)
-            .then((data => {
+            .then((data) => {
                 setResponsiblePersons(data);
             })
-            )
             .catch((err) => console.error(err));
-            
-    }, [oneCard]);
+    }, [card]);
 
     const openCardModal = () => setCardModal(true);
     const closeCardModal = () => setCardModal(false);
 
-
     let cardDueDate: Date | null = null;
-    if (oneCard.dueDate) {
-        cardDueDate = new Date(oneCard.dueDate);
+    if (card.dueDate) {
+        cardDueDate = new Date(card.dueDate);
     }
 
     const showOnlyRealData = false;
@@ -98,17 +106,39 @@ export default function BoardCard({ card, index, projectMembers, updateCards, ca
                             ),
                         }}
                     >
-                        <CardContent onClick={openCardModal} sx={{textAlign: "center", padding:"7px"}}>
-                            <Typography>{oneCard.title}</Typography>
-                            {oneCard.dueDate ? (
-                                <Typography style={{ fontSize: 10 }}>{cardDueDate?.toLocaleDateString("fi-FI")}</Typography>
-                            ) : (null)}
+                        <CardContent
+                            onClick={openCardModal}
+                            sx={{ textAlign: "center", padding: "7px" }}
+                        >
+                            <Typography>{card.title}</Typography>
+                            {card.dueDate ? (
+                                <Typography style={{ fontSize: 10 }}>
+                                    {cardDueDate?.toLocaleDateString("fi-FI")}
+                                </Typography>
+                            ) : null}
                             {showOnlyRealData ? (
-                                <Stack direction="row" spacing={1}  sx={{ marginTop: "9px" }}>
-                                    <Chip label="primary" size="small" color="primary" />
-                                    <Chip label="success" size="small" color="success" />
-                                    <Chip label="success" size="small" color="success" />
-                                </Stack>) : (null)}
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{ marginTop: "9px" }}
+                                >
+                                    <Chip
+                                        label="primary"
+                                        size="small"
+                                        color="primary"
+                                    />
+                                    <Chip
+                                        label="success"
+                                        size="small"
+                                        color="success"
+                                    />
+                                    <Chip
+                                        label="success"
+                                        size="small"
+                                        color="success"
+                                    />
+                                </Stack>
+                            ) : null}
                         </CardContent>
                         <CardActions
                             disableSpacing
@@ -132,7 +162,9 @@ export default function BoardCard({ card, index, projectMembers, updateCards, ca
                                         <Tooltip
                                             key={member.userId}
                                             title={
-                                                <Typography sx={{ fontSize: 13 }}>
+                                                <Typography
+                                                    sx={{ fontSize: 13 }}
+                                                >
                                                     {fullName}
                                                 </Typography>
                                             }
@@ -143,7 +175,7 @@ export default function BoardCard({ card, index, projectMembers, updateCards, ca
                                                 alt={fullName}
                                                 src={member.picture as string}
                                             >
-                                                {`${member.firstName[0]}${member.lastName[0]}`}
+                                                {`${member.firstName[0].toUpperCase()}${member.lastName[0].toUpperCase()}`}
                                             </Avatar>
                                         </Tooltip>
                                     );
@@ -158,13 +190,15 @@ export default function BoardCard({ card, index, projectMembers, updateCards, ca
                                     <IconButton aria-label="share">
                                         <ChatBubbleOutlineIcon />
                                     </IconButton>
-                                    <p>2</p> </>) : (null)}
+                                    <p>2</p>{" "}
+                                </>
+                            ) : null}
                         </CardActions>
                     </div>
-                    <BoardCardModal 
-                        open={cardModal} 
+                    <BoardCardModal
+                        open={cardModal}
                         close={closeCardModal}
-                        card={oneCard}
+                        card={card}
                         setCard={setOneCard}
                         projectMembers={projectMembers}
                         cardResponsiblePersons={responsiblePersons}

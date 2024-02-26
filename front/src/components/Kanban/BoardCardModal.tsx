@@ -24,7 +24,11 @@ import SendIcon from "@mui/icons-material/Send";
 import { useState, useEffect } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ExpandLess } from "@mui/icons-material";
-import { ICard, ICardResponsiblePerson, IResponsiblePerson } from "../../models/cardModels";
+import {
+    ICard,
+    ICardResponsiblePerson,
+    IResponsiblePerson,
+} from "../../models/cardModels";
 import cardsService from "../../services/cardsService";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
@@ -38,16 +42,17 @@ import CardDescriptionInput from "../Inputs/CardDescriptionInput";
 import DeleteModal from "./DeleteModal";
 import { ProjectMember } from "../../models/projectModels";
 import Icons from "../Icons/Icons";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { v4 as uuid } from "uuid";
 
 const comments = [
     {
         id: 1,
-        comment: "Haloo"
+        comment: "Haloo",
     },
     {
         id: 2,
-        comment: "Haloo2"
+        comment: "Haloo2",
     },
 ];
 
@@ -65,7 +70,7 @@ const style = {
     maxWidth: "900px",
     maxHeight: "660px",
     minWidth: "200px",
-    cursor: "default"
+    cursor: "default",
 };
 
 const uploadBoxStyle = {
@@ -80,7 +85,7 @@ const uploadBoxStyle = {
     fontSize: "24px",
     color: "#555555",
     border: "2px #c3c3c3 dashed",
-    borderRadius: "12px"
+    borderRadius: "12px",
 };
 
 interface IPropsCardModal {
@@ -90,22 +95,42 @@ interface IPropsCardModal {
     setCard: React.Dispatch<React.SetStateAction<ICard>>;
     projectMembers: ProjectMember[];
     cardResponsiblePersons: ICardResponsiblePerson[];
-    setCardResponsiblePersons: React.Dispatch<React.SetStateAction<ICardResponsiblePerson[]>>;
+    setCardResponsiblePersons: React.Dispatch<
+        React.SetStateAction<ICardResponsiblePerson[]>
+    >;
     updateCards: (card: ICard) => void;
     allCards: ICard[];
-    setCards:React.Dispatch<React.SetStateAction<ICard[]>>;
-  }
-  
+    setCards: React.Dispatch<React.SetStateAction<ICard[]>>;
+}
 
-export const BoardCardModal = ({open, close, card, setCard, projectMembers, cardResponsiblePersons, setCardResponsiblePersons, updateCards, allCards, setCards}: IPropsCardModal) => {
+export const BoardCardModal = ({
+    open,
+    close,
+    card,
+    setCard,
+    projectMembers,
+    cardResponsiblePersons,
+    setCardResponsiblePersons,
+    updateCards,
+    allCards,
+    setCards,
+}: IPropsCardModal) => {
     const [expanded, setExpanded] = useState<boolean>(false);
     const [deleteModal, setDeleteModal] = useState<boolean>(false);
-    const [selectedUsersState, setSelectedUsersState] = useState<ProjectMember[]>([]);
-    const [alreadyResponsibles, setAlreadyResponsibles] = useState<ICardResponsiblePerson[]>(cardResponsiblePersons);
-    const [deletedPersons, setDeletedPersons] = useState<ICardResponsiblePerson[]>([]);
+    const [selectedUsersState, setSelectedUsersState] = useState<
+        ProjectMember[]
+    >([]);
+    const [alreadyResponsibles, setAlreadyResponsibles] = useState<
+        ICardResponsiblePerson[]
+    >(cardResponsiblePersons);
+    const [deletedPersons, setDeletedPersons] = useState<
+        ICardResponsiblePerson[]
+    >([]);
     const [selectedUserId, setSelectedUserId] = useState<string>("Select..");
     const token = selectToken();
+
     const {
+        setValues,
         values,
         errors,
         touched,
@@ -123,11 +148,9 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
         },
         validationSchema: updateCardSchema,
         async onSubmit(values) {
-
             try {
                 if (token) {
-                    const updateCard: ICard
-                    = {
+                    const updateCard: ICard = {
                         ...card,
                         title: values!.title,
                         subTitle: values!.subTitle,
@@ -135,19 +158,16 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
                         status: values!.status || "",
                         dueDate: values!.dueDate || new Date(),
                     };
-                    await cardsService.updateCard(
-                        token,
-                        updateCard
-                    );
-                    updateCards(updateCard);
-                    setCard(updateCard);
-                    if(selectedUsersState.length > 0) {
-                        for(let i = 0; i < selectedUsersState.length; i++) {
-                            const findResponsibleId = alreadyResponsibles.find((val) => val.userId === selectedUsersState[i].id);
+                    await cardsService.updateCard(token, updateCard);
+                    if (selectedUsersState.length > 0) {
+                        for (let i = 0; i < selectedUsersState.length; i++) {
+                            const findResponsibleId = alreadyResponsibles.find(
+                                (val) => val.userId === selectedUsersState[i].id
+                            );
                             const data: IResponsiblePerson = {
                                 id: findResponsibleId!.cardResponsibleId,
-                                userId:selectedUsersState[i].id,
-                                cardId: card.id
+                                userId: selectedUsersState[i].id,
+                                cardId: card.id,
                             };
                             await cardsService.addResponsiblePerson(
                                 token,
@@ -163,6 +183,7 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
                             );
                         }
                     }
+                    updateCards(updateCard);
                     setCardResponsiblePersons(alreadyResponsibles);
                     setCard(updateCard);
                     setSelectedUsersState([]);
@@ -182,16 +203,28 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
     });
 
     useEffect(() => {
+        if (card) {
+            setValues({
+                ...card,
+                title: card.title,
+                subTitle: card.subTitle || "",
+                description: card.description || "",
+                status: card.status || "",
+                dueDate: (card!.dueDate as Date) || null,
+            });
+        }
+    }, [card]);
+
+    useEffect(() => {
         setAlreadyResponsibles(cardResponsiblePersons);
     }, [cardResponsiblePersons]);
-
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
 
     const closeBoardCardModal = () => {
-        setCard({ 
+        setCard({
             ...card,
             title: card.title,
             subTitle: card.subTitle || "",
@@ -205,14 +238,10 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
     const openDeleteModal = () => setDeleteModal(true);
     const closeDeleteModal = () => setDeleteModal(false);
 
-
     const deleteCard = async () => {
-        try {    
-            if(token) {
-                await cardsService.deleteCard(
-                    token,
-                    card.id
-                );
+        try {
+            if (token) {
+                await cardsService.deleteCard(token, card.id);
             }
             const newCards = allCards.filter((c) => c.id !== card.id);
             setCards(newCards);
@@ -227,9 +256,13 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
     };
 
     const addResponsiblePerson = () => {
-        const selectedUserValues = projectMembers.find(val => val.id === selectedUserId);
-        const foundError = alreadyResponsibles.find(val => val.userId === selectedUserId);
-        if(foundError) {
+        const selectedUserValues = projectMembers.find(
+            (val) => val.id === selectedUserId
+        );
+        const foundError = alreadyResponsibles.find(
+            (val) => val.userId === selectedUserId
+        );
+        if (foundError) {
             toast.error("The user is already responsible for this card");
             setSelectedUserId("Select..");
             return;
@@ -241,9 +274,11 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
             firstName: selectedUserValues!.firstName,
             lastName: selectedUserValues!.lastName,
             email: selectedUserValues!.email,
-            picture: selectedUserValues!.picture
+            picture: selectedUserValues!.picture,
         };
-        const copyResponsiblesStateArray: ICardResponsiblePerson[] = [...alreadyResponsibles];
+        const copyResponsiblesStateArray: ICardResponsiblePerson[] = [
+            ...alreadyResponsibles,
+        ];
         const responsibleUser: ICardResponsiblePerson = {
             cardResponsibleId: uuid(),
             userId: selectedUserValues!.id,
@@ -252,30 +287,40 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
             email: selectedUserValues!.email,
             picture: selectedUserValues!.picture,
         };
-        
+
         copyResponsiblesStateArray.push(responsibleUser);
         setAlreadyResponsibles(copyResponsiblesStateArray);
         copySelectedUsersState.push(newMember);
         setSelectedUsersState(copySelectedUsersState);
         setSelectedUserId("Select..");
-
     };
 
     const onDeleteResponsiblePersonData = (userId: string) => {
-        const findResponsible = alreadyResponsibles.find((val) => val.userId === userId);
-        const findSelected = selectedUsersState.find((val) => val.id === userId);
+        const findResponsible = alreadyResponsibles.find(
+            (val) => val.userId === userId
+        );
+        const findSelected = selectedUsersState.find(
+            (val) => val.id === userId
+        );
         const findDelete = deletedPersons.find((val) => val.userId === userId);
         if (findSelected || findDelete) {
-            const newSelectedUsers = selectedUsersState.filter((val) => val.id !== userId);
+            const newSelectedUsers = selectedUsersState.filter(
+                (val) => val.id !== userId
+            );
             setSelectedUsersState(newSelectedUsers);
-            const newDeletedPersons = deletedPersons.filter((val) => val.userId !== userId);
+            const newDeletedPersons = deletedPersons.filter(
+                (val) => val.userId !== userId
+            );
             setDeletedPersons(newDeletedPersons);
-            const newResponsibles = alreadyResponsibles.filter((val) => val.userId !== userId);
+            const newResponsibles = alreadyResponsibles.filter(
+                (val) => val.userId !== userId
+            );
             setAlreadyResponsibles(newResponsibles);
-        }
-        else {
+        } else {
             setDeletedPersons([...deletedPersons, findResponsible!]);
-            const newResponsibles = alreadyResponsibles.filter((val) => val.userId !== userId);
+            const newResponsibles = alreadyResponsibles.filter(
+                (val) => val.userId !== userId
+            );
             setAlreadyResponsibles(newResponsibles);
         }
     };
@@ -288,31 +333,51 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
     };
 
     const disable = !values.title;
-    const disableAdd = selectedUserId === undefined || selectedUserId === "Select..";
+    const disableAdd =
+        selectedUserId === undefined || selectedUserId === "Select..";
 
     return (
         <>
-            <Modal  
-                open={open}
-                onClose={close}
-                hideBackdrop={true}>
+            <Modal open={open} onClose={close} hideBackdrop={true}>
                 <Card sx={style}>
-                    <Container component="form" onSubmit={handleSubmit} style={{ cursor: "default", width: "90%"}}>
-                        <Grid container direction="row" sx={{display: "flex", alignItems: "center" }}>
-                            <Typography style={{ 
-                                marginBottom: "30px", 
-                                marginTop: "25px", 
-                                fontSize: "2.5rem", 
-                                fontWeight:"bold",
-                                flexGrow: 1 }}>
+                    <Container
+                        component="form"
+                        onSubmit={handleSubmit}
+                        style={{ cursor: "default", width: "90%" }}
+                    >
+                        <Grid
+                            container
+                            direction="row"
+                            sx={{ display: "flex", alignItems: "center" }}
+                        >
+                            <Typography
+                                style={{
+                                    marginBottom: "30px",
+                                    marginTop: "25px",
+                                    fontSize: "2.5rem",
+                                    fontWeight: "bold",
+                                    flexGrow: 1,
+                                }}
+                            >
                                 Edit card
                             </Typography>
-                            <Typography onClick={openDeleteModal} style={{ 
-                                marginBottom: "25px", color: "red", cursor: "pointer", fontWeight:"bold", fontSize:"16px"
-                            }}>Delete card</Typography>
+                            <Typography
+                                onClick={openDeleteModal}
+                                style={{
+                                    marginBottom: "25px",
+                                    color: "red",
+                                    cursor: "pointer",
+                                    fontWeight: "bold",
+                                    fontSize: "16px",
+                                }}
+                            >
+                                Delete card
+                            </Typography>
                         </Grid>
                         <Grid item xs={10} md={12} lg={12} xl={10}>
-                            <InputLabel sx={{ fontSize: "1.7rem" }}>Title</InputLabel>
+                            <InputLabel sx={{ fontSize: "1.7rem" }}>
+                                Title
+                            </InputLabel>
                             <CardTitleInput
                                 title={values.title}
                                 touched={touched.title}
@@ -321,23 +386,43 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
                                 handleBlur={handleBlur}
                             />
                         </Grid>
-                        <Grid item xs={10} md={12} lg={12} xl={10} sx={{ marginLeft: "10px" }}>
-                            <h4>{card.title.length} / 100</h4>
+                        <Grid
+                            item
+                            xs={10}
+                            md={12}
+                            lg={12}
+                            xl={10}
+                            sx={{ marginLeft: "10px" }}
+                        >
+                            <h4>{values?.title?.length} / 100</h4>
                         </Grid>
                         <Grid item xs={10} md={12} lg={12} xl={10}>
-                            <InputLabel sx={{ fontSize: "1.7rem" }}>Description</InputLabel>
+                            <InputLabel sx={{ fontSize: "1.7rem" }}>
+                                Description
+                            </InputLabel>
                             <CardDescriptionInput
                                 description={values.description}
                                 handleChange={handleChange}
                             />
                         </Grid>
-                        <Grid item xs={10} md={12} lg={12} xl={10} sx={{ marginLeft: "10px" }}>
-                            <h4>{card.description?.length} / 500</h4>
+                        <Grid
+                            item
+                            xs={10}
+                            md={12}
+                            lg={12}
+                            xl={10}
+                            sx={{ marginLeft: "10px" }}
+                        >
+                            <h4>{values?.description?.length} / 500</h4>
                         </Grid>
-                        <Grid container direction="row" style={{marginLeft: "40px"}}>
+                        <Grid
+                            container
+                            direction="row"
+                            style={{ marginLeft: "40px" }}
+                        >
                             <Grid item xs={12} md={4} lg={6} xl={6}>
                                 <InputLabel sx={{ fontSize: "1.7rem" }}>
-                            Status
+                                    Status
                                 </InputLabel>
                                 <CardStatusInput
                                     status={values.status}
@@ -346,7 +431,7 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
                             </Grid>
                             <Grid item xs={12} md={4} lg={6} xl={6}>
                                 <InputLabel sx={{ fontSize: "1.7rem" }}>
-                            Due date
+                                    Due date
                                 </InputLabel>
                                 <CardDueDateInput
                                     dueDate={values.dueDate}
@@ -356,7 +441,7 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
                         </Grid>
                         <Grid item xs={10} md={12} lg={12} xl={10}>
                             <InputLabel sx={{ fontSize: "1.7rem" }}>
-                                 Responsible Persons
+                                Responsible Persons
                             </InputLabel>
                             <Select
                                 id="demo-multiple-name"
@@ -371,7 +456,13 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
                                     </MenuItem>
                                 ))}
                             </Select>
-                            <Box sx={{ display: "flex", marginTop: "10px", marginLeft: "4px"}}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    marginTop: "10px",
+                                    marginLeft: "4px",
+                                }}
+                            >
                                 <Chip
                                     icon={<Icons.AddPerson size="14px" />}
                                     onClick={addResponsiblePerson}
@@ -398,24 +489,36 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
                         {alreadyResponsibles.map((val) => (
                             <Box
                                 key={val.userId}
-                                sx={{ width: "100%", maxWidth: 400, marginTop:"10px" }}
+                                sx={{
+                                    width: "100%",
+                                    maxWidth: 400,
+                                    marginTop: "10px",
+                                }}
                             >
                                 <ListItem
-                                    onClick={() => onDeleteResponsiblePersonData(val.userId)}
+                                    onClick={() =>
+                                        onDeleteResponsiblePersonData(
+                                            val.userId
+                                        )
+                                    }
                                     secondaryAction={
                                         <IconButton
                                             edge="end"
                                             aria-label="delete"
                                         >
-                                            <Icons.Delete
-                                                iconColor="red"
-                                                size="x-large"
+                                            <DeleteForeverIcon
+                                                sx={{
+                                                    fontSize: "x-large",
+                                                    color: "red",
+                                                }}
                                             />
                                         </IconButton>
                                     }
                                 >
                                     <ListItemText
-                                        primary={val.firstName + " " + val.lastName} 
+                                        primary={
+                                            val.firstName + " " + val.lastName
+                                        }
                                         primaryTypographyProps={{
                                             fontSize: 16,
                                         }}
@@ -425,23 +528,43 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
                             </Box>
                         ))}
                         <Grid item xs={10} md={12} lg={12} xl={10}>
-                            <InputLabel sx={{ fontSize: "1.7rem" }}>Upload files</InputLabel>
+                            <InputLabel sx={{ fontSize: "1.7rem" }}>
+                                Upload files
+                            </InputLabel>
                         </Grid>
                         <Grid item xs={10} md={12} lg={12} xl={10}>
                             <Box style={uploadBoxStyle}>
-                                <InputLabel sx={{ color: "grey", fontSize: "1.7rem" }}>Drag and Drop or click to upload</InputLabel>
-                                <CloudUploadIcon sx={{ fontSize: 55 }}/>
+                                <InputLabel
+                                    sx={{ color: "grey", fontSize: "1.7rem" }}
+                                >
+                                    Drag and Drop or click to upload
+                                </InputLabel>
+                                <CloudUploadIcon sx={{ fontSize: 55 }} />
                             </Box>
                         </Grid>
-                        <Grid container direction="row" sx={{display: "flex", alignItems: "center" }}>
-                            <InputLabel sx={{ fontSize: "1.7rem", flexGrow: 1 }}>Comments</InputLabel>
+                        <Grid
+                            container
+                            direction="row"
+                            sx={{ display: "flex", alignItems: "center" }}
+                        >
+                            <InputLabel
+                                sx={{ fontSize: "1.7rem", flexGrow: 1 }}
+                            >
+                                Comments
+                            </InputLabel>
                             {!expanded ? (
-                                <IconButton aria-label="add to favorites" onClick={handleExpandClick}>
-                                    <ExpandMoreIcon sx={{fontSize: "22px"}}/>
+                                <IconButton
+                                    aria-label="add to favorites"
+                                    onClick={handleExpandClick}
+                                >
+                                    <ExpandMoreIcon sx={{ fontSize: "22px" }} />
                                 </IconButton>
                             ) : (
-                                <IconButton aria-label="add to favorites" onClick={handleExpandClick}>
-                                    <ExpandLess sx={{fontSize: "22px"}} />
+                                <IconButton
+                                    aria-label="add to favorites"
+                                    onClick={handleExpandClick}
+                                >
+                                    <ExpandLess sx={{ fontSize: "22px" }} />
                                 </IconButton>
                             )}
                         </Grid>
@@ -450,27 +573,46 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
                                 border={1}
                                 borderColor="grey.500"
                                 padding={3}
-                                sx={{marginTop: "10px"}}
+                                sx={{ marginTop: "10px" }}
                             >
-                                {comments.map(val => (
-                                    <Grid item xs={10} md={12} lg={12} xl={10} key={val.id}>
+                                {comments.map((val) => (
+                                    <Grid
+                                        item
+                                        xs={10}
+                                        md={12}
+                                        lg={12}
+                                        xl={10}
+                                        key={val.id}
+                                    >
                                         <ListItem
                                             key={val.id}
                                             secondaryAction={
-                                                <IconButton edge="end" aria-label="delete">
-                                              X
+                                                <IconButton
+                                                    edge="end"
+                                                    aria-label="delete"
+                                                >
+                                                    X
                                                 </IconButton>
                                             }
                                         >
                                             <ListItemText
                                                 primary={val.comment}
-                                                primaryTypographyProps={{ fontSize: 16 }}
+                                                primaryTypographyProps={{
+                                                    fontSize: 16,
+                                                }}
                                             />
                                         </ListItem>
                                         <Divider />
                                     </Grid>
                                 ))}
-                                <Grid  sx={{marginTop: "15px"}} item xs={10} md={12} lg={12} xl={10}>
+                                <Grid
+                                    sx={{ marginTop: "15px" }}
+                                    item
+                                    xs={10}
+                                    md={12}
+                                    lg={12}
+                                    xl={10}
+                                >
                                     <TextField
                                         name="newEmailState"
                                         id="newEmailState"
@@ -482,33 +624,37 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
                                                         sx={{ p: "10px" }}
                                                         aria-label="directions"
                                                     >
-                                                        <SendIcon 
-                                                            fontSize="large" 
-                                                        />
-                                                    </IconButton>                                    
+                                                        <SendIcon fontSize="large" />
+                                                    </IconButton>
                                                 </InputAdornment>
                                             ),
                                         }}
                                     ></TextField>
                                 </Grid>
                             </Box>
-                        </Collapse>         
-                        <Box sx={{ 
-                            display: "flex", 
-                            justifyContent: "space-evenly", 
-                            marginTop: "40px", 
-                            flexWrap: "wrap" 
-                        }}>
+                        </Collapse>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "space-evenly",
+                                marginTop: "40px",
+                                flexWrap: "wrap",
+                            }}
+                        >
                             <Button
                                 variant="contained"
                                 color="secondary"
-                                sx={{marginRight: "10px" }}
+                                sx={{ marginRight: "10px" }}
                                 type="submit"
                                 disabled={disable}
                             >
                                 Save
                             </Button>
-                            <Button variant="contained" color="error" onClick={closeBoardCardModal}>
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={closeBoardCardModal}
+                            >
                                 Cancel
                             </Button>
                         </Box>
@@ -519,9 +665,10 @@ export const BoardCardModal = ({open, close, card, setCard, projectMembers, card
                 open={deleteModal}
                 close={closeDeleteModal}
                 card={card}
-                deleteCard={deleteCard}/>       
+                deleteCard={deleteCard}
+            />
         </>
-    ); 
+    );
 };
 
 export default BoardCardModal;

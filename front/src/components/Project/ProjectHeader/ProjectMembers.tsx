@@ -103,7 +103,7 @@ const ProjectMembers = ({
                                     alt={fullName}
                                     src={member.picture as string}
                                 >
-                                    {`${member.firstName[0]}${member.lastName[0]}`}
+                                    {`${member.firstName[0].toUpperCase()}${member.lastName[0].toUpperCase()}`}
                                 </Avatar>
                             </Tooltip>
                         );

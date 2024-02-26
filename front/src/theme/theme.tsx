@@ -129,6 +129,14 @@ let theme = createTheme({
                 },
             },
         },
+        MuiAutocomplete: {
+            styleOverrides: {
+                noOptions: {
+                    fontSize: "14px",
+                    color: "white",
+                },
+            },
+        },
     },
 });
 

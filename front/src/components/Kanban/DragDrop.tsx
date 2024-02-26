@@ -23,12 +23,16 @@ interface Props {
     updateColumns: (column: IProjectColumn) => void;
     projectId: string;
     token: string;
-    projectMembers: ProjectMember[]
-    setCards:React.Dispatch<React.SetStateAction<ICard[]>>;
+    projectMembers: ProjectMember[];
+    setCards: React.Dispatch<React.SetStateAction<ICard[]>>;
 }
 
 const Container = styled.div`
     display: flex;
+    overflow-x: auto;
+    min-height: 100vh;
+    min-height: calc(100vh - 350px);
+    right: -15px;
 `;
 
 export default function DragDrop({

@@ -33,7 +33,7 @@ interface Props {
     projectMembers: ProjectMember[];
     updateCards: (card: ICard) => void;
     allCards: ICard[];
-    setCards:React.Dispatch<React.SetStateAction<ICard[]>>;
+    setCards: React.Dispatch<React.SetStateAction<ICard[]>>;
 }
 
 export default function GridColumn({
@@ -83,18 +83,22 @@ export default function GridColumn({
                             >
                                 {cards
                                     .sort((a, b) => a.orderIndex - b.orderIndex)
-                                    .map((card, index) => (
-                                        <BoardCard
-                                            key={card.id}
-                                            card={card}
-                                            index={index}
-                                            projectMembers={projectMembers}
-                                            updateCards={updateCards}
-                                            cardDragDisabled={cardDragDisabled}
-                                            allCards={allCards}
-                                            setCards={setCards}
-                                        />
-                                    ))}
+                                    .map((card, index) => {
+                                        return (
+                                            <BoardCard
+                                                key={card.id}
+                                                card={card}
+                                                index={index}
+                                                projectMembers={projectMembers}
+                                                updateCards={updateCards}
+                                                cardDragDisabled={
+                                                    cardDragDisabled
+                                                }
+                                                allCards={allCards}
+                                                setCards={setCards}
+                                            />
+                                        );
+                                    })}
                                 {provided.placeholder}
                             </CardList>
                         )}

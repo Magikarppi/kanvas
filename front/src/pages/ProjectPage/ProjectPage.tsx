@@ -34,10 +34,6 @@ const ProjectPage = () => {
     const navigate = useNavigate();
     const token = selectToken() as string;
 
-    const [scrollWidth, setScrollWidth] = useState(
-        document.documentElement.scrollWidth
-    );
-
     const [loading, setLoading] = useState(true);
     const [project, setProject] = useState<IProject>();
     const [columns, setColumns] = useState<IProjectColumn[]>([]);
@@ -74,19 +70,6 @@ const ProjectPage = () => {
         };
         fetchProject();
     }, [projectId]);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setScrollWidth(document.documentElement.scrollWidth);
-        };
-
-        handleResize();
-        window.addEventListener("resize", handleResize);
-
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
-    }, [loading, columns]);
 
     useEffect(() => {
         // send updates also to backend
@@ -326,16 +309,19 @@ const ProjectPage = () => {
             <ProjectHeader
                 projectInfo={project}
                 projectMembers={members}
-                width={scrollWidth}
                 handleOpenEditProjectModal={() => setProjectModalOpen(true)}
             />
-            <Divider style={{ marginTop: "20px", width: scrollWidth }} />
+            <Divider style={{ marginTop: "20px"}} />
             <ProjectToolbar
                 toggleListOrGrid={handleDisplay}
                 showGridOrList={showGridOrList}
-                width={scrollWidth}
+                cards={cards}
+                columns={columns}
+                updateCards={handleUpdateCards}
+                projectMembers={members}
+                setCards={setCards}
             />
-            <Divider style={{ marginBottom: "20px", width: scrollWidth }} />
+            <Divider style={{ marginBottom: "20px"}} />
 
             {showGridOrList === "grid" ? (
                 <DragDrop

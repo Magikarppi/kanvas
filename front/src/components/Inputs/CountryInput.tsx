@@ -26,7 +26,6 @@ export default function CountryInput({
                 data-cy="country-input"
                 error={touched && Boolean(error)}
                 helperText={touched && error}
-                required
                 fullWidth
                 id="country"
                 value={country}

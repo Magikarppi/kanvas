@@ -332,7 +332,7 @@ export default function AllProjectsPage() {
             />
             <Stack sx={{ minHeight: "90vh" }}>
                 <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
-                    <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+                    <Typography variant="h4" sx={{ mb: 2, mt: 2 }}>
                         My favorite projects
                     </Typography>
                     <Grid
@@ -345,7 +345,7 @@ export default function AllProjectsPage() {
                 </Grid>
                 <Divider light sx={{ width: "100%" }} />
                 <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
-                    <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+                    <Typography variant="h4" sx={{ mb: 2, mt: 2 }}>
                         My projects
                     </Typography>
                     <Grid
@@ -361,7 +361,7 @@ export default function AllProjectsPage() {
                 </Grid>
                 <Divider light sx={{ width: "100%" }} />
                 <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
-                    <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+                    <Typography variant="h4" sx={{ mb: 2, mt: 2 }}>
                         My teams
                     </Typography>
                     <Grid
@@ -377,7 +377,7 @@ export default function AllProjectsPage() {
                 </Grid>
                 <Divider light sx={{ height: "1px", width: "100%" }} />
                 <Grid sx={{ width: "100%", pr: 2, pl: 2, mb: 2 }}>
-                    <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+                    <Typography variant="h4" sx={{ mb: 2, mt: 2 }}>
                         Public projects
                     </Typography>
                     <Grid

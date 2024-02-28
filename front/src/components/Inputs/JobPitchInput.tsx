@@ -36,7 +36,6 @@ export default function jobPitchInput({
                 error={touched && Boolean(error)}
                 helperText={touched && error}
                 onBlur={handleBlur}
-                required
                 fullWidth
                 InputProps={{
                     style: { fontSize: 14 },

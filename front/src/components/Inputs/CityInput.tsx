@@ -26,7 +26,6 @@ export default function CityInput({
                 data-cy="city-input"
                 error={touched && Boolean(error)}
                 helperText={touched && error}
-                required
                 fullWidth
                 id="city"
                 value={city}

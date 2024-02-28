@@ -26,7 +26,6 @@ export default function PhoneNumberInput({
                 data-cy="phone-number-input"
                 error={touched && Boolean(error)}
                 helperText={touched && error}
-                required
                 fullWidth
                 id="phoneNumber"
                 value={phoneNumber}

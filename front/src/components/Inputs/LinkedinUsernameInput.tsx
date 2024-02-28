@@ -32,7 +32,6 @@ export default function LinkedinUsernameInput({
                 error={touched && Boolean(error)}
                 helperText={touched && error}
                 onBlur={handleBlur}
-                required
                 fullWidth
             />
         </>

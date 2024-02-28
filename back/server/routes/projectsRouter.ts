@@ -226,7 +226,7 @@ router.delete("/:id", async (req: UserRequest, res: Response) => {
             return;
         }
         await deleteProjectDAO(projectId);
-        res.status(HTTP_RESPONSE_CODES.OK).send();
+        res.status(HTTP_RESPONSE_CODES.OK).send("Project deleted");
     } catch (error) {
         console.error(error);
         return res
@@ -423,7 +423,7 @@ router.put("/:id", validateMembers, async (req: UserRequest, res: Response) => {
             userId
         );
 
-        res.status(HTTP_RESPONSE_CODES.OK).send();
+        res.status(HTTP_RESPONSE_CODES.OK).send("Project updated");
     } catch (error) {
         console.log(error);
         res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(

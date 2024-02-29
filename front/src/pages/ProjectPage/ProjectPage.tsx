@@ -34,6 +34,9 @@ const ProjectPage = () => {
     const navigate = useNavigate();
     const token = selectToken() as string;
 
+    const [toggleCardsBackEndUpdate, setToggleCardsBackEndUpdate] =
+        useState(false);
+
     const [loading, setLoading] = useState(true);
     const [project, setProject] = useState<IProject>();
     const [columns, setColumns] = useState<IProjectColumn[]>([]);
@@ -86,7 +89,7 @@ const ProjectPage = () => {
         if (cards.length > 0) {
             cards.forEach((card) => updateCard(card));
         }
-    }, [cards]);
+    }, [toggleCardsBackEndUpdate]);
 
     const handleDisplay = (
         _: React.MouseEvent<HTMLElement>,
@@ -177,17 +180,15 @@ const ProjectPage = () => {
                 const movedCard = prevCards.splice(originalCardIndex, 1)[0];
 
                 prevCards.forEach((card) => {
-                    if (movedCard.orderIndex > updatedCard.orderIndex) {
+                    if (card.inColumn === movedCard.inColumn) {
                         if (
-                            card.orderIndex >= updatedCard.orderIndex &&
-                            card.orderIndex < movedCard.orderIndex
+                            originalCard.orderIndex > card.orderIndex &&
+                            movedCard.orderIndex <= card.orderIndex
                         ) {
                             card.orderIndex++;
-                        }
-                    } else if (movedCard.orderIndex < updatedCard.orderIndex) {
-                        if (
-                            card.orderIndex > movedCard.orderIndex &&
-                            card.orderIndex <= updatedCard.orderIndex
+                        } else if (
+                            originalCard.orderIndex < card.orderIndex &&
+                            movedCard.orderIndex >= card.orderIndex
                         ) {
                             card.orderIndex--;
                         }
@@ -195,6 +196,8 @@ const ProjectPage = () => {
                 });
 
                 movedCard.orderIndex = updatedCard.orderIndex;
+
+                setToggleCardsBackEndUpdate((prev) => !prev);
 
                 prevCards.splice(updatedCard.orderIndex, 0, movedCard);
                 return prevCards;
@@ -243,6 +246,8 @@ const ProjectPage = () => {
                             .map((newCard) => newCard.id)
                             .includes(card.id)
                 );
+
+                setToggleCardsBackEndUpdate((prev) => !prev);
 
                 // return untouched and updated columns
                 return [

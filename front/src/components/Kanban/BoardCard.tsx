@@ -36,10 +36,10 @@ const cardStyle = {
     borderRadius: "12px",
     marginBottom: "10px",
     border: "2px solid",
-    height: "117.5px",
+    minHeight: "117.5px",
     width: "220px",
     background: "black",
-    paddinLeft: "0px",
+    paddingLeft: "0px",
     cursor: "pointer",
 };
 
@@ -110,7 +110,9 @@ export default function BoardCard({
                             onClick={openCardModal}
                             sx={{ textAlign: "center", padding: "7px" }}
                         >
-                            <Typography>{card.title}</Typography>
+                            <Typography>
+                                {card.title}
+                            </Typography>
                             {card.dueDate ? (
                                 <Typography style={{ fontSize: 10 }}>
                                     {cardDueDate?.toLocaleDateString("fi-FI")}

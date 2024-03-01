@@ -1,3 +1,5 @@
+import { ProjectMember } from "./projectModels";
+
 export interface ICard {
     id: string;
     projectId: string;
@@ -10,6 +12,21 @@ export interface ICard {
     attachments: string | null;
     inColumn: string;
     orderIndex: number;
+}
+
+export interface IOnSaveAddCardModalObject  {
+    title: string;
+    desc: string;
+    files: string[] | null;
+    status: string;
+    dueDate: Date;
+    responsiblePersonId: string;
+}
+export interface IAddCardModal {
+    onCloseAddCardModal:() => void;
+    isAddCardModalOpen: boolean;
+    onSaveAddCardModal:(object: IOnSaveAddCardModalObject) => void;
+    members?:ProjectMember[];
 }
 
 export interface ICardResponsiblePerson {

@@ -2,7 +2,7 @@ import { ICard, IResponsiblePerson } from "../models/cardModels";
 import { createClient } from "../utils/axiosUtils";
 
 const cardsService = {
-    addCard: async (token: string, card: Omit<ICard, "creationDate">) => {
+    addCard: async (token: string, card: Omit<ICard, "creationDate" | "id">) => {
         const client = createClient(token);
         const response = await client.post("/cards", card);
 

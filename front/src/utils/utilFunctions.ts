@@ -6,6 +6,15 @@ export const getDate = (dateString: string) => {
     return `${day}.${month}.${year}`;
 };
 
+
+export const showDate = (dateString: string) => {
+    const date = new Date(Date.parse(dateString));
+    const day = date.getDate();
+    const month = (date.getMonth());
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+};
+
 export const stringToColor = (string: string) => {
     let hash = 0;
 

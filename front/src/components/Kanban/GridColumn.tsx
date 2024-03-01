@@ -1,10 +1,15 @@
 import styled from "styled-components";
 import { IProjectColumn } from "../../models/projectModels";
-import { ICard } from "../../models/cardModels";
+import { ICard, IOnSaveAddCardModalObject, IResponsiblePerson } from "../../models/cardModels";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import BoardCard from "./BoardCard";
 import ColumnTitle from "./ColumnTitle";
 import { ProjectMember } from "../../models/projectModels";
+import { AddCardModal } from "../cards/addCardModal";
+import { useState } from "react";
+import cardsService from "../../services/cardsService";
+import { selectToken } from "../../redux/hooks";
+import { v4 as uuid } from "uuid";
 
 const Container = styled.div`
     margin: 0px 10px 0px 10px;
@@ -47,6 +52,46 @@ export default function GridColumn({
     allCards,
     setCards,
 }: Props) {
+    
+    const [isAddCardModalOpen, setIsAddCardModalOpen] = useState<boolean>(false);
+    const token = selectToken() as string;
+
+    const  addCard = async(object: IOnSaveAddCardModalObject) => {
+
+        const {title, desc, files, status, dueDate, responsiblePersonId } = object;
+        const subtitle = "Subtitle"; // Mistä?
+        const inColumn = column.id;
+        const orderIndex =  cards.length;
+        const projectMember = projectMembers?.find((value:ProjectMember) => value.id === responsiblePersonId );
+        const savingCard: Omit<ICard, "creationDate" | "id"> = {
+            title: title,
+            description: desc,
+            attachments: files ? files[0] : null,
+            status: status,
+            dueDate: dueDate,
+            projectId: column.projectId,
+            subTitle: subtitle,
+            inColumn: inColumn.toString(),
+            orderIndex: orderIndex
+        };
+        const card = await cardsService.addCard(token, savingCard);
+        if(projectMember){
+            const responsiblePerson: IResponsiblePerson = {id: uuid(), cardId: card.id, userId: projectMember?.id};
+            await cardsService.addResponsiblePerson(token, responsiblePerson);
+        }
+        const newArray:ICard[] = allCards.concat([card]);
+        setCards(newArray);
+        onCloseAddCardModal();
+    };  
+    
+    const onCloseAddCardModal = () => {
+        setIsAddCardModalOpen(false);
+    };
+
+    const wantsToAddCard = () => {
+        setIsAddCardModalOpen(true);
+    };
+
     return (
         <Draggable
             draggableId={column.id}
@@ -72,6 +117,8 @@ export default function GridColumn({
                     <ColumnTitle
                         columnInfo={column}
                         updateColumns={updateColumns}
+                        onSaveAddCardModal={addCard}
+                        wantsToAddCard={wantsToAddCard}
                     />
 
                     <Droppable droppableId={column.id} type="card">
@@ -102,6 +149,12 @@ export default function GridColumn({
                             </CardList>
                         )}
                     </Droppable>
+                    <AddCardModal 
+                        onCloseAddCardModal={onCloseAddCardModal}
+                        isAddCardModalOpen={isAddCardModalOpen}
+                        onSaveAddCardModal={addCard}
+                        members={projectMembers}
+                    /> 
                 </Container>
             )}
         </Draggable>

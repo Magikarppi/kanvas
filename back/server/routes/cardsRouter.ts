@@ -83,7 +83,7 @@ cards.put("/:id", async (req: Request, res: Response) => {
     };
     try {
         await updateCardDAO(id, card);
-        res.status(HTTP_RESPONSE_CODES.OK).send(card);
+        res.status(HTTP_RESPONSE_CODES.OK).send();
     } catch (error) {
         console.error(error);
         res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(
@@ -154,8 +154,8 @@ cards.get("/responsible-persons/:id", async (req: UserRequest, res: Response) =>
 });
 
 cards.post("/add-responsible-person", async (req: UserRequest, res: Response) => {
-    const {userId, cardId, id} = req.body;
-    const isBodyPropertiesMissing = !userId || !cardId || !id;
+    const {userId, cardId} = req.body;
+    const isBodyPropertiesMissing = !userId || !cardId;
 
     if (isBodyPropertiesMissing) {
         res
@@ -182,7 +182,7 @@ cards.post("/add-responsible-person", async (req: UserRequest, res: Response) =>
                 .send("The user is not a member of this project");
             return;
         }
-        /*
+
         const cardResponsiblePersons = await allCardResponsiblePersonsDAO(cardId);
 
         const isCardAlreadyMember = cardResponsiblePersons?.some(
@@ -195,9 +195,9 @@ cards.post("/add-responsible-person", async (req: UserRequest, res: Response) =>
                 .send("The user is already responsible for this card");
             return;
         }
-*/
+
         const cardResponsiblePersonData: IResponsiblePerson = {
-            id: id,
+            id: uuid(),
             userId: userId,
             cardId: cardId,               
         };

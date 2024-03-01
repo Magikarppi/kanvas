@@ -12,12 +12,13 @@ type Props = {
     anchorEl: null | HTMLElement;
     setAnchorEl: (target: null) => void;
     wantsToRename: () => void;
+    wantsToAddCard?: () => void;
 };
 
-const ColumnDotMenu = ({ anchorEl, setAnchorEl, wantsToRename }: Props) => {
+const ColumnDotMenu = ({ anchorEl, setAnchorEl, wantsToRename, wantsToAddCard }: Props) => {
     const open = Boolean(anchorEl);
     const id = open ? "simple-popper" : undefined;
-
+    
     return (
         <Popover
             disableScrollLock={true}
@@ -31,7 +32,7 @@ const ColumnDotMenu = ({ anchorEl, setAnchorEl, wantsToRename }: Props) => {
         >
             <List sx={{ padding: 0 }}>
                 <ListItem disablePadding>
-                    <ListItemButton>
+                    <ListItemButton  onClick={() => wantsToAddCard ? wantsToAddCard() : null}>
                         <ListItemIcon>
                             <Icons.Add />
                         </ListItemIcon>

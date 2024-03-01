@@ -184,6 +184,7 @@ export default function DragDrop({
                                 marginLeft: columns.length === 0 ? "1.5%" : 0,
                             }}
                         >
+                           
                             <Collapse in={wantsToAddColumn} timeout="auto">
                                 <TextField
                                     size="small"

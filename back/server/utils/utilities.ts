@@ -73,6 +73,17 @@ export const RESPONSE_MESSAGES = {
     SERVER_ERROR: "An unexpected error occurred while processing your request",
     TEAM_NOT_FOUND: "Team with that id was not found",
     USER_NOT_FOUND: "User with that id was not found",
+    INVALID_TEAM_NAME:
+        "name should be a non empty string with max length of 100 characters",
+    INVALID_ADMIN: "admin should be a non empty string",
+    INVALID_IS_PUBLIC: "isPublic should be a boolean",
+    INVALID_EMAILS_ARRAY: "emails should be an array of strings",
+    INVALID_CARD_TITLE:
+        "title should be a non empty string with max length of 50 characters",
+    INVALID_CREATION_DATE: "creationDate should a non empty string",
+    INVALID_IN_COLUMN: "inColumn should a non empty string",
+    INVALID_PROJECT_ID: "projectId should a non empty string",
+    INVALID_ORDER_INDEX: "orderIndex should be a number",
 };
 
 export const formatUser = (userFromDB: IUserFromDB): IUser => ({

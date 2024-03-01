@@ -1,7 +1,11 @@
 import { Router, Response } from "express";
 import { v4 as uuid } from "uuid";
 
-import { UserRequest, validateMembers } from "../middleware/middleware";
+import {
+    UserRequest,
+    validateFavoriteProjectsPostRequest,
+    validateMembers,
+} from "../middleware/middleware";
 import {
     insertProjectDAO,
     getProjectMemberDAO,
@@ -464,45 +468,51 @@ router.delete(
     }
 );
 
-router.post("/favorite-projects", async (req: UserRequest, res: Response) => {
-    try {
-        const { projectId } = req.body;
-        const { value: userId } = req.user as JwtPayload;
-        const userFavoriteProjects = await getUserFavoriteProjectsDAO(userId);
-        const userFavoriteProjectsIds = userFavoriteProjects?.map(
-            (val) => val.id
-        );
-        const found = userFavoriteProjectsIds?.includes(projectId);
+router.post(
+    "/favorite-projects",
+    validateFavoriteProjectsPostRequest,
+    async (req: UserRequest, res: Response) => {
+        try {
+            const { projectId } = req.body;
+            const { value: userId } = req.user as JwtPayload;
+            const userFavoriteProjects = await getUserFavoriteProjectsDAO(
+                userId
+            );
+            const userFavoriteProjectsIds = userFavoriteProjects?.map(
+                (val) => val.id
+            );
+            const found = userFavoriteProjectsIds?.includes(projectId);
 
-        if (!found) {
-            const favoriteProject: IProjectMember = {
-                id: uuid(),
-                projectId: projectId,
-                userId: userId,
-            };
-            await insertProjectFavoriteProjectsDAO(favoriteProject);
-            const project = await getProjectDAO(projectId);
-
-            if (project) {
-                const favoriteProjectReturnObj: IFavoriteProject = {
-                    ...formatProject(project),
-                    favoriteProjectId: favoriteProject.id,
+            if (!found) {
+                const favoriteProject: IProjectMember = {
+                    id: uuid(),
+                    projectId: projectId,
+                    userId: userId,
                 };
+                await insertProjectFavoriteProjectsDAO(favoriteProject);
+                const project = await getProjectDAO(projectId);
+
+                if (project) {
+                    const favoriteProjectReturnObj: IFavoriteProject = {
+                        ...formatProject(project),
+                        favoriteProjectId: favoriteProject.id,
+                    };
+                    return res
+                        .status(HTTP_RESPONSE_CODES.CREATED)
+                        .json(favoriteProjectReturnObj);
+                }
+            } else {
                 return res
-                    .status(HTTP_RESPONSE_CODES.CREATED)
-                    .json(favoriteProjectReturnObj);
+                    .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                    .send("Project is already in favorite projects");
             }
-        } else {
+        } catch (error) {
+            console.error(error);
             return res
-                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-                .send("Project is already in favorite projects");
+                .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+                .send(RESPONSE_MESSAGES.SERVER_ERROR);
         }
-    } catch (error) {
-        console.error(error);
-        return res
-            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
-            .send(RESPONSE_MESSAGES.SERVER_ERROR);
     }
-});
+);
 
 export default router;

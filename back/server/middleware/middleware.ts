@@ -6,7 +6,11 @@ import {
     RESPONSE_MESSAGES,
     validateEmail,
 } from "../utils/utilities";
-import { getProjectMemberDAO, getUserByEmailDAO } from "../../database/DAOs";
+import {
+    getProjectDAO,
+    getProjectMemberDAO,
+    getUserByEmailDAO,
+} from "../../database/DAOs";
 import { IUserFromDB } from "../../database/utils/interfaces";
 
 dotenv.config();
@@ -113,6 +117,36 @@ export const validateEmailAndNames = (
     next();
 };
 
+export const validateFavoriteProjectsPostRequest = async (
+    request: UserRequest,
+    response: Response,
+    next: NextFunction
+) => {
+    try {
+        const { projectId } = request.body;
+
+        if (!validateNonEmptyString(projectId)) {
+            return response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.INVALID_PROJECT_ID);
+        }
+
+        const projectExists = await getProjectDAO(projectId);
+
+        if (!projectExists) {
+            return response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.PROJECT_NOT_FOUND);
+        }
+    } catch (error) {
+        return response
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
+    }
+
+    next();
+};
+
 export const validateColumnRequest = async (
     request: UserRequest,
     response: Response,
@@ -123,20 +157,13 @@ export const validateColumnRequest = async (
         const { projectId, columnName, orderIndex } = request.body;
 
         if (
-            !projectId ||
-            !columnName ||
-            orderIndex === undefined ||
-            orderIndex === null
+            !validateNonEmptyString(projectId) ||
+            !validateNonEmptyString(columnName, 50) ||
+            typeof orderIndex !== "number"
         ) {
             return response
                 .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
                 .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
-        }
-
-        if ((columnName as string).length > 50) {
-            return response
-                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
-                .send("Max length for columnName is 50 characters");
         }
 
         const isMemberOfProject = await getProjectMemberDAO(userId, projectId);
@@ -181,4 +208,142 @@ export const validateMembers = async (
             .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
             .send(RESPONSE_MESSAGES.SERVER_ERROR);
     }
+};
+
+const validateNonEmptyString = (value: unknown, maxLength: number = 255) =>
+    typeof value === "string" &&
+    (value as string).trim().length > 0 &&
+    (value as string).trim().length < maxLength;
+const validateBoolean = (value: unknown) => typeof value === "boolean";
+const validateStringArray = (value: unknown) =>
+    Array.isArray(value) && value.every((v) => typeof v === "string");
+
+export const validateTeamsPostRequest = (
+    req: UserRequest,
+    res: Response,
+    next: NextFunction
+) => {
+    const { name, isPublic, emails } = req.body;
+
+    if (!validateNonEmptyString(name, 100)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_TEAM_NAME);
+    }
+
+    if (!validateBoolean(isPublic)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_IS_PUBLIC);
+    }
+
+    if (!validateStringArray(emails)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_EMAILS_ARRAY);
+    }
+
+    next();
+};
+
+export const validateTeamsPutRequest = (
+    req: UserRequest,
+    res: Response,
+    next: NextFunction
+) => {
+    const { name, admin, isPublic } = req.body;
+
+    if (!validateNonEmptyString(name, 100)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_TEAM_NAME);
+    }
+
+    if (!validateBoolean(isPublic)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_IS_PUBLIC);
+    }
+
+    if (!validateNonEmptyString(admin)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_ADMIN);
+    }
+
+    next();
+};
+
+export const validateCardsPostRequest = (
+    req: UserRequest,
+    res: Response,
+    next: NextFunction
+) => {
+    const { title, inColumn, projectId, orderIndex } = req.body;
+
+    if (!validateNonEmptyString(title, 50)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_CARD_TITLE);
+    }
+
+    if (!validateNonEmptyString(inColumn)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_IN_COLUMN);
+    }
+
+    if (!validateNonEmptyString(projectId)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_PROJECT_ID);
+    }
+
+    if (typeof orderIndex !== "number") {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_ORDER_INDEX);
+    }
+
+    next();
+};
+
+export const validateCardsPutRequest = (
+    req: UserRequest,
+    res: Response,
+    next: NextFunction
+) => {
+    const { title, creationDate, inColumn, projectId, orderIndex } = req.body;
+
+    if (!validateNonEmptyString(title, 50)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_CARD_TITLE);
+    }
+
+    if (!validateNonEmptyString(creationDate)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_CREATION_DATE);
+    }
+
+    if (!validateNonEmptyString(inColumn)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_IN_COLUMN);
+    }
+
+    if (!validateNonEmptyString(projectId)) {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_PROJECT_ID);
+    }
+
+    if (typeof orderIndex !== "number") {
+        return res
+            .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+            .send(RESPONSE_MESSAGES.INVALID_ORDER_INDEX);
+    }
+
+    next();
 };

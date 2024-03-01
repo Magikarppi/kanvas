@@ -43,6 +43,7 @@ export default function ProjectEndDateInput({
                                 <CalendarMonthIcon fontSize="large"/>
                             </InputAdornment>
                         ),
+                        readOnly: true
                     }}/>
                 }
             />

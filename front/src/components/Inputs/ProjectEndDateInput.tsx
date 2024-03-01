@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InputLabel, TextField } from "@mui/material";
+import { InputLabel, TextField, InputAdornment } from "@mui/material";
 import DatePicker from "../DatePicker/Datepicker";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { FormikErrors } from "formik";
 
 interface IProps {
@@ -40,9 +41,17 @@ export default function ProjectEndDateInput({
                     <TextField
                         name="endDate"
                         value={endDate}
+                        id="endDateTextField"
                         fullWidth
                         data-cy="project-end-date-input"
-                    />
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <CalendarMonthIcon fontSize="large"/>
+                                </InputAdornment>
+                            ),
+                            readOnly: true
+                        }}/>
                 }
             />
         </>

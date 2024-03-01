@@ -87,13 +87,20 @@ describe("Add project modal", () => {
 
         getCyData("project-name-input").type(projectInfo.name);
         getCyData("project-description-input").type(projectInfo.description);
-        getCyData("project-end-date-input").clear().type(projectInfo.endDate);
+        cy.wait(1500);
+        cy.get("#endDate").click();
+        cy.wait(1500);
+        cy.get(".react-datepicker__navigation--next").click().click().click().click();
+        cy.wait(1500);
+        cy.contains("15").click();
+        cy.wait(1500);  
         getCyData("project-theme-input").click();
         getCyData("select-option-red").click();
         getCyData("project-is-public-checkbox").click();
         getCyData("add-project-member-input").type(projectMemberEmail);
         getCyData("add-project-member-button").click();
         cy.contains(projectMemberEmail);
+
 
         getCyData("project-submit-button").click();
 

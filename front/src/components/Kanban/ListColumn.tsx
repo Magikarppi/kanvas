@@ -14,25 +14,32 @@ import {
 } from "@mui/material";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Icons from "../Icons/Icons";
-import { ICard } from "../../models/cardModels";
-import { IProjectColumn } from "../../models/projectModels";
+import { ICard, IOnSaveAddCardModalObject, IResponsiblePerson } from "../../models/cardModels";
+import { IProjectColumn, ProjectMember } from "../../models/projectModels";
 import ColumnDotMenu from "./ColumnDotMenu";
 import columnsService from "../../services/columnsService";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { selectToken } from "../../redux/hooks";
 import ListCard from "./ListCard";
+import { AddCardModal } from "../cards/addCardModal";
+import cardsService from "../../services/cardsService";
+import { v4 as uuid } from "uuid";
 
 interface Props {
     column: IProjectColumn;
     cards: ICard[];
     index: number;
     updateColumns: (column: IProjectColumn) => void;
+    members?:ProjectMember[];
+    setCards: React.Dispatch<React.SetStateAction<ICard[]>>;
+    allCards: ICard[];
 }
 
-const ListColumn = ({ column, cards, index, updateColumns }: Props) => {
-    const token = selectToken() as string;
+const ListColumn = ({ column, cards, index, updateColumns, members, setCards, allCards }: Props) => {
 
+    const token = selectToken() as string;
+    const [isAddCardModalOpen, setIsAddCardModalOpen] = useState<boolean>(false);  
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -50,11 +57,51 @@ const ListColumn = ({ column, cards, index, updateColumns }: Props) => {
             ref.current!.focus();
         }, 200);
     };
+    const addCard = async(object: IOnSaveAddCardModalObject) => {
+
+        const {title, desc, files, status, dueDate, responsiblePersonId } = object;
+        const copyDate:Date = dueDate;
+        copyDate.setMonth(copyDate.getMonth() + 1);
+        
+        const subtitle = "Subtitle"; // Mistä?
+        const inColumn = column.id;
+        const orderIndex =  cards.length;
+        const projectMember = members?.find((value:ProjectMember) => value.id === responsiblePersonId );
+        const savingCard: Omit<ICard, "creationDate" | "id"> = {
+            title: title,
+            description: desc,
+            attachments: files ? files[0] : null,
+            status: status,
+            dueDate: copyDate,
+            projectId: column.projectId,
+            subTitle: subtitle,
+            inColumn: inColumn.toString(),
+            orderIndex: orderIndex
+        };
+        const card = await cardsService.addCard(token, savingCard);
+        if(projectMember) {
+            const responsiblePerson: IResponsiblePerson = {id: uuid(), cardId: card.id, userId: projectMember?.id};
+            await cardsService.addResponsiblePerson(token, responsiblePerson);
+        }
+        const newArray:ICard[] = allCards.concat([card]);
+        setCards(newArray);
+        onCloseAddCardModal();
+    };
+
+
+    const onCloseAddCardModal = () => {
+        setIsAddCardModalOpen(false);
+    };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Escape") {
             setWantsToRename(false);
         }
+    };
+
+    const wantsToAddCard = () => {
+        setAnchorEl(null);
+        setIsAddCardModalOpen(true);
     };
 
     const handleSubmit = async (e: FormEvent) => {
@@ -164,12 +211,13 @@ const ListColumn = ({ column, cards, index, updateColumns }: Props) => {
                             </Box>
                         )}
                         <IconButton onClick={handleMenuClick}>
-                            <Icons.MoreHoriz size="24px" />
+                            <Icons.MoreHoriz size="24px" /> 
                         </IconButton>
                         <ColumnDotMenu
                             wantsToRename={handleWantsToRename}
                             anchorEl={anchorEl}
                             setAnchorEl={setAnchorEl}
+                            wantsToAddCard={wantsToAddCard}
                         />
                     </Toolbar>
                     <Table
@@ -262,6 +310,12 @@ const ListColumn = ({ column, cards, index, updateColumns }: Props) => {
                                 </TableBody>
                             )}
                         </Droppable>
+                        <AddCardModal 
+                            onCloseAddCardModal={onCloseAddCardModal}
+                            isAddCardModalOpen={isAddCardModalOpen}
+                            onSaveAddCardModal={addCard}
+                            members={members}
+                        /> 
                     </Table>
                 </Box>
             )}

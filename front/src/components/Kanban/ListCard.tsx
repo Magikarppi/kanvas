@@ -2,7 +2,7 @@ import { TableRow, TableCell } from "@mui/material";
 import { Draggable } from "react-beautiful-dnd";
 import Icons from "../Icons/Icons";
 import { ICard } from "../../models/cardModels";
-import { getDate } from "../../utils/utilFunctions";
+import { getDate, showDate } from "../../utils/utilFunctions";
 
 type Props = {
     card: ICard;
@@ -66,7 +66,9 @@ const ListCard = ({ card, index }: Props) => {
                             fontSize: "14px",
                         }}
                     >
-                        {getDate(card.dueDate as unknown as string)}
+                      
+                        {!(card.dueDate instanceof Date) && typeof card.dueDate === "string" && card.dueDate !== null ? showDate(card.dueDate) : null}
+
                     </TableCell>
                 </TableRow>
             )}

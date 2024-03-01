@@ -355,6 +355,8 @@ const ProjectPage = () => {
                     updateCards={handleUpdateCards}
                     projectId={projectId as string}
                     token={token}
+                    members={members}
+                    setCards={setCards}
                 />
             )}
         </>

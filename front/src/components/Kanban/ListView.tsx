@@ -1,6 +1,6 @@
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import { ICard } from "../../models/cardModels";
-import { IProjectColumn } from "../../models/projectModels";
+import { IProjectColumn, ProjectMember } from "../../models/projectModels";
 import { Box, Button, Collapse, TextField } from "@mui/material";
 import ListColumn from "./ListColumn";
 import { useRef, useState } from "react";
@@ -16,6 +16,8 @@ interface Props {
     updateColumns: (column: IProjectColumn) => void;
     projectId: string;
     token: string;
+    members:ProjectMember[];
+    setCards: React.Dispatch<React.SetStateAction<ICard[]>>;
 }
 
 const ListView = ({
@@ -26,6 +28,9 @@ const ListView = ({
     updateColumns,
     projectId,
     token,
+    members,
+    setCards
+    
 }: Props) => {
     const [newColumnName, setNewColumnName] = useState<string>("");
     const [wantsToAddColumn, setWantsToAddColumn] = useState(false);
@@ -180,6 +185,9 @@ const ListView = ({
                                         )}
                                         index={index}
                                         updateColumns={updateColumns}
+                                        members={members}
+                                        setCards={setCards}
+                                        allCards={cards}
                                     />
                                 ))}
                             {provided.placeholder}

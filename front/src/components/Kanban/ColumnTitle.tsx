@@ -14,12 +14,17 @@ import columnsService from "../../services/columnsService";
 import { selectToken } from "../../redux/hooks";
 import ColumnDotMenu from "./ColumnDotMenu";
 
+import { IOnSaveAddCardModalObject } from "../../models/cardModels";
+
 interface Props {
     columnInfo: IProjectColumn;
     updateColumns: (column: IProjectColumn) => void;
+    onSaveAddCardModal?:(object: IOnSaveAddCardModalObject) => void;
+    wantsToAddCard?:() => void;
+    
 }
 
-const ColumnTitle = ({ columnInfo, updateColumns }: Props) => {
+const ColumnTitle = ({ columnInfo, updateColumns, wantsToAddCard }: Props) => {
     const token = selectToken() as string;
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -27,6 +32,7 @@ const ColumnTitle = ({ columnInfo, updateColumns }: Props) => {
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
     };
+    
 
     const [columnTitle, setColumnTitle] = useState(columnInfo.columnName);
     const [wantsToRename, setWantsToRename] = useState(false);
@@ -40,11 +46,17 @@ const ColumnTitle = ({ columnInfo, updateColumns }: Props) => {
         }, 200);
     };
 
+    const handleWantsToAdd = () => {
+        setAnchorEl(null);
+        wantsToAddCard ? wantsToAddCard() : null;
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Escape") {
             setWantsToRename(false);
         }
     };
+    
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -146,7 +158,9 @@ const ColumnTitle = ({ columnInfo, updateColumns }: Props) => {
                 wantsToRename={handleWantsToRename}
                 anchorEl={anchorEl}
                 setAnchorEl={setAnchorEl}
+                wantsToAddCard={handleWantsToAdd}
             />
+           
         </Box>
     );
 };

@@ -76,6 +76,24 @@ export default function BoardCard({
             .catch((err) => console.error(err));
     }, [card]);
 
+    useEffect(() => {
+        const updatedResponsibles = responsiblePersons.filter((rp) =>
+            projectMembers.some((pm) => pm.id === rp.userId)
+        );
+
+        const responsiblePersonsToDelete = responsiblePersons.filter(
+            (rp) => !projectMembers.some((pm) => pm.id === rp.userId)
+        );
+
+        setResponsiblePersons(updatedResponsibles);
+
+        responsiblePersonsToDelete.forEach((person) => {
+            cardsService
+                .deleteResponsiblePerson(token!, person.cardResponsibleId)
+                .catch((err) => console.error(err));
+        });
+    }, [projectMembers]);
+
     const openCardModal = () => setCardModal(true);
     const closeCardModal = () => setCardModal(false);
 

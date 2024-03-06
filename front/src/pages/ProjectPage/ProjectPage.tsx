@@ -272,7 +272,7 @@ const ProjectPage = () => {
         };
 
         try {
-            await projectService.updateProjectById(
+            const projectData = await projectService.updateProjectById(
                 token,
                 updatedProject,
                 projectId,
@@ -280,6 +280,7 @@ const ProjectPage = () => {
             );
 
             setProject(updatedProject);
+            setMembers(projectData.projectMembers);
         } catch (error) {
             if (error instanceof AxiosError) {
                 toast.error(error?.response?.data);

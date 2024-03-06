@@ -33,6 +33,7 @@ import {
     IProjectColumnDB,
     IProjectDB,
     IProjectMember,
+    IProjectMemberDB,
     ITeamDB,
     IUserFromDB,
     IUserRole,
@@ -427,7 +428,16 @@ router.put("/:id", validateMembers, async (req: UserRequest, res: Response) => {
             userId
         );
 
-        res.status(HTTP_RESPONSE_CODES.OK).send("Project updated");
+        const updatedProjectMembers: IProjectMemberDB[] | undefined =
+            await getProjectMembersDAO(projectId);
+
+        if (!updatedProjectMembers) {
+            throw new Error();
+        }
+
+        res.status(HTTP_RESPONSE_CODES.OK).json({
+            projectMembers: formatProjectMembers(updatedProjectMembers),
+        });
     } catch (error) {
         console.log(error);
         res.status(HTTP_RESPONSE_CODES.SERVER_ERROR).send(

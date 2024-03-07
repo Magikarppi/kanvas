@@ -1,46 +1,31 @@
-# Getting Started with Create React App
+## Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Frontend technologies and their applications
 
-## Available Scripts
+**React with TypeScript**
 
-In the project directory, you can run:
+Kanvas’ user interface was implemented using React’s version 18.2. To ensure type safety and code reliability, we used TypeScript.
 
-### `npm start`
+When implementing front end code few notable libraries should be mentioned:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+-   [Material UI](https://mui.com/) was used to implement most of the UI’s elements
+-   [React Router](https://reactrouter.com/en/main) was used in page routing
+-   [axios](https://axios-http.com/) was used to send HTTP requests to server
+-   [Redux](https://redux.js.org/) was used for global state management
+-   [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd) was used to implement Kanban board with drag and drop features
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Frontend environment variables
 
-### `npm test`
+The following variable should be added to .env file at the root level of the /front folder:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Environment variable | Description                           | Example value           |
+| -------------------- | ------------------------------------- | ----------------------- |
+| `REACT_APP_BASE_URL` | Base server url and port for the site | `http://localhost:3000` |
 
-### `npm run build`
+### Frontend startup instructions
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Navigate to frontend with `cd front`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. Run `npm install` to install frontend dependencies.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+3. Run `npm start` to start the development server.

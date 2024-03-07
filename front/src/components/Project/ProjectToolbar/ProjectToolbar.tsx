@@ -8,7 +8,8 @@ import {
     Tooltip,
     Typography,
 } from "@mui/material";
-import { styled } from "@mui/system";
+import styled from "styled-components";
+
 
 import Icons from "../../Icons/Icons";
 import { ICard, ICardResponsiblePerson } from "../../../models/cardModels";
@@ -32,34 +33,34 @@ type Props = {
     projectMembers: ProjectMember[];
 };
 
-const GroupHeader = styled("div")({
-    position: "sticky",
-    top: "-8px",
-    padding: "4px 10px",
-    marginRight: "10px",
-    color: "white",
-    fontWeight: "bold",
-    fontSize: "15.5px",
-    backgroundColor: "#424242",
-    borderRadius: "4px",
-    textAlign: "center",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-});
+const GroupHeader = styled.div`
+    position: sticky;
+    top: -8px;
+    padding: 4px 10px;
+    margin-right: 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 15.5px;
+    background-color: #424242;
+    border-radius: 4px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis,
+`;
 
-const GroupItems = styled("ul")({
-    fontSize: "13.5px",
-    padding: 0,
-    marginRight: "10px",
-    "& > *:hover": {
-        backgroundColor: "#5F01FB !important",
-        fontWeight: "bold",
-        transition: "all 0.2s",
-        borderRadius: "4px",
-    },
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-});
+const GroupItems = styled.ul`
+    font-size: 13.5px;
+    padding: 0;
+    margin-right: 10px;
+    & > *:hover {
+        background-color:#5F01FB !important;
+        font-weight: bold;
+        transition: all 0.2s;
+        border-radius: 4px;
+    }
+    overflow: hidden;
+    text-overflow: ellipsis;
+`;
 
 const ProjectToolbar = ({
     toggleListOrGrid,

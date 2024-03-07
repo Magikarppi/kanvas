@@ -73,7 +73,7 @@ export const addProjectSchema = yup.object().shape({
             projectDescriptionMaxLength,
             maxLengthProjectDescriptionHelperText
         ),
-    endDate: yup.date(),
+    endDate: yup.date().nullable(),
     theme: yup.string().required(),
     isPublic: yup.string<TisPublic>().required(),
     memberEmail: yup.string(),

@@ -14,7 +14,11 @@ import {
 } from "@mui/material";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Icons from "../Icons/Icons";
-import { ICard, IOnSaveAddCardModalObject, IResponsiblePerson } from "../../models/cardModels";
+import {
+    ICard,
+    IOnSaveAddCardModalObject,
+    IResponsiblePerson,
+} from "../../models/cardModels";
 import { IProjectColumn, ProjectMember } from "../../models/projectModels";
 import ColumnDotMenu from "./ColumnDotMenu";
 import columnsService from "../../services/columnsService";
@@ -25,27 +29,39 @@ import ListCard from "./ListCard";
 import { AddCardModal } from "../cards/addCardModal";
 import cardsService from "../../services/cardsService";
 import { v4 as uuid } from "uuid";
+import DeleteConfirmation from "../Confirmations/DeleteColumnConfirmation";
 
 interface Props {
     column: IProjectColumn;
     cards: ICard[];
     index: number;
     updateColumns: (column: IProjectColumn) => void;
-    members?:ProjectMember[];
+    members?: ProjectMember[];
     setCards: React.Dispatch<React.SetStateAction<ICard[]>>;
     allCards: ICard[];
+    deleteColumn: (columnId: string, orderIndex: number) => void;
 }
 
-const ListColumn = ({ column, cards, index, updateColumns, members, setCards, allCards }: Props) => {
-
+const ListColumn = ({
+    column,
+    cards,
+    index,
+    updateColumns,
+    members,
+    setCards,
+    allCards,
+    deleteColumn,
+}: Props) => {
     const token = selectToken() as string;
-    const [isAddCardModalOpen, setIsAddCardModalOpen] = useState<boolean>(false);  
+    const [isAddCardModalOpen, setIsAddCardModalOpen] =
+        useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
     };
 
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const [columnTitle, setColumnTitle] = useState(column.columnName);
     const [wantsToRename, setWantsToRename] = useState<boolean>(false);
     const ref = useRef<HTMLInputElement | null>(null);
@@ -57,16 +73,18 @@ const ListColumn = ({ column, cards, index, updateColumns, members, setCards, al
             ref.current!.focus();
         }, 200);
     };
-    const addCard = async(object: IOnSaveAddCardModalObject) => {
-
-        const {title, desc, files, status, dueDate, responsiblePersonId } = object;
-        const copyDate:Date = dueDate;
+    const addCard = async (object: IOnSaveAddCardModalObject) => {
+        const { title, desc, files, status, dueDate, responsiblePersonId } =
+            object;
+        const copyDate: Date = dueDate;
         copyDate.setMonth(copyDate.getMonth() + 1);
-        
+
         const subtitle = "Subtitle"; // Mistä?
         const inColumn = column.id;
-        const orderIndex =  cards.length;
-        const projectMember = members?.find((value:ProjectMember) => value.id === responsiblePersonId );
+        const orderIndex = cards.length;
+        const projectMember = members?.find(
+            (value: ProjectMember) => value.id === responsiblePersonId
+        );
         const savingCard: Omit<ICard, "creationDate" | "id"> = {
             title: title,
             description: desc,
@@ -76,18 +94,21 @@ const ListColumn = ({ column, cards, index, updateColumns, members, setCards, al
             projectId: column.projectId,
             subTitle: subtitle,
             inColumn: inColumn.toString(),
-            orderIndex: orderIndex
+            orderIndex: orderIndex,
         };
         const card = await cardsService.addCard(token, savingCard);
-        if(projectMember) {
-            const responsiblePerson: IResponsiblePerson = {id: uuid(), cardId: card.id, userId: projectMember?.id};
+        if (projectMember) {
+            const responsiblePerson: IResponsiblePerson = {
+                id: uuid(),
+                cardId: card.id,
+                userId: projectMember?.id,
+            };
             await cardsService.addResponsiblePerson(token, responsiblePerson);
         }
-        const newArray:ICard[] = allCards.concat([card]);
+        const newArray: ICard[] = allCards.concat([card]);
         setCards(newArray);
         onCloseAddCardModal();
     };
-
 
     const onCloseAddCardModal = () => {
         setIsAddCardModalOpen(false);
@@ -153,6 +174,14 @@ const ListColumn = ({ column, cards, index, updateColumns, members, setCards, al
                         backgroundColor: "#262626",
                     }}
                 >
+                    <DeleteConfirmation
+                        name={column.columnName}
+                        onDelete={() =>
+                            deleteColumn(column.id, column.orderIndex)
+                        }
+                        open={deleteConfirmationOpen}
+                        close={() => setDeleteConfirmationOpen(false)}
+                    />
                     <Toolbar sx={{ backgroundColor: "#262626" }}>
                         {!wantsToRename ? (
                             <Typography
@@ -211,13 +240,16 @@ const ListColumn = ({ column, cards, index, updateColumns, members, setCards, al
                             </Box>
                         )}
                         <IconButton onClick={handleMenuClick}>
-                            <Icons.MoreHoriz size="24px" /> 
+                            <Icons.MoreHoriz size="24px" />
                         </IconButton>
                         <ColumnDotMenu
                             wantsToRename={handleWantsToRename}
                             anchorEl={anchorEl}
                             setAnchorEl={setAnchorEl}
                             wantsToAddCard={wantsToAddCard}
+                            wantsToDeleteColumn={() =>
+                                setDeleteConfirmationOpen(true)
+                            }
                         />
                     </Toolbar>
                     <Table
@@ -310,12 +342,12 @@ const ListColumn = ({ column, cards, index, updateColumns, members, setCards, al
                                 </TableBody>
                             )}
                         </Droppable>
-                        <AddCardModal 
+                        <AddCardModal
                             onCloseAddCardModal={onCloseAddCardModal}
                             isAddCardModalOpen={isAddCardModalOpen}
                             onSaveAddCardModal={addCard}
                             members={members}
-                        /> 
+                        />
                     </Table>
                 </Box>
             )}

@@ -10,7 +10,7 @@ import ProjectEndDateInput from "../Inputs/ProjectEndDateInput";
 import ProjectNameInput from "../Inputs/ProjectNameInput";
 import ProjectThemeInput from "../Inputs/ProjectThemeInput";
 import { projectModalStyle } from "./AddProjectModal";
-import DeleteConfirmation from "../Confirmations/DeleteConfirmation";
+import DeleteConfirmation from "../Confirmations/DeleteProjectConfirmation";
 import PublicProjectElement from "./PublicProjectElement";
 import AddProjectMembers from "./AddProjectMembers";
 import useMemberEmails from "../../hooks/useMemberEmails";
@@ -57,7 +57,7 @@ export default function EditProjectModal({
     const initialValues = {
         name: project?.name || "",
         description: project?.description || "",
-        endDate: project?.endDate || new Date(),
+        endDate: project?.endDate || null,
         theme: project?.theme || "blank",
         isPublic: project?.isPublic || false,
         memberEmail: "",

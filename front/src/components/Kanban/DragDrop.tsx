@@ -25,6 +25,7 @@ interface Props {
     token: string;
     projectMembers: ProjectMember[];
     setCards: React.Dispatch<React.SetStateAction<ICard[]>>;
+    deleteColumn: (columnId: string, orderIndex: number) => void;
 }
 
 const Container = styled.div`
@@ -42,6 +43,7 @@ export default function DragDrop({
     updateCards,
     updateColumns,
     projectId,
+    deleteColumn,
     token,
     projectMembers,
     setCards,
@@ -169,6 +171,7 @@ export default function DragDrop({
                                     cardDragDisabled={isCardDragDisabled}
                                     allCards={cards}
                                     setCards={setCards}
+                                    deleteColumn={deleteColumn}
                                 />
                             ))}
                         {provided.placeholder}
@@ -184,7 +187,6 @@ export default function DragDrop({
                                 marginLeft: columns.length === 0 ? "1.5%" : 0,
                             }}
                         >
-                           
                             <Collapse in={wantsToAddColumn} timeout="auto">
                                 <TextField
                                     size="small"

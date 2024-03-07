@@ -15,16 +15,22 @@ import { selectToken } from "../../redux/hooks";
 import ColumnDotMenu from "./ColumnDotMenu";
 
 import { IOnSaveAddCardModalObject } from "../../models/cardModels";
+import DeleteConfirmation from "../Confirmations/DeleteColumnConfirmation";
 
 interface Props {
     columnInfo: IProjectColumn;
     updateColumns: (column: IProjectColumn) => void;
-    onSaveAddCardModal?:(object: IOnSaveAddCardModalObject) => void;
-    wantsToAddCard?:() => void;
-    
+    onSaveAddCardModal?: (object: IOnSaveAddCardModalObject) => void;
+    wantsToAddCard?: () => void;
+    deleteColumn: (columnId: string, orderIndex: number) => void;
 }
 
-const ColumnTitle = ({ columnInfo, updateColumns, wantsToAddCard }: Props) => {
+const ColumnTitle = ({
+    columnInfo,
+    deleteColumn,
+    updateColumns,
+    wantsToAddCard,
+}: Props) => {
     const token = selectToken() as string;
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -32,8 +38,8 @@ const ColumnTitle = ({ columnInfo, updateColumns, wantsToAddCard }: Props) => {
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
     };
-    
 
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const [columnTitle, setColumnTitle] = useState(columnInfo.columnName);
     const [wantsToRename, setWantsToRename] = useState(false);
     const ref = useRef<HTMLInputElement | null>(null);
@@ -56,7 +62,6 @@ const ColumnTitle = ({ columnInfo, updateColumns, wantsToAddCard }: Props) => {
             setWantsToRename(false);
         }
     };
-    
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -154,13 +159,21 @@ const ColumnTitle = ({ columnInfo, updateColumns, wantsToAddCard }: Props) => {
                     <Icons.MoreHoriz size="22px" />
                 </IconButton>
             )}
+            <DeleteConfirmation
+                name={columnInfo.columnName}
+                onDelete={() =>
+                    deleteColumn(columnInfo.id, columnInfo.orderIndex)
+                }
+                open={deleteConfirmationOpen}
+                close={() => setDeleteConfirmationOpen(false)}
+            />
             <ColumnDotMenu
                 wantsToRename={handleWantsToRename}
                 anchorEl={anchorEl}
                 setAnchorEl={setAnchorEl}
                 wantsToAddCard={handleWantsToAdd}
+                wantsToDeleteColumn={() => setDeleteConfirmationOpen(true)}
             />
-           
         </Box>
     );
 };

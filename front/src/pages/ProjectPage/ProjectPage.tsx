@@ -306,6 +306,29 @@ const ProjectPage = () => {
         }
     };
 
+    const handleDeleteColumn = async (columnId: string, orderIndex: number) => {
+        if (project) {
+            try {
+                const updatedColumns = await columnsService.deleteColumn(
+                    token,
+                    columnId,
+                    orderIndex,
+                    project.id
+                );
+                const projectData = await projectService.getProjectById(
+                    token,
+                    projectId as string
+                );
+                setColumns(updatedColumns);
+                setCards(projectData.cards);
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    toast.error(error?.response?.data);
+                }
+            }
+        }
+    };
+
     const projectMemberEmails = members.map((member) => member.email);
 
     return loading === true ? null : (
@@ -346,6 +369,7 @@ const ProjectPage = () => {
                     token={token}
                     projectMembers={members}
                     setCards={setCards}
+                    deleteColumn={handleDeleteColumn}
                 />
             ) : (
                 <ListView
@@ -358,6 +382,7 @@ const ProjectPage = () => {
                     token={token}
                     members={members}
                     setCards={setCards}
+                    deleteColumn={handleDeleteColumn}
                 />
             )}
         </>

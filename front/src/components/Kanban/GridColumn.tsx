@@ -1,6 +1,10 @@
 import styled from "styled-components";
 import { IProjectColumn } from "../../models/projectModels";
-import { ICard, IOnSaveAddCardModalObject, IResponsiblePerson } from "../../models/cardModels";
+import {
+    ICard,
+    IOnSaveAddCardModalObject,
+    IResponsiblePerson,
+} from "../../models/cardModels";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import BoardCard from "./BoardCard";
 import ColumnTitle from "./ColumnTitle";
@@ -38,6 +42,7 @@ interface Props {
     updateCards: (card: ICard) => void;
     allCards: ICard[];
     setCards: React.Dispatch<React.SetStateAction<ICard[]>>;
+    deleteColumn: (columnId: string, orderIndex: number) => void;
 }
 
 export default function GridColumn({
@@ -51,18 +56,21 @@ export default function GridColumn({
     updateCards,
     allCards,
     setCards,
+    deleteColumn,
 }: Props) {
-    
-    const [isAddCardModalOpen, setIsAddCardModalOpen] = useState<boolean>(false);
+    const [isAddCardModalOpen, setIsAddCardModalOpen] =
+        useState<boolean>(false);
     const token = selectToken() as string;
 
-    const  addCard = async(object: IOnSaveAddCardModalObject) => {
-
-        const {title, desc, files, status, dueDate, responsiblePersonId } = object;
+    const addCard = async (object: IOnSaveAddCardModalObject) => {
+        const { title, desc, files, status, dueDate, responsiblePersonId } =
+            object;
         const subtitle = "Subtitle"; // Mistä?
         const inColumn = column.id;
-        const orderIndex =  cards.length;
-        const projectMember = projectMembers?.find((value:ProjectMember) => value.id === responsiblePersonId );
+        const orderIndex = cards.length;
+        const projectMember = projectMembers?.find(
+            (value: ProjectMember) => value.id === responsiblePersonId
+        );
         const savingCard: Omit<ICard, "creationDate" | "id"> = {
             title: title,
             description: desc,
@@ -72,18 +80,22 @@ export default function GridColumn({
             projectId: column.projectId,
             subTitle: subtitle,
             inColumn: inColumn.toString(),
-            orderIndex: orderIndex
+            orderIndex: orderIndex,
         };
         const card = await cardsService.addCard(token, savingCard);
-        if(projectMember){
-            const responsiblePerson: IResponsiblePerson = {id: uuid(), cardId: card.id, userId: projectMember?.id};
+        if (projectMember) {
+            const responsiblePerson: IResponsiblePerson = {
+                id: uuid(),
+                cardId: card.id,
+                userId: projectMember?.id,
+            };
             await cardsService.addResponsiblePerson(token, responsiblePerson);
         }
-        const newArray:ICard[] = allCards.concat([card]);
+        const newArray: ICard[] = allCards.concat([card]);
         setCards(newArray);
         onCloseAddCardModal();
-    };  
-    
+    };
+
     const onCloseAddCardModal = () => {
         setIsAddCardModalOpen(false);
     };
@@ -119,6 +131,7 @@ export default function GridColumn({
                         updateColumns={updateColumns}
                         onSaveAddCardModal={addCard}
                         wantsToAddCard={wantsToAddCard}
+                        deleteColumn={deleteColumn}
                     />
 
                     <Droppable droppableId={column.id} type="card">
@@ -131,30 +144,34 @@ export default function GridColumn({
                                     .sort((a, b) => a.orderIndex - b.orderIndex)
                                     .map((card, index) => {
                                         return (
-                                            <BoardCard
-                                                key={card.id}
-                                                card={card}
-                                                index={index}
-                                                projectMembers={projectMembers}
-                                                updateCards={updateCards}
-                                                cardDragDisabled={
-                                                    cardDragDisabled
-                                                }
-                                                allCards={allCards}
-                                                setCards={setCards}
-                                            />
+                                            card && (
+                                                <BoardCard
+                                                    key={card.id}
+                                                    card={card}
+                                                    index={index}
+                                                    projectMembers={
+                                                        projectMembers
+                                                    }
+                                                    updateCards={updateCards}
+                                                    cardDragDisabled={
+                                                        cardDragDisabled
+                                                    }
+                                                    allCards={allCards}
+                                                    setCards={setCards}
+                                                />
+                                            )
                                         );
                                     })}
                                 {provided.placeholder}
                             </CardList>
                         )}
                     </Droppable>
-                    <AddCardModal 
+                    <AddCardModal
                         onCloseAddCardModal={onCloseAddCardModal}
                         isAddCardModalOpen={isAddCardModalOpen}
                         onSaveAddCardModal={addCard}
                         members={projectMembers}
-                    /> 
+                    />
                 </Container>
             )}
         </Draggable>

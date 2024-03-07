@@ -83,11 +83,19 @@ describe("Edit project modal", () => {
     it("allows user to edit a project name and members", () => {
         const newProjectName = `${projectInfo.name} 2`;
         const projectMemberEmail = "somemember@test.com";
+        const day = "15";
+
         openEditProjectModal();
 
         getCyData("project-name-input").clear().type(newProjectName);
         getCyData("project-description-input").type(projectInfo.description);
-        getCyData("project-end-date-input").clear().type("24/12/2030");
+        cy.get("#endDate").click();
+        cy.get(".react-datepicker__navigation--next")
+            .click()
+            .click()
+            .click()
+            .click();
+        cy.contains(day).click();
         getCyData("project-theme-input").click();
         getCyData("select-option-red").click();
         getCyData("project-is-public-checkbox").click();

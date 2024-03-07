@@ -181,6 +181,41 @@ export const validateColumnRequest = async (
     }
 };
 
+export const validateColumnDeleteRequest = async (
+    request: UserRequest,
+    response: Response,
+    next: NextFunction
+) => {
+    try {
+        const { value: userId } = request.user as JwtPayload;
+        const { projectId, columnId, orderIndex } = request.params;
+
+        if (
+            !validateNonEmptyString(projectId) ||
+            !validateNonEmptyString(columnId) ||
+            !validateNonEmptyString(orderIndex)
+        ) {
+            return response
+                .status(HTTP_RESPONSE_CODES.BAD_REQUEST)
+                .send(RESPONSE_MESSAGES.INVALID_REQ_BODY);
+        }
+
+        const isMemberOfProject = await getProjectMemberDAO(userId, projectId);
+
+        if (!isMemberOfProject) {
+            return response
+                .status(HTTP_RESPONSE_CODES.FORBIDDEN)
+                .send(RESPONSE_MESSAGES.FORBIDDEN);
+        }
+
+        next();
+    } catch (error) {
+        return response
+            .status(HTTP_RESPONSE_CODES.SERVER_ERROR)
+            .send(RESPONSE_MESSAGES.SERVER_ERROR);
+    }
+};
+
 export const validateMembers = async (
     request: UserRequest,
     response: Response,

@@ -12,11 +12,12 @@ interface Props {
     columns: IProjectColumn[];
     cards: ICard[];
     addNewColumn: (newColumn: IProjectColumn) => void;
+    deleteColumn: (columnId: string, orderIndex: number) => void;
     updateCards: (card: ICard) => void;
     updateColumns: (column: IProjectColumn) => void;
     projectId: string;
     token: string;
-    members:ProjectMember[];
+    members: ProjectMember[];
     setCards: React.Dispatch<React.SetStateAction<ICard[]>>;
 }
 
@@ -29,8 +30,8 @@ const ListView = ({
     projectId,
     token,
     members,
-    setCards
-    
+    deleteColumn,
+    setCards,
 }: Props) => {
     const [newColumnName, setNewColumnName] = useState<string>("");
     const [wantsToAddColumn, setWantsToAddColumn] = useState(false);
@@ -188,6 +189,7 @@ const ListView = ({
                                         members={members}
                                         setCards={setCards}
                                         allCards={cards}
+                                        deleteColumn={deleteColumn}
                                     />
                                 ))}
                             {provided.placeholder}

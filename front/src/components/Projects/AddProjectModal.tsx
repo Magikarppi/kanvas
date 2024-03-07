@@ -61,7 +61,7 @@ export default function AddProjectModal({
     const initialValues = {
         name: "",
         description: "",
-        endDate: new Date(),
+        endDate: null,
         theme: "blank",
         isPublic: false,
         memberEmail: "",

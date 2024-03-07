@@ -23,6 +23,21 @@ const columnsService = {
             return response.data;
         }
     },
+
+    deleteColumn: async (
+        token: string,
+        columnId: string,
+        orderIndex: number,
+        projectId: string
+    ) => {
+        const client = createClient(token);
+        const response = await client.delete(
+            `/columns/${projectId}/${columnId}/${orderIndex}`
+        );
+        if (response) {
+            return response.data;
+        }
+    },
 };
 
 export default columnsService;

@@ -13,12 +13,19 @@ type Props = {
     setAnchorEl: (target: null) => void;
     wantsToRename: () => void;
     wantsToAddCard?: () => void;
+    wantsToDeleteColumn: () => void;
 };
 
-const ColumnDotMenu = ({ anchorEl, setAnchorEl, wantsToRename, wantsToAddCard }: Props) => {
+const ColumnDotMenu = ({
+    anchorEl,
+    setAnchorEl,
+    wantsToRename,
+    wantsToAddCard,
+    wantsToDeleteColumn,
+}: Props) => {
     const open = Boolean(anchorEl);
     const id = open ? "simple-popper" : undefined;
-    
+
     return (
         <Popover
             disableScrollLock={true}
@@ -32,7 +39,11 @@ const ColumnDotMenu = ({ anchorEl, setAnchorEl, wantsToRename, wantsToAddCard }:
         >
             <List sx={{ padding: 0 }}>
                 <ListItem disablePadding>
-                    <ListItemButton  onClick={() => wantsToAddCard ? wantsToAddCard() : null}>
+                    <ListItemButton
+                        onClick={() =>
+                            wantsToAddCard ? wantsToAddCard() : null
+                        }
+                    >
                         <ListItemIcon>
                             <Icons.Add />
                         </ListItemIcon>
@@ -48,7 +59,7 @@ const ColumnDotMenu = ({ anchorEl, setAnchorEl, wantsToRename, wantsToAddCard }:
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                    <ListItemButton>
+                    <ListItemButton onClick={() => wantsToDeleteColumn()}>
                         <ListItemIcon>
                             <Icons.DeleteForever />
                         </ListItemIcon>

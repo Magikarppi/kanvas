@@ -5,7 +5,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { FormikErrors } from "formik";
 
 interface IProps {
-    endDate: Date;
+    endDate: Date | null;
     setFieldValue: (
         field: string,
         value: any,
@@ -16,7 +16,7 @@ interface IProps {
               FormikErrors<{
                   name: string;
                   description: string;
-                  endDate: Date;
+                  endDate: Date | null;
                   theme: string;
                   isPublic: boolean;
               }>
@@ -34,7 +34,10 @@ export default function ProjectEndDateInput({
                 id="endDate"
                 selected={(endDate && new Date(endDate)) || null}
                 onChange={(date: Date) => {
-                    setFieldValue("endDate", date);
+                    setFieldValue(
+                        "endDate",
+                        date ? date.toLocaleDateString() : null
+                    );
                 }}
                 dateFormat="dd/MM/yyyy"
                 customInput={
@@ -47,11 +50,11 @@ export default function ProjectEndDateInput({
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
-                                    <CalendarMonthIcon fontSize="large"/>
+                                    <CalendarMonthIcon fontSize="large" />
                                 </InputAdornment>
                             ),
-                            readOnly: true
-                        }}/>
+                        }}
+                    />
                 }
             />
         </>

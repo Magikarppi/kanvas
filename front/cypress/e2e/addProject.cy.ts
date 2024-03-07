@@ -83,6 +83,7 @@ describe("Add project modal", () => {
 
     it("allows user to add a project with valid info", () => {
         const projectMemberEmail = "projectmember@test.com";
+        const day = "15";
         openAddProjectModal();
 
         getCyData("project-name-input").type(projectInfo.name);
@@ -90,17 +91,20 @@ describe("Add project modal", () => {
         cy.wait(1500);
         cy.get("#endDate").click();
         cy.wait(1500);
-        cy.get(".react-datepicker__navigation--next").click().click().click().click();
+        cy.get(".react-datepicker__navigation--next")
+            .click()
+            .click()
+            .click()
+            .click();
         cy.wait(1500);
-        cy.contains("15").click();
-        cy.wait(1500);  
+        cy.contains(day).click();
+        cy.wait(1500);
         getCyData("project-theme-input").click();
         getCyData("select-option-red").click();
         getCyData("project-is-public-checkbox").click();
         getCyData("add-project-member-input").type(projectMemberEmail);
         getCyData("add-project-member-button").click();
         cy.contains(projectMemberEmail);
-
 
         getCyData("project-submit-button").click();
 

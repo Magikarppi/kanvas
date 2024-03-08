@@ -81,7 +81,7 @@ teams.post(
             await insertTeamDAO(team, userTeam);
             for (let i = 0; i < emails.length; i++) {
                 if (validateEmail(emails[i])) {
-                    await sendEmail(emails[i], name);
+                    sendEmail(emails[i], name);
                 }
             }
             res.json({

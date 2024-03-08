@@ -24,17 +24,6 @@ const LoginNavList = () => {
                 </ListItem>
             </Link>
             <Divider />
-            <Link to="/teams">
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <Icons.Team />
-                        </ListItemIcon>
-                        <ListItemText primary="Teams" />
-                    </ListItemButton>
-                </ListItem>
-            </Link>
-            <Divider />
             <Link to="/profile">
                 <ListItem disablePadding>
                     <ListItemButton>
@@ -42,28 +31,6 @@ const LoginNavList = () => {
                             <Icons.Account />
                         </ListItemIcon>
                         <ListItemText primary="Profile" />
-                    </ListItemButton>
-                </ListItem>
-            </Link>
-            <Divider />
-            <Link to="/messages">
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <Icons.Message />
-                        </ListItemIcon>
-                        <ListItemText primary="Messages" />
-                    </ListItemButton>
-                </ListItem>
-            </Link>
-            <Divider />
-            <Link to="/notifications">
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <Icons.Notifications />
-                        </ListItemIcon>
-                        <ListItemText primary="Notifications" />
                     </ListItemButton>
                 </ListItem>
             </Link>

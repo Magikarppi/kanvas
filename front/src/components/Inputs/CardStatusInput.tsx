@@ -1,34 +1,40 @@
-import {TextField, InputAdornment } from "@mui/material";
-import DnsIcon from "@mui/icons-material/Dns";
+import {
+    Select,
+    MenuItem,
+    SelectChangeEvent,
+} from "@mui/material";
+import { ReactNode } from "react";
+import { statusThemes } from "../../utils/consts";
 
 interface IProps {
     handleChange:
-        | React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
+        | ((event: SelectChangeEvent<string>, child: ReactNode) => void)
         | undefined;
     status: string;
 }
 
-export default function CardStatusInput({
-    handleChange,
-    status,
-}: IProps) {
+export default function CardStatusInput({ handleChange, status }: IProps) {
     return (
         <>
-            <TextField
+            <Select
+                id="status-select"
+                value={status || "Select.."}
                 onChange={handleChange}
-                value={status}
                 name="status"
-                type="text"
-                id="status"
-                autoComplete="off"
-                InputProps={{
-                    endAdornment: (
-                        <InputAdornment position="end">
-                            <DnsIcon fontSize="large"/>
-                        </InputAdornment>
-                    ),
-                }}
-            />
+                fullWidth
+            >
+                {statusThemes.map((status) => {
+                    return (
+                        <MenuItem
+                            value={status}
+                            key={status}
+                            disabled={status === "Select.."}
+                        >
+                            {status}
+                        </MenuItem>
+                    );
+                })}
+            </Select>
         </>
     );
 }

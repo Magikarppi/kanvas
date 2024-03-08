@@ -155,7 +155,7 @@ export const BoardCardModal = ({
                         title: values!.title,
                         subTitle: values!.subTitle || null,
                         description: values!.description || null,
-                        status: values!.status || null,
+                        status: values.status === "Select.." ? null : values!.status || null,
                         dueDate: values!.dueDate || null,
                     };
                     await cardsService.updateCard(token, updateCard);
@@ -418,7 +418,8 @@ export const BoardCardModal = ({
                         <Grid
                             container
                             direction="row"
-                            style={{ marginLeft: "40px" }}
+                            alignItems="center"
+                            spacing={10}
                         >
                             <Grid item xs={12} md={4} lg={6} xl={6}>
                                 <InputLabel sx={{ fontSize: "1.7rem" }}>

@@ -18,7 +18,7 @@ export default function CardStatusInput({ handleChange, status }: IProps) {
         <>
             <Select
                 id="status-select"
-                value={status || "Select.."}
+                value={status || "None"}
                 onChange={handleChange}
                 name="status"
                 fullWidth
@@ -28,7 +28,6 @@ export default function CardStatusInput({ handleChange, status }: IProps) {
                         <MenuItem
                             value={status}
                             key={status}
-                            disabled={status === "Select.."}
                         >
                             {status}
                         </MenuItem>

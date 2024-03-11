@@ -35,6 +35,7 @@ export const AddCardModal = (props: IAddCardModal) => {
         : [];
 
     const statuses = [
+        {value: "", label: "None"},
         { value: "In Progress", label: "In Progress" },
         { value: "To do", label: "To do" },
         { value: "Done", label: "Done" },
@@ -131,20 +132,21 @@ export const AddCardModal = (props: IAddCardModal) => {
                             <InputLabel sx={inputLabelStyle}>Status</InputLabel>
                             <Box>
                                 <Box>
-                                    <Select value={status === "" ? statuses[0].value : status} 
+                                    <Select 
+                                        value={status}
                                         onChange={(e:SelectChangeEvent) => setStatus(e.target.value)}
                                         sx={{
                                             width: "50%",
                                         }}
+                                        displayEmpty
                                     >
                                         {statuses.map((option) => (
                                             <MenuItem key={option.value} value={option.value}>
                                                 {option.label}
                                             </MenuItem>
                                         ))}
-                                    </Select>      
+                                    </Select>          
                                 </Box>
-                            
                             </Box>
                         </Box>
                         <Box sx={{width: "50%", height: "100%"}}>

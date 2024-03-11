@@ -7,13 +7,9 @@ import {
     Typography,
     Avatar,
     Chip,
-    Stack,
     AvatarGroup,
     Tooltip,
 } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import BoardCardModal from "./BoardCardModal";
 import { ProjectMember } from "../../models/projectModels";
 import { selectToken } from "../../redux/hooks";
@@ -36,7 +32,7 @@ const cardStyle = {
     borderRadius: "12px",
     marginBottom: "10px",
     border: "2px solid",
-    minHeight: "117.5px",
+    minHeight: "133px",
     width: "220px",
     background: "black",
     paddingLeft: "0px",
@@ -102,8 +98,6 @@ export default function BoardCard({
         cardDueDate = new Date(card.dueDate);
     }
 
-    const showOnlyRealData = false;
-
     return (
         <Draggable
             draggableId={card.id}
@@ -134,29 +128,27 @@ export default function BoardCard({
                                     {cardDueDate?.toLocaleDateString("fi-FI")}
                                 </Typography>
                             ) : null}
-                            {showOnlyRealData ? (
-                                <Stack
-                                    direction="row"
-                                    spacing={1}
-                                    sx={{ marginTop: "9px" }}
-                                >
-                                    <Chip
-                                        label="primary"
-                                        size="small"
-                                        color="primary"
-                                    />
-                                    <Chip
-                                        label="success"
-                                        size="small"
-                                        color="success"
-                                    />
-                                    <Chip
-                                        label="success"
-                                        size="small"
-                                        color="success"
-                                    />
-                                </Stack>
-                            ) : null}
+                            {card.status === "In Progress" ? (
+                                <Chip
+                                    label="In Progress"
+                                    size="small"
+                                    color="warning"
+                                    sx={{width: "6rem", marginTop: "2px"}}
+                                />) : (null)}
+                            {card.status === "To do" ? (
+                                <Chip
+                                    label="To do"
+                                    size="small"
+                                    color="primary"
+                                    sx={{width: "6rem", marginTop: "2px"}}
+                                />) : (null)}
+                            {card.status === "Done" ? (
+                                <Chip
+                                    label="Done"
+                                    size="small"
+                                    color="success"
+                                    sx={{width: "6rem", marginTop: "2px"}}
+                                />) : (null)}
                         </CardContent>
                         <CardActions
                             disableSpacing
@@ -170,7 +162,7 @@ export default function BoardCard({
                                         width: 35,
                                         height: 35,
                                     },
-                                    marginTop: "10px",
+                                    marginTop: card.status === "" || card.status === null ? "26px" : "0px"
                                 }}
                                 max={2}
                             >
@@ -199,18 +191,6 @@ export default function BoardCard({
                                     );
                                 })}
                             </AvatarGroup>
-                            {showOnlyRealData ? (
-                                <>
-                                    <IconButton aria-label="add to favorites">
-                                        <AttachFileIcon />
-                                    </IconButton>
-                                    <p>2</p>
-                                    <IconButton aria-label="share">
-                                        <ChatBubbleOutlineIcon />
-                                    </IconButton>
-                                    <p>2</p>{" "}
-                                </>
-                            ) : null}
                         </CardActions>
                     </div>
                     <BoardCardModal

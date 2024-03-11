@@ -155,7 +155,10 @@ export const BoardCardModal = ({
                         title: values!.title,
                         subTitle: values!.subTitle || null,
                         description: values!.description || null,
-                        status: values.status === "None" ? null : values!.status || null,
+                        status:
+                            values.status === "None"
+                                ? null
+                                : values!.status || null,
                         dueDate: values!.dueDate || null,
                     };
                     await cardsService.updateCard(token, updateCard);
@@ -338,7 +341,12 @@ export const BoardCardModal = ({
 
     return (
         <>
-            <Modal open={open} onClose={close} hideBackdrop={true}>
+            <Modal
+                open={open}
+                onClose={close}
+                hideBackdrop={true}
+                data-cy="edit-card-modal"
+            >
                 <Card sx={style}>
                     <Container
                         component="form"
@@ -363,6 +371,7 @@ export const BoardCardModal = ({
                             </Typography>
                             <Typography
                                 onClick={openDeleteModal}
+                                data-cy="edit-card-delete-card-button"
                                 style={{
                                     marginBottom: "25px",
                                     color: "red",

@@ -26,7 +26,7 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { selectToken } from "../../redux/hooks";
 import ListCard from "./ListCard";
-import { AddCardModal } from "../cards/addCardModal";
+import { AddCardModal } from "./addCardModal";
 import cardsService from "../../services/cardsService";
 import { v4 as uuid } from "uuid";
 import DeleteConfirmation from "../Confirmations/DeleteColumnConfirmation";

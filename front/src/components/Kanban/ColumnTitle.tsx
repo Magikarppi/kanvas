@@ -118,6 +118,7 @@ const ColumnTitle = ({
                     sx={{ marginLeft: "3%", marginTop: "2.5%" }}
                 >
                     <TextField
+                        data-cy="rename-column-input"
                         fullWidth
                         helperText="Press Enter to Save Changes"
                         autoComplete="off"
@@ -129,7 +130,10 @@ const ColumnTitle = ({
                             disableUnderline: true,
                             endAdornment: (
                                 <InputAdornment position="end">
-                                    <IconButton onClick={handleSubmit}>
+                                    <IconButton
+                                        onClick={handleSubmit}
+                                        data-cy="rename-column-input-submit-button"
+                                    >
                                         <Icons.Edit />
                                     </IconButton>
                                 </InputAdornment>
@@ -155,7 +159,10 @@ const ColumnTitle = ({
             )}
 
             {!wantsToRename && (
-                <IconButton onClick={handleMenuClick}>
+                <IconButton
+                    onClick={handleMenuClick}
+                    data-cy="column-menu-button"
+                >
                     <Icons.MoreHoriz size="22px" />
                 </IconButton>
             )}

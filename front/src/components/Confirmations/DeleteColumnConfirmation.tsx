@@ -57,6 +57,7 @@ export default function DeleteConfirmation({
                     fullWidth
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
+                    data-cy="delete-column-confirmation-input"
                 />
             </DialogContent>
             <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
@@ -64,6 +65,7 @@ export default function DeleteConfirmation({
                     onClick={handleDelete}
                     color="error"
                     variant="contained"
+                    data-cy="delete-column-confirmation-delete-button"
                 >
                     Delete
                 </Button>

@@ -25,3 +25,7 @@ export const projectInfo = {
     isPublic: true,
     theme: "red",
 };
+
+export const cardInfo = {
+    title: "testikortti",
+};

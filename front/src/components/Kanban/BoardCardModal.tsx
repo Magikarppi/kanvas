@@ -155,7 +155,7 @@ export const BoardCardModal = ({
                         title: values!.title,
                         subTitle: values!.subTitle || null,
                         description: values!.description || null,
-                        status: values.status === "Select.." ? null : values!.status || null,
+                        status: values.status === "None" ? null : values!.status || null,
                         dueDate: values!.dueDate || null,
                     };
                     await cardsService.updateCard(token, updateCard);

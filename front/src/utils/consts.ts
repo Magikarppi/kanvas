@@ -11,7 +11,7 @@ export const jobPitchMaxLength = 500;
 export const cardTitleMaxLength = 50;
 export const keywordMaxLength = 100;
 export const cardColorMaxLength = 100;
-export const statusThemes = ["Select..","In Progress", "To do", "Done"];
+export const statusThemes = ["None","In Progress", "To do", "Done"];
 // team
 export const teamNameMaxLength = 100;
 

@@ -118,8 +118,8 @@ export default function GridColumn({
                     style={{
                         maxHeight:
                             cards.length === 0
-                                ? "197.5px"
-                                : `${cards.length * 127.5 + 70}px`,
+                                ? "214.5px"
+                                : `${cards.length * 144.5 + 70}px`,
                         background: snapshot.isDragging
                             ? "linear-gradient(180deg, #7c4fc8 0%, #5E00FF 100%)"
                             : "linear-gradient(180deg, #535353 0%, #434343 28%, #272727 100%)",

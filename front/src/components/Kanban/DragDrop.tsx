@@ -189,6 +189,7 @@ export default function DragDrop({
                         >
                             <Collapse in={wantsToAddColumn} timeout="auto">
                                 <TextField
+                                    data-cy="add-new-column-input"
                                     size="small"
                                     autoComplete="off"
                                     placeholder="Column name *"
@@ -206,6 +207,7 @@ export default function DragDrop({
                                 />
                             </Collapse>
                             <Button
+                                data-cy="add-new-column-button"
                                 disabled={
                                     !wantsToAddColumn
                                         ? false

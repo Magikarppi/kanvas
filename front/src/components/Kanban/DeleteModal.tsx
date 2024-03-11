@@ -1,17 +1,11 @@
-import {
-    Button,
-    Modal,
-    Typography,
-    Box,
-} from "@mui/material";
+import { Button, Modal, Typography, Box } from "@mui/material";
 import { ICard } from "../../models/cardModels";
-
 
 interface IPropsDeleteModal {
     open: boolean;
     card: ICard;
     close: () => void;
-    deleteCard:() => void;
+    deleteCard: () => void;
 }
 
 const deleteModalStyle = {
@@ -26,8 +20,12 @@ const deleteModalStyle = {
     p: 4,
 };
 
-export const DeleteModal = ({open, close, card, deleteCard}: IPropsDeleteModal) => {
-   
+export const DeleteModal = ({
+    open,
+    close,
+    card,
+    deleteCard,
+}: IPropsDeleteModal) => {
     return (
         <>
             <Modal
@@ -36,37 +34,48 @@ export const DeleteModal = ({open, close, card, deleteCard}: IPropsDeleteModal) 
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
                 hideBackdrop={true}
+                data-cy="card-delete-modal"
             >
                 <Box sx={deleteModalStyle}>
-                    <Typography style={{textAlign: "center", fontSize:"23px"}}>
-                    Are you sure you want to remove this card?
+                    <Typography
+                        style={{ textAlign: "center", fontSize: "23px" }}
+                    >
+                        Are you sure you want to remove this card?
                     </Typography>
-                    <Typography style={{textAlign: "center", fontSize:"20px"}}>
+                    <Typography
+                        style={{ textAlign: "center", fontSize: "20px" }}
+                    >
                         {card.title}
                     </Typography>
-                    <Box sx={{ 
-                        display: "flex", 
-                        justifyContent: "space-evenly", 
-                        marginTop: "40px", 
-                        flexWrap: "wrap" 
-                    }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-evenly",
+                            marginTop: "40px",
+                            flexWrap: "wrap",
+                        }}
+                    >
                         <Button
                             variant="contained"
                             color="error"
-                            sx={{marginRight: "10px" }}
+                            sx={{ marginRight: "10px" }}
                             onClick={deleteCard}
+                            data-cy="card-delete-modal-delete-button"
                         >
-                                Delete
+                            Delete
                         </Button>
-                        <Button variant="contained" sx={{backgroundColor:"grey", color:"white"}} onClick={close}>
-                                Cancel
+                        <Button
+                            variant="contained"
+                            sx={{ backgroundColor: "grey", color: "white" }}
+                            onClick={close}
+                        >
+                            Cancel
                         </Button>
                     </Box>
                 </Box>
             </Modal>
         </>
-
-    ); 
+    );
 };
 
 export default DeleteModal;

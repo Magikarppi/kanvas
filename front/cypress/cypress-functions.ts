@@ -41,3 +41,53 @@ export const addProject = () => {
     getCyData("project-is-public-checkbox").click();
     getCyData("project-submit-button").click();
 };
+
+const prefix = "data-rbd";
+const dragHandle = (() => {
+    const base = `${prefix}-drag-handle`;
+
+    return {
+        base,
+        draggableId: `${base}-draggable-id`,
+        contextId: `${base}-context-id`,
+    };
+})();
+
+const draggable = (() => {
+    const base = `${prefix}-draggable`;
+    return {
+        base,
+        contextId: `${base}-context-id`,
+        id: `${base}-id`,
+    };
+})();
+
+const droppable = (() => {
+    const base = `${prefix}-droppable`;
+    return {
+        base,
+        contextId: `${base}-context-id`,
+        id: `${base}-id`,
+    };
+})();
+
+export function getDroppableSelector(droppableId?: string) {
+    if (droppableId) {
+        return `[${droppable.id}="${droppableId}"]`;
+    }
+    return `[${droppable.id}]`;
+}
+
+export function getHandleSelector(draggableId?: string) {
+    if (draggableId) {
+        return `[${dragHandle.draggableId}="${draggableId}"]`;
+    }
+    return `[${dragHandle.draggableId}]`;
+}
+
+export function getDraggableSelector(draggableId?: string) {
+    if (draggableId) {
+        return `[${draggable.id}="${draggableId}"]`;
+    }
+    return `[${draggable.id}]`;
+}

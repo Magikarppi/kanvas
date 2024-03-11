@@ -9,11 +9,11 @@ import { Draggable, Droppable } from "react-beautiful-dnd";
 import BoardCard from "./BoardCard";
 import ColumnTitle from "./ColumnTitle";
 import { ProjectMember } from "../../models/projectModels";
-import { AddCardModal } from "../cards/addCardModal";
 import { useState } from "react";
 import cardsService from "../../services/cardsService";
 import { selectToken } from "../../redux/hooks";
 import { v4 as uuid } from "uuid";
+import { AddCardModal } from "./addCardModal";
 
 const Container = styled.div`
     margin: 0px 10px 0px 10px;
@@ -65,7 +65,6 @@ export default function GridColumn({
     const addCard = async (object: IOnSaveAddCardModalObject) => {
         const { title, desc, files, status, dueDate, responsiblePersonId } =
             object;
-        const subtitle = "Subtitle"; // Mistä?
         const inColumn = column.id;
         const orderIndex = cards.length;
         const projectMember = projectMembers?.find(
@@ -78,7 +77,7 @@ export default function GridColumn({
             status: status,
             dueDate: dueDate,
             projectId: column.projectId,
-            subTitle: subtitle,
+            subTitle: null,
             inColumn: inColumn.toString(),
             orderIndex: orderIndex,
         };

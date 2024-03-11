@@ -148,7 +148,7 @@ const ProjectToolbar = ({
                         },
                     }}
                 >
-                    <ToggleButton value="grid" aria-label="grid-view">
+                    <ToggleButton data-cy="show-grid-button" value="grid" aria-label="grid-view">
                         <Tooltip
                             title={<Typography>Show Grid</Typography>}
                             arrow

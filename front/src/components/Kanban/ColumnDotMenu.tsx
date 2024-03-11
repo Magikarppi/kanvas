@@ -40,6 +40,7 @@ const ColumnDotMenu = ({
             <List sx={{ padding: 0 }}>
                 <ListItem disablePadding>
                     <ListItemButton
+                        data-cy="open-add-card-modal-button"
                         onClick={() =>
                             wantsToAddCard ? wantsToAddCard() : null
                         }
@@ -51,7 +52,10 @@ const ColumnDotMenu = ({
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                    <ListItemButton onClick={() => wantsToRename()}>
+                    <ListItemButton
+                        onClick={() => wantsToRename()}
+                        data-cy="rename-column-button"
+                    >
                         <ListItemIcon>
                             <Icons.Edit />
                         </ListItemIcon>
@@ -59,7 +63,10 @@ const ColumnDotMenu = ({
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                    <ListItemButton onClick={() => wantsToDeleteColumn()}>
+                    <ListItemButton
+                        onClick={() => wantsToDeleteColumn()}
+                        data-cy="delete-column-button"
+                    >
                         <ListItemIcon>
                             <Icons.DeleteForever />
                         </ListItemIcon>

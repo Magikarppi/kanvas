@@ -3,7 +3,6 @@ import {
     Card,
     InputLabel,
     Modal,
-    TextField,
     Typography,
     Box,
     Grid,
@@ -13,17 +12,11 @@ import {
     IconButton,
     ListItemText,
     Divider,
-    InputAdornment,
     Container,
-    Collapse,
     SelectChangeEvent,
     Chip,
 } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import SendIcon from "@mui/icons-material/Send";
 import { useState, useEffect } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { ExpandLess } from "@mui/icons-material";
 import {
     ICard,
     ICardResponsiblePerson,
@@ -45,17 +38,6 @@ import Icons from "../Icons/Icons";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { v4 as uuid } from "uuid";
 
-const comments = [
-    {
-        id: 1,
-        comment: "Haloo",
-    },
-    {
-        id: 2,
-        comment: "Haloo2",
-    },
-];
-
 const style = {
     position: "absolute",
     top: "50%",
@@ -71,21 +53,6 @@ const style = {
     maxHeight: "660px",
     minWidth: "200px",
     cursor: "default",
-};
-
-const uploadBoxStyle = {
-    width: "auto",
-    margin: "30px",
-    height: "auto",
-    minHeight: "140px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexFlow: "column nowrap",
-    fontSize: "24px",
-    color: "#555555",
-    border: "2px #c3c3c3 dashed",
-    borderRadius: "12px",
 };
 
 interface IPropsCardModal {
@@ -115,7 +82,6 @@ export const BoardCardModal = ({
     allCards,
     setCards,
 }: IPropsCardModal) => {
-    const [expanded, setExpanded] = useState<boolean>(false);
     const [deleteModal, setDeleteModal] = useState<boolean>(false);
     const [selectedUsersState, setSelectedUsersState] = useState<
         ProjectMember[]
@@ -221,10 +187,6 @@ export const BoardCardModal = ({
     useEffect(() => {
         setAlreadyResponsibles(cardResponsiblePersons);
     }, [cardResponsiblePersons]);
-
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
 
     const closeBoardCardModal = () => {
         setCard({
@@ -536,7 +498,7 @@ export const BoardCardModal = ({
                                 </ListItem>
                                 <Divider />
                             </Box>
-                        ))}          
+                        ))}
                         <Box
                             sx={{
                                 display: "flex",

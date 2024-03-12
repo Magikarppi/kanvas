@@ -77,12 +77,11 @@ const LoginNavDrawer = ({ open, setOpen }: TOpen) => {
                 data-cy="sign-out-drawer"
                 variant="outlined"
                 style={{
-                    margin: "0 -20px 0px 20px",
+                    margin: "0 0px 0px 8px",
                     width: "200px",
                     position: "absolute",
                     bottom: "20px",
                 }}
-                fullWidth
                 onClick={() => handleSignOut()}
             >
                 Sign out

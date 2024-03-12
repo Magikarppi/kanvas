@@ -10,15 +10,13 @@ import {
     MenuItem,
     SelectChangeEvent,
 } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import {
     IAddCardModal,
     IOnSaveAddCardModalObject,
 } from "../../models/cardModels";
 import DatePicker from "../DatePicker/Datepicker";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { ProjectMember } from "../../models/projectModels";
 
 export const AddCardModal = (props: IAddCardModal) => {
@@ -26,7 +24,6 @@ export const AddCardModal = (props: IAddCardModal) => {
     const [desc, setDesc] = useState<string>("");
     const [selectOption, setSelectOption] = useState<string>("");
     const [status, setStatus] = useState<string>("");
-    const [files, setFiles] = useState<string[] | null>(null);
     const [dueDate, setDueDate] = useState<Date>(new Date());
 
     const options = props.members
@@ -49,22 +46,6 @@ export const AddCardModal = (props: IAddCardModal) => {
         }
     };
 
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files && event.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append("myFile", file);
-            const Url = URL.createObjectURL(file);
-            if (files) {
-                const array = [...files];
-                array.push(Url);
-                setFiles(array);
-            } else {
-                setFiles([Url]);
-            }
-        }
-    };
-
     const onAddCard = () => {
         const object: IOnSaveAddCardModalObject = {
             title: title,
@@ -79,21 +60,11 @@ export const AddCardModal = (props: IAddCardModal) => {
         setDesc("");
         setSelectOption("");
         setStatus("");
-        setFiles(null);
         setDueDate(new Date());
     };
 
     const datePickerOnChange = (date: Date) => {
         setDueDate(date);
-    };
-
-    const onDeleteFile = (value: string) => {
-        if (files) {
-            const array: string[] = files.filter(
-                (valueItem: string) => valueItem != value
-            );
-            setFiles(array);
-        }
     };
 
     const style = {
@@ -102,7 +73,7 @@ export const AddCardModal = (props: IAddCardModal) => {
         left: "50%",
         transform: "translate(-50%, -50%)",
         width: "70%",
-        height: "100%",
+        height: "95%",
         border: "2px solid #5e00ff",
         boxShadow: 24,
         p: 1,
@@ -111,9 +82,10 @@ export const AddCardModal = (props: IAddCardModal) => {
         maxHeight: "800px",
         minWidth: "500px",
         minheight: "200px",
+        cursor: "default",
     };
 
-    const inputLabelStyle = { marginBottom: "1%", marginTop: "1%" };
+    const inputLabelStyle={marginBottom: "2px"};
     return (
         <Modal
             open={props.isAddCardModalOpen}
@@ -139,6 +111,7 @@ export const AddCardModal = (props: IAddCardModal) => {
                             alignItems: "center",
                             display: "flex",
                             color: "white",
+                            marginTop: "10px",
                         }}
                     >
                         Add new card
@@ -177,7 +150,6 @@ export const AddCardModal = (props: IAddCardModal) => {
                     </Box>
                     <Box
                         sx={{
-                            height: "20%",
                             width: "100%",
                             display: "flex",
                             justifyContent: "center",
@@ -197,9 +169,10 @@ export const AddCardModal = (props: IAddCardModal) => {
                             placeholder="Description"
                             sx={{
                                 width: "100%",
-                                height: "100%",
                                 margin: 0,
                                 padding: 0,
+                            }}
+                            InputProps={{style: { fontSize: 14 },
                             }}
                         />
                     </Box>
@@ -297,14 +270,13 @@ export const AddCardModal = (props: IAddCardModal) => {
                         sx={{
                             height: "20%",
                             width: "100%",
-                            justifyContent: "space-around",
                             display: "flex",
                             flexDirection: "column",
                             flex: 1,
                         }}
                     >
                         <InputLabel sx={inputLabelStyle}>
-                            Responsive persons
+                        Responsible Persons
                         </InputLabel>
                         <Select
                             value={selectOption}
@@ -324,90 +296,9 @@ export const AddCardModal = (props: IAddCardModal) => {
                             ))}
                         </Select>
                     </Box>
-                    <Box sx={{ height: "20%", width: "100%" }}>
-                        <InputLabel sx={inputLabelStyle}>
-                            {" "}
-                            Attachments
-                        </InputLabel>
-                        <Box
-                            sx={{
-                                borderStyle: "dashed",
-                                width: "100%",
-                                height: "70%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                flexDirection: "row",
-                                borderWidth: "1px",
-                                borderRadius: "20px",
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontSize: 20,
-                                }}
-                            >
-                                <input
-                                    id="actual-btn"
-                                    style={{ display: "none" }}
-                                    type="file"
-                                    onChange={handleFileChange}
-                                />
-                                <label htmlFor="actual-btn">
-                                    Drag and Drop or Click to upload{" "}
-                                    <CloudUploadIcon fontSize="large" />
-                                </label>
-                            </Box>
-                        </Box>
-                    </Box>
-                    <Box sx={{ height: "20%", width: "100%" }}>
-                        <InputLabel sx={{ marginTop: "2%" }}>
-                            Preview
-                        </InputLabel>
-                        <Box
-                            sx={{
-                                height: "auto",
-                                width: "100%",
-                                display: "flex",
-                                flexDirection: "row",
-                            }}
-                        >
-                            {files &&
-                                files.map((value: string) => (
-                                    <Box
-                                        sx={{
-                                            position: "relative",
-                                            width: "20%",
-                                        }}
-                                        key={value}
-                                    >
-                                        <DeleteForeverIcon
-                                            onClick={() => onDeleteFile(value)}
-                                            htmlColor="red"
-                                            fontSize="large"
-                                            sx={{
-                                                position: "absolute",
-                                                right: 0,
-                                            }}
-                                        />
-                                        <img
-                                            style={{
-                                                height: "100%",
-                                                width: "100%",
-                                            }}
-                                            key={value}
-                                            src={value}
-                                        ></img>
-                                    </Box>
-                                ))}
-                        </Box>
-                    </Box>
                     <Box
                         sx={{
-                            height: "12.5%",
+                            height: "20%",
                             width: "100%",
                             display: "flex",
                             flexDirection: "row",

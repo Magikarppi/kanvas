@@ -190,7 +190,6 @@ export default function AllProjectsPage() {
                 }
             } catch (error) {
                 console.error(error);
-                // Todo: Set error message
             }
         }
     };

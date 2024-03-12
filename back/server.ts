@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import userRouter from "./server/routes/usersRouter";
-// import { createTablesAndFillWithDummyData } from "./database/database-service";
+import { createTables } from "./database/database-service";
 import teamsRouter from "./server/routes/teamsRouter";
 import projectsRouter from "./server/routes/projectsRouter";
 import { authenticate, loggerMiddleWare } from "./server/middleware/middleware";
@@ -29,6 +29,12 @@ server.use("/columns", authenticate, columnsRouter);
 server.use("/reactions", authenticate, reactionsRouter);
 server.use("/comments", authenticate, commentsRouter);
 
-// createTablesAndFillWithDummyData();
+(async () => {
+    try {
+        await createTables();
+    } catch (error) {
+        console.error(error);
+    }
+})();
 
 export default server;

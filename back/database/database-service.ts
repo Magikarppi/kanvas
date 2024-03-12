@@ -1,8 +1,6 @@
 import pg from "pg";
 import dotenv from "dotenv";
 
-import { dummyUsers } from "./utils/dummyData";
-import { insertUserDAO } from "./DAOs";
 import { IParametrizedQuery } from "./utils/interfaces";
 
 dotenv.config();
@@ -66,7 +64,7 @@ export const executeMultipleQueries = async (...args: IParametrizedQuery[]) => {
     }
 };
 
-const createTables = async () => {
+export const createTables = async () => {
     try {
         const query = `
         CREATE TABLE IF NOT EXISTS "users" (
@@ -202,27 +200,7 @@ const createTables = async () => {
 
         await executeQuery(query);
 
-        console.log("Tables created successfully");
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-const fillTablesWithDummyData = async () => {
-    try {
-        for (const user of dummyUsers) {
-            await insertUserDAO(user);
-        }
-        console.log("Dummy data added successfully");
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-export const createTablesAndFillWithDummyData = async () => {
-    try {
-        await createTables();
-        await fillTablesWithDummyData();
+        console.log("Tables created successfully if they didn't already exist");
     } catch (error) {
         console.error(error);
     }

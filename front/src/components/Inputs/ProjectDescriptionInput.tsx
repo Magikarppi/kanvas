@@ -37,6 +37,9 @@ export default function ProjectDescriptionInput({
                 multiline
                 rows={4}
                 data-cy="project-description-input"
+                InputProps={{
+                    style: { fontSize: 14 },
+                }}
             />
             <Typography variant="caption" sx={{ ml: 2 }}>
                 {description.length}/{projectDescriptionMaxLength}

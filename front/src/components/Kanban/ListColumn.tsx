@@ -79,7 +79,7 @@ const ListColumn = ({
         const copyDate: Date = dueDate;
         copyDate.setMonth(copyDate.getMonth() + 1);
 
-        const subtitle = "Subtitle"; // Mistä?
+        const subtitle = "Subtitle";
         const inColumn = column.id;
         const orderIndex = cards.length;
         const projectMember = members?.find(

@@ -248,7 +248,7 @@ export const validateMembers = async (
 const validateNonEmptyString = (value: unknown, maxLength: number = 255) =>
     typeof value === "string" &&
     (value as string).trim().length > 0 &&
-    (value as string).trim().length < maxLength;
+    (value as string).trim().length <= maxLength;
 const validateBoolean = (value: unknown) => typeof value === "boolean";
 const validateStringArray = (value: unknown) =>
     Array.isArray(value) && value.every((v) => typeof v === "string");

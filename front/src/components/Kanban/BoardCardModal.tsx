@@ -403,7 +403,7 @@ export const BoardCardModal = ({
                             xl={10}
                             sx={{ marginLeft: "10px" }}
                         >
-                            <h4>{values?.title?.length} / 100</h4>
+                            <h4>{values?.title?.length} / 50</h4>
                         </Grid>
                         <Grid item xs={10} md={12} lg={12} xl={10}>
                             <InputLabel sx={{ fontSize: "1.7rem" }}>
@@ -536,113 +536,7 @@ export const BoardCardModal = ({
                                 </ListItem>
                                 <Divider />
                             </Box>
-                        ))}
-                        <Grid item xs={10} md={12} lg={12} xl={10}>
-                            <InputLabel sx={{ fontSize: "1.7rem" }}>
-                                Upload files
-                            </InputLabel>
-                        </Grid>
-                        <Grid item xs={10} md={12} lg={12} xl={10}>
-                            <Box style={uploadBoxStyle}>
-                                <InputLabel
-                                    sx={{ color: "grey", fontSize: "1.7rem" }}
-                                >
-                                    Drag and Drop or click to upload
-                                </InputLabel>
-                                <CloudUploadIcon sx={{ fontSize: 55 }} />
-                            </Box>
-                        </Grid>
-                        <Grid
-                            container
-                            direction="row"
-                            sx={{ display: "flex", alignItems: "center" }}
-                        >
-                            <InputLabel
-                                sx={{ fontSize: "1.7rem", flexGrow: 1 }}
-                            >
-                                Comments
-                            </InputLabel>
-                            {!expanded ? (
-                                <IconButton
-                                    aria-label="add to favorites"
-                                    onClick={handleExpandClick}
-                                >
-                                    <ExpandMoreIcon sx={{ fontSize: "22px" }} />
-                                </IconButton>
-                            ) : (
-                                <IconButton
-                                    aria-label="add to favorites"
-                                    onClick={handleExpandClick}
-                                >
-                                    <ExpandLess sx={{ fontSize: "22px" }} />
-                                </IconButton>
-                            )}
-                        </Grid>
-                        <Collapse in={expanded} timeout="auto" unmountOnExit>
-                            <Box
-                                border={1}
-                                borderColor="grey.500"
-                                padding={3}
-                                sx={{ marginTop: "10px" }}
-                            >
-                                {comments.map((val) => (
-                                    <Grid
-                                        item
-                                        xs={10}
-                                        md={12}
-                                        lg={12}
-                                        xl={10}
-                                        key={val.id}
-                                    >
-                                        <ListItem
-                                            key={val.id}
-                                            secondaryAction={
-                                                <IconButton
-                                                    edge="end"
-                                                    aria-label="delete"
-                                                >
-                                                    X
-                                                </IconButton>
-                                            }
-                                        >
-                                            <ListItemText
-                                                primary={val.comment}
-                                                primaryTypographyProps={{
-                                                    fontSize: 16,
-                                                }}
-                                            />
-                                        </ListItem>
-                                        <Divider />
-                                    </Grid>
-                                ))}
-                                <Grid
-                                    sx={{ marginTop: "15px" }}
-                                    item
-                                    xs={10}
-                                    md={12}
-                                    lg={12}
-                                    xl={10}
-                                >
-                                    <TextField
-                                        name="newEmailState"
-                                        id="newEmailState"
-                                        fullWidth
-                                        InputProps={{
-                                            endAdornment: (
-                                                <InputAdornment position="end">
-                                                    <IconButton
-                                                        sx={{ p: "10px" }}
-                                                        aria-label="directions"
-                                                    >
-                                                        <SendIcon fontSize="large" />
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    ></TextField>
-                                </Grid>
-                            </Box>
-                        </Collapse>
+                        ))}          
                         <Box
                             sx={{
                                 display: "flex",

@@ -31,6 +31,7 @@ export const projectModalStyle = {
     overflowY: "auto",
     width: "100%",
     height: "100%",
+    cursor: "default",
 };
 
 export default function AddProjectModal({

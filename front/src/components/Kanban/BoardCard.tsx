@@ -122,9 +122,9 @@ export default function BoardCard({
                             onClick={openCardModal}
                             sx={{ textAlign: "center", padding: "7px" }}
                         >
-                            <Typography>{card.title}</Typography>
+                            <Typography sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow:"ellipsis", width:"205px" }}>{card.title}</Typography>
                             {card.dueDate ? (
-                                <Typography style={{ fontSize: 10 }}>
+                                <Typography style={{ fontSize: 11, fontWeight:"bold"}}>
                                     {cardDueDate?.toLocaleDateString("fi-FI")}
                                 </Typography>
                             ) : null}

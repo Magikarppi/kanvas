@@ -301,7 +301,7 @@ export default function AllProjectsPage() {
     const renderUserTeams = () =>
         dashboardData?.userTeams?.map((team) => (
             <Grid key={team.id} item xs={12} sm={6} md={3}>
-                {createCard(team, null, `/teams/${team.id}`)}
+                {createCard(team, null, "/dashboard")}
             </Grid>
         ));
 

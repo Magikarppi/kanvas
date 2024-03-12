@@ -29,3 +29,18 @@ The following variable should be added to .env file at the root level of the /fr
 2. Run `npm install` to install frontend dependencies.
 
 3. Run `npm start` to start the development server.
+
+### Testing
+
+We have written some unit and end-to-end tests to test the functionality of Kanvas.
+
+Unit tests were written with using [jest](https://jestjs.io/). To run Kanvas' unit tests, navigate to /front folder with `cd front`. After that, run tests with the command `npm run test`.
+
+End-to-end tests (eight in total) were written using [cypress](https://www.cypress.io/). To run these tests from the command line, navigate to /front folder with the command `cd front`. After that, start cypress tests using the command `npx cypress run`.
+
+Another way to run cypress tests is to run the command `npx cypress open` after navigating to /front folder. In the window that opens, choose E2E Testing. After configuration has finished, choose the browser that you want to use for testing. Finally, in the browser window that opens, you can run a single test by clicking it.
+
+Note that in order to run Kanvas' cypress tests, you should:
+
+1. Start the front end development server using the instructions above
+2. Start both the database container and the server using the start up instructions in the README file of the back folder

@@ -111,10 +111,10 @@ interface ICard {
 
 | Endpoint | Headers | Request Body | Status Codes | Response Body |
 | ------------------------- | -------------------------------------- | ----------------------- |-------------------------------------- | ----------------------- |
-| `/ POST` | Authorization (Bearer token) | id (string) <br> projectId (string) <br> title (string) <br> subtitle (string or null) <br> description (string or null) <br> status (string or null) <br> creationDate (Date) <br> dueDate (Date or null) <br> attachments (string or null) <br> orderIndex (number) | **201** (Card created successfully) <br> **403** (User is not project member) <br> **500** (General server error) | Success: <br> card: ICard <br><br> Error: <br> Error message |
+| `/ POST` | Authorization (Bearer token) | id (string) <br> projectId (string) <br> title (string) <br> subtitle (string or null) <br> description (string or null) <br> status (string or null) <br> creationDate (Date) <br> dueDate (Date or null) <br> attachments (string or null) <br> orderIndex (number) | **201** (Card created successfully) <br> **400** (Invalid request body) <br> **403** (User is not project member) <br> **500** (General server error) | Success: <br> card: ICard <br><br> Error: <br> Error message |
 | `/:id DELETE` | Authorization (Bearer token) | - | **200** (Card deleted successfully) <br> **404** (Card with id not found) <br> **500** (General server error) | <br><br> Error: <br> Error message |
 | `/:id GET` | Authorization (Bearer token) | - | **200** (Card with id found) <br> **404** (Card with id not found) <br> **500** (General server error) | Success: <br> card: ICard <br><br> Error: <br> Error message |
-| `/:id PUT` | Authorization (Bearer token) | id (string) <br> projectId (string) <br> title (string) <br> subtitle (string or null) <br> description (string or null) <br> status (string or null) <br> creationDate (Date) <br> dueDate (Date or null) <br> attachments (string or null) <br> orderIndex (number) | **201** (Card updated successfully) <br> **404** (Card with id not found) <br> **500** (General server error) | Success: <br> card: ICard <br><br> Error: <br> Error message |
+| `/:id PUT` | Authorization (Bearer token) | id (string) <br> projectId (string) <br> title (string) <br> subtitle (string or null) <br> description (string or null) <br> status (string or null) <br> creationDate (Date) <br> dueDate (Date or null) <br> attachments (string or null) <br> orderIndex (number) | **201** (Card updated successfully) <br> **400** (Invalid request body) <br> **404** (Card with id not found) <br> **500** (General server error) | Success: <br> card: ICard <br><br> Error: <br> Error message |
 
 ### /columns
 
@@ -129,9 +129,9 @@ interface IProjectColumn {
 
 | Endpoint | Headers | Request Body | Status Codes | Response Body |
 | ------------------------- | -------------------------------------- | ----------------------- | -------------------------------------- | ----------------------- |
-| `/ POST` | Authorization (Bearer token) | projectId (string) <br> columnName (string) <br> orderIndex (number) | **201** (Column created successfully) <br> **500** (General server error) | Success: <br >object: IProjectColumn <br><br> Error: <br> Error message |
-| `/:columnId DELETE` | Authorization (Bearer token) | projectId (string) <br> orderIndex (number) | **200** (Column deleted successfully) <br> **500** (General server error) | Success: <br> Status code 200 <br><br> Error: <br> Error message |
-| `/:columnId PUT` | Authorization (Bearer token) | projectId (string) <br> columnName (string) <br> orderIndex (number) | **200** (Column updated successfully) <br> **500** (General server error) | Success: <br> object: IProjectColumn) <br><br> Error: <br> Error message |
+| `/ POST` | Authorization (Bearer token) | projectId (string) <br> columnName (string) <br> orderIndex (number) | **201** (Column created successfully) <br> **400** (Invalid request body) <br> **500** (General server error) | Success: <br >object: IProjectColumn <br><br> Error: <br> Error message |
+| `/:projectId/:columnId/:orderIndex DELETE` | Authorization (Bearer token) |  | **200** (Column deleted successfully) <br> **400** (Invalid request params) <br> **500** (General server error) | Success: <br> IProjectColumn[] <br><br> Error: <br> Error message |
+| `/:columnId PUT` | Authorization (Bearer token) | projectId (string) <br> columnName (string) <br> orderIndex (number) | **200** (Column updated successfully) <br> **400** (Invalid request body) <br> **500** (General server error) | Success: <br> object: IProjectColumn[] <br><br> Error: <br> Error message |
 
 ### /comments
 ```ts
@@ -178,7 +178,7 @@ interface IFavoriteProject extends IProject {
 | `/dashboard/:id GET` | Authorization (Bearer token) | - | **201** (Data retrieved successfully) <br> **404** (User with id not found) <br> **500** (General server error) | Success: <br><br> allProjects:<br> IProject [] <br><br> favoriteProjects: IFavoriteProject [] <br><br> publicProjects:<br> IProject [] <br><br> Error: <br> Error message |
 | `/:id PUT` | Authorization (Bearer token) | name (string) <br> description (string) <br> creationDate (Date or null) <br> endDate (Date or null) <br> theme (string) <br> isPublic (boolean) <br> members (array) <br> picture (string or null) | **200** (Project updated successfully) <br> **403** (User is not the project admin) <br> **404** (Project not found) <br> **500** (General server error) | Success: <br> "Project updated" <br><br> Error: <br> Error message |
 | `/favorite-projects/:id DELETE` | Authorization (Bearer token) | - | **200** (Favorite project deleted successfully) <br> **500** (General server error) | Success: <br> "Favorite project deleted" <br><br> Error: <br> Error message |
-| `/favorite-projects/:id POST` | Authorization (Bearer token) | projectId (string) | **200** (Favorite project added successfully) <br> **500** (General server error) | Success:<br> object: IFavoriteProject <br><br> Error: <br> Error message |
+| `/favorite-projects/:id POST` | Authorization (Bearer token) | projectId (string) | **200** (Favorite project added successfully) <br> **400** (Invalid request body or project not found) <br> **500** (General server error) | Success:<br> object: IFavoriteProject <br><br> Error: <br> Error message |
 
 ### /reactions
 
@@ -209,10 +209,10 @@ interface ITeam {
 
 | Endpoint | Headers | Request Body | Status Codes | Response Body |
 | --------------------------- | -------------------------------------- | ------------------------- | -------------------------------------- | ------------------------- |
-| `/newteams POST` | Authorization (Bearer token) | name (string) <br> isPublic (boolean) <br> emails (string []) | **200** (Team created successfully) <br> **500** (General server error) | Success:<br> object: ITeam <br><br> Error: <br> Error message |
+| `/newteams POST` | Authorization (Bearer token) | name (string) <br> isPublic (boolean) <br> emails (string []) | **200** (Team created successfully) <br> **400** (Invalid request body) <br> **500** (General server error) | Success:<br> object: ITeam <br><br> Error: <br> Error message |
 | `/delete/:id DELETE` | Authorization (Bearer token) | - | **200** (Team deleted successfully) <br> **403** (User is not the team admin) <br> **404** (Team with id not found) <br> **500** (General server error) | Success: <br> "Ok" <br><br> Error: <br> Error message |
 | `/:id GET` | Authorization (Bearer token) | - | **200** (Team with id found) <br> **404** (Team with id not found) <br> **500** (General server error) | Success:<br> object: ITeam <br><br> Error: <br> Error message |
-| `/update/:id PUT` | Authorization (Bearer token) | name (string) <br> admin (string) <br> isPublic (boolean)  | **200** (Team updated successfully) <br> **403** (User is not the team admin) <br> **404** (Team with id not found) <br> **500** (General server error) | Success:<br> object: ITeam <br><br> Error: <br> Error message |
+| `/update/:id PUT` | Authorization (Bearer token) | name (string) <br> admin (string) <br> isPublic (boolean)  | **200** (Team updated successfully) <br> **400** (Invalid request body) <br> **403** (User is not the team admin) <br> **404** (Team with id not found) <br> **500** (General server error) | Success:<br> object: ITeam <br><br> Error: <br> Error message |
 
 ### /users
 
